@@ -3,7 +3,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 500px;
+  min-height: 600px;
   height: 100vh;
   padding: 0;
   margin: 0;
@@ -13,13 +13,15 @@ body {
 }
 
 .center-block {
-  width: 550px;
+  width: 100%;
+  max-width: 550px;
   padding: 20px;
   text-align: center;
 }
 
 .msd-logo {
-  max-width: 300px;
+  width: 300px;
+  max-width: 75%;
 }
 
 ul {
@@ -29,6 +31,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 h1 {
@@ -59,4 +62,14 @@ h1 {
   font-weight: 700;
   letter-spacing: 1px;
   margin: 0;
+}
+
+@media (max-width: 768px) {
+  li {
+    width: 50%;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
 }
