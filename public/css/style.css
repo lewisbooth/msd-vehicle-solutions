@@ -65,11 +65,19 @@ h1 {
 }
 
 @media (max-width: 768px) {
+  ul {
+    margin: 40px 0;
+  }
+
   li {
     width: 50%;
   }
 
   h1 {
     font-size: 28px;
+  }
+
+  .call-to-action {
+    margin-top: 20px;
   }
 }
