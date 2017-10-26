@@ -1,0 +1,219 @@
+doctype html
+html
+  head
+    title= `${title} | MSD Vehicle Solutions`
+    meta(name="description" content=`${description || "Flexible car and van hire, sales and leasing for personal and commercial use across Staffordshire since 1986"}`)
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel="icon" type="image/png" href="/images/favicon/favicon.png")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+  body
+    block nav
+      nav.main-nav.row
+        .main-nav-container.container
+          img.main-nav-main-logo(src="/images/logos/msd-logo-white.svg", alt="MSD Vehicle Solutions Logo")
+          ul
+            a(href="/")
+              li Hire
+            a(href="/sales")
+              li Sales
+            a(href="/leasing")
+              li Leasing
+            a(href="/conversions")
+              li Conversions
+            a(href="/modifications")
+              li Modifications
+            a(href="/servicing")
+              li Servicing
+            a(href="/contact")
+              li Contact
+          a(href="tel: +441782517782") 
+            .call-to-book
+              span.call-to-book-text CALL NOW TO BOOK
+              span.call-to-book-number 01782 517782
+
+
+    block coverImage
+      .cover-image-container.row
+        img(src="/images/cover-images/van-hire.jpg", alt="Car & Van Hire")
+
+    block articleHeader
+      .container
+        .article-header
+          h1 Car &amp; Van Hire in Stoke-on-Trent
+          h3 from £50 per day
+
+    section.container.content
+      block articleContent
+        article
+          p MSD Vehicle Solutions has offered flexible car and van #[a(href="/") hire], #[a(href="/sales") sales] and #[a(href="/leasing") leasing] for personal and commercial use across Staffordshire since 1986. Today we offer a wide range of bespoke vehicle modification, servicing and van conversion services. Whatever the job, call us or drop in today to see what we have to offer.
+          a(href="/").button.button-main Hire a vehicle
+          a(href="/").button.button-secondary Van size guide
+          img(src="/images/page-content/home/van-lineup.jpg", alt="Lineup of vans for hire")
+          h4 Why hire with MSD?
+          p As a proud family business with over 30 years experience, we offer only the highest quality vehicles and flexible contracts to ensure that you receive the best possible service.
+          ul.list-ticks
+            li Short and long term hire
+            li Brand new '67 registrations
+            li Business and personal use
+            li Tough ply-lined vans
+            li Simple all-in-one pricing
+            li Reliable family-run service
+
+      block sidebar
+        aside
+          a(href="tel: +441782517782") 
+            .call-to-book
+              span.call-to-book-text CALL NOW TO BOOK
+              span.call-to-book-number 01782 517782
+
+          .sidebar-block
+            h4 Opening Hours
+            ul.opening-times
+              li
+                span.day Mon - Fri
+                span.time 8:30 - 18:00
+              li
+                span.day Sat
+                span.time 8:30 - 13:00 / 17:00 - 18:00
+              li
+                span.day Sun
+                span.time 8:30 - 09:00 / 17:00 - 18:00
+          .sidebar-block.reviews
+            h4 Reviews
+            p If you like our services, we’d appreciate you leaving a review on one of the below:
+            a(href="/")
+              span
+                img(src="/images/icons/yell.svg", alt="Yell Logo").reviews-icon
+                span Yell
+              span
+                img(src="/images/icons/review-stars.svg", alt="Yell Logo").reviews-stars
+                span 5.0
+            a(href="/")
+              span
+                img(src="/images/icons/facebook.svg", alt="Yell Logo").reviews-icon
+                span Facebook
+              span
+                img(src="/images/icons/review-stars.svg", alt="Yell Logo").reviews-stars
+                span 5.0
+            a(href="/")
+              span
+                img(src="/images/icons/google.svg", alt="Yell Logo").reviews-icon
+                span Google
+              span
+                img(src="/images/icons/review-stars.svg", alt="Yell Logo").reviews-stars
+                span 5.0
+    
+    block promoted-items
+      .container
+        h3 Vehicle Hire Deals
+      section.promoted-items.row
+        .container
+          .vehicle-cards
+            .vehicle-cards-card
+              img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small").vehicle-card-image
+              h5 Ford Transit (Small)
+              ul.vehicle-details
+                li
+                  span Storage size (cm)
+                  span 78w x 79h x 191d
+                li
+                  span Max cargo
+                  span 2185kg
+                li
+                  span Seats
+                  span 3
+                li
+                  span Engine size
+                  span 1.6L
+                li
+                  span Fuel type
+                  span Diesel
+                li
+                  span Fuel economy
+                  span 35mpg
+                li
+                  span Transmission
+                  span Manual
+                li
+                  span Vehicle Height
+                  span 2.4m
+                li
+                  span Mileage
+                  span 64800
+                li
+                  span Year
+                  span 2015
+              a(href="tel: +441782517782").button.button-secondary.button-card Call now to book
+            .vehicle-cards-card
+              img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small").vehicle-card-image
+              h5 Ford Transit (Small)
+              ul.vehicle-details
+                li
+                  span Storage size (cm)
+                  span 78w x 79h x 191d
+                li
+                  span Max cargo
+                  span 2185kg
+                li
+                  span Seats
+                  span 3
+                li
+                  span Engine size
+                  span 1.6L
+                li
+                  span Fuel type
+                  span Diesel
+                li
+                  span Fuel economy
+                  span 35mpg
+                li
+                  span Transmission
+                  span Manual
+                li
+                  span Vehicle Height
+                  span 2.4m
+                li
+                  span Mileage
+                  span 64800
+                li
+                  span Year
+                  span 2015
+              a(href="tel: +441782517782").button.button-secondary.button-card Call now to book
+            .vehicle-cards-card
+              img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small").vehicle-card-image
+              h5 Ford Transit (Small)
+              ul.vehicle-details
+                li
+                  span Storage size (cm)
+                  span 78w x 79h x 191d
+                li
+                  span Max cargo
+                  span 2185kg
+                li
+                  span Seats
+                  span 3
+                li
+                  span Engine size
+                  span 1.6L
+                li
+                  span Fuel type
+                  span Diesel
+                li
+                  span Fuel economy
+                  span 35mpg
+                li
+                  span Transmission
+                  span Manual
+                li
+                  span Vehicle Height
+                  span 2.4m
+                li
+                  span Mileage
+                  span 64800
+                li
+                  span Year
+                  span 2015
+              a(href="tel: +441782517782").button.button-secondary.button-card Call now to book
+            a.button.centered See all vehicles            
+              
+            

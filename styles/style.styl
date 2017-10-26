@@ -1,0 +1,249 @@
+$openSansRegular = "Open Sans Regular", Helvetica, Arial, sans-serif
+$openSansSemibold = "Open Sans Semibold", Helvetica, Arial, sans-serif
+$exoLight = "Exo Light", Helvetica, Arial, sans-serif
+$exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
+
+@import '_partials/*'
+
+.main-nav
+  background-color $darkBlue
+  color white
+  height 90px
+  width 100%
+  position fixed
+  z-index 9
+  top 0
+  
+  &-container
+    display flex
+    flex-direction row
+    justify-content space-between
+    align-items center
+    height 100%
+
+  &-main-logo
+    height 68px
+    width auto
+
+  ul
+    display flex
+    align-items center
+    padding-left 0
+    height 100%
+
+    a
+      display flex
+      align-items center
+      padding 0 20px
+      color white
+      height 100%
+      box-sizing border-box
+
+      &:hover
+        background-color rgba(255,255,255,0.15)
+        border-bottom 2px solid white
+        border-top 2px solid $lightBlue
+
+  .call-to-book
+    height 90px
+    line-height 1.8rem
+
+    &-text
+      font-size 1.4rem
+      letter-spacing 0.07em
+
+    &-number
+      font-size 2.4rem
+      letter-spacing 0.1em
+      margin-top 3px
+
+.call-to-book
+  background-color $mainGreen
+  padding 15px
+  display flex
+  flex-direction column
+  align-items center
+  justify-content center
+  box-sizing border-box
+  color white
+  line-height 2.6rem
+
+  &:hover
+    background-color $darkGreen
+
+  &-text
+    font-size 1.8rem
+    letter-spacing 0.07em
+
+  &-number
+    font-family $exoSemibold
+    font-size 3.6rem
+    letter-spacing 0.2rem
+    margin-top 3px
+
+.cover-image-container
+  height 530px
+  overflow hidden
+  display flex
+  align-items center
+  justify-content center
+  border-bottom 3px solid $mainBlue
+  margin-top 90px
+
+  img 
+    max-height initial 
+    max-width initial
+    min-height 100%
+    min-width 100%
+    width initial
+    height initial
+
+.article-header
+  position absolute
+  bottom 0
+  background-color white
+  border-top 3px solid $mainBlue
+  margin 0 -30px -3px -30px
+  width 50%
+  box-sizing content-box
+  padding 30px
+
+  h1
+    font-size 3.2rem
+    font-family $exoLight
+    line-height 1.2em
+    margin-bottom 5px
+
+  h3
+    font-size 7.2rem
+    font-family $exoSemibold
+    margin-bottom -40px
+    line-height 1em
+
+.content
+  display flex
+  justify-content space-between
+  
+  article 
+    width 50%
+    margin-top 2.5rem
+    margin-bottom 5rem
+
+    img 
+      margin-bottom 1.6em
+
+  aside
+    width 33.32%
+    margin-top 5rem
+    margin-bottom 5rem
+
+    .sidebar-block
+      margin-top 5rem
+      border 1px solid #DEDEDE
+      border-bottom 3px solid $mainBlue
+      padding 1.8rem 2rem
+
+
+.list-ticks
+  width calc(100% - 42px)
+  text-align left
+  padding-left 0
+  position relative
+  margin-left 42px
+  box-sizing border-box
+  display flex
+  flex-wrap wrap
+  flex-direction row
+  justify-content space-between
+
+  li
+    display inline-block
+    width calc(49% - 20px)
+    padding-bottom 20px
+    line-height 1.2em
+    position relative
+    white-space normal
+
+    &:before
+      width 32px
+      height 25px
+      background-image url("/images/icons/tick.png")
+      background-size cover
+      position absolute 
+      display inline-block
+      content ""
+      left -42px
+
+.opening-times
+  padding-left 0
+  margin-top 1rem
+
+  li
+    width 100%
+    display flex
+    justify-content space-between
+
+    .time
+      font-family $openSansSemibold
+
+.reviews
+  p
+    margin-bottom 1.6rem
+
+  a
+    margin 0 -2rem 
+    padding 1rem 2rem
+    display flex
+    align-items center
+    justify-content space-between
+    color black
+
+    &:hover
+      background-color #f4f4f4
+
+  & span
+    display flex
+    align-items center
+
+  &-icon
+    width 4rem
+    margin-right 2rem
+
+  &-stars
+    height 2.6rem
+    margin-right 10px
+
+.promoted-items
+  background-color $softGrey
+  padding 5rem 0
+  margin 2rem 0 5rem 0
+
+.vehicle-cards
+  display flex
+  justify-content space-between
+  flex-wrap wrap
+  width 100%
+  align-items flex-start
+
+  &-card
+    width calc(33.3% - 0.5rem)
+    background-color white
+    padding 0.75rem
+    padding-bottom 0
+    box-sizing border-box
+    border 1px solid $greyBorders
+    margin-bottom 4rem
+
+    h5
+      padding 1rem 1.25rem 1rem 1.25rem
+
+    .vehicle-details
+      margin-bottom 2rem
+
+      li
+        padding 0 1.25rem    
+        display flex
+        justify-content space-between
+
+        &:nth-child(odd)
+          background-color $softGrey
