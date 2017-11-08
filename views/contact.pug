@@ -1,0 +1,47 @@
+extends layout
+
+block coverImage
+  .cover-image-container.row(style="background-image: url('/images/cover-images/contact.jpg');")
+
+block articleHeader
+  .container
+    .article-header
+      h3 Contact Us
+
+block articleContent
+  article
+    p To find out about the latest vehicles and offers or for more detailed information on our services, please call us or fill in the form below.
+    form.contact-form(name="contact-form")
+      .split-container
+        .split
+          label Name
+          input(type="text" name="name" maxlength="50" required)
+        .split
+          label Email
+          input(type="email" name="email" maxlength="100" required)
+      label Message
+      textarea(name="message" rows="10" required)
+      input(name="telephone" type="tel" maxlength="50").bot-trap
+      .flash-message
+      button(type="submit").button Send Message
+    .contact-info.split-container
+      .split
+        ul
+          li MSD Vehicle Solutions
+          li Childerplay Road
+          li Knypersley
+          li Stoke-on-Trent
+          li ST8 7PZ
+      .split
+        ul
+          li 
+            a(href="mailto:info@msdvehiclesolutions.co.uk") info@msdvehiclesolutions.co.uk
+          li 
+            a(href="tel:+441782517782") 01782 517782
+
+block services
+
+block extraFooterScripts
+  script(src="https://unpkg.com/axios/dist/axios.min.js" async defer)
+  script
+    include scripts/dist/contactForm-min.js

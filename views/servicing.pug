@@ -1,0 +1,55 @@
+extends layout
+
+block coverImage
+  .cover-image-container.row(style="background-image: url('/images/cover-images/vehicle-servicing.jpg');")
+
+block articleHeader
+  .container
+    .article-header
+      h1 Car &amp; Van Servicing in Stoke-on-Trent
+      h3 Servicing &amp; Tyres
+
+block articleContent
+  article
+    p Regular servicing &amp; maintenance with MSD Vehicle Solutions maximises the lifespan and quality of your vehicle. With extensive experience in high performance cars, our mechanics can take on any make or model of vehicle. Whether you need a full service, fluid top-up or want to swap out some winter tyres ready for the snow, we’re ready to help.
+    img(src="/images/page-content/servicing/vehicle-servicing.jpg", alt="Man changing car tyre")
+    h4 Maintenance Services
+    ul.list-ticks
+      li Full service
+      li Tyre change/rotation
+      li Oil &amp; filter change
+      li Bodywork repairs
+      li Fluid top-up
+      li Wheel alignment &amp; balance
+      li Spark plugs
+      li Tracking adjustment
+      li Air &amp; fuel filters
+      li Brake pads
+
+block grey-strip
+  .container
+    .gallery          
+      img.gallery-image(src="/images/page-content/servicing/gallery-car-on-ramp.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-cleaning-dipstick.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-fluid-top-up.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-nissan-gtr.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-oil-filter.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-oil-top-up.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-servicing-checklist.jpg", alt="Car on ramp")
+      img.gallery-image(src="/images/page-content/servicing/gallery-spark-plugs.jpg", alt="Car on ramp")
+  
+block services
+  .container
+    h3 Our Services
+  section.grey.our-services.row
+    .container
+      .cards.cards-4
+        +serviceCardHire
+        +serviceCardSales
+        +serviceCardMods
+        +serviceCardConversions
+
+block extraFooterScripts
+  script
+    include scripts/dist/instafeed-lib.js
+    include scripts/dist/instafeed-min.js

@@ -1,0 +1,55 @@
+extends layout
+
+include _mixins/_vehicleCard
+
+block coverImage
+  .cover-image-container.row(style="background-image: url('/images/cover-images/vehicle-leasing.jpg');")
+
+block articleHeader
+  .container
+    .article-header
+      h1 Car &amp; Van Leasing in Stoke-on-Trent
+      h3 Leasing Deals
+          
+block articleContent
+  article
+    p Leasing is the most affordable and flexible way to drive a new car with a fixed monthly cost. Our business &amp; personal leasing deals cover all shapes &amp; sizes of vehicle, and our selection changes regularly. Our flexible leasing options include Personal Contract Purchase (PCP), Hire Purchase (HP), Personal Contract Hire (PCH) and Business Contract Hire (BCH). Many of our vehicles are also available to #[a(href="/") hire] or  #[a(href="/sales") buy].
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/sales/cars-for-sale.jpg", alt="Lineup of cars for lease")
+      .split
+        h3 Cars for lease
+        p Browse our current selection of affordable car lease deals.
+        a(href="/leasing/cars").button See car deals
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/sales/vans-for-sale.jpg", alt="Lineup of vans for lease")
+      .split
+        h3 Vans for lease
+        p Our wide selection of van lease deals are perfect for any job.
+        a(href="/leasing/vans").button See van deals
+    h4 Why lease with MSD?
+    p As an independent family business, we offer honest and friendly advice to help you pick the best leasing deal for your situation, and our #[a(href="/servicing" target="_blank") service and repair centre] can support your vehicle throughout the lease period and beyond. Need a specific vehicle? Call us and we'll order it directly for you.
+    ul.list-ticks
+      li Brand new '67 registrations
+      li Business or personal use
+      li Affordable fixed monthly cost
+      li Servicing packages
+      li Tax &amp; MOT packages
+      li Flexible finance
+
+block grey-strip
+    .container
+      h3 Promoted Lease Deals
+    section.grey.promoted-items.row
+      .container
+        .cards
+          +vehicleCard
+          +vehicleCard
+          +vehicleCard
+        .row.center-content
+          a(href="/").button.no-margin See all vehicles
+
+block extraFooterScripts
+  script
+    include scripts/dist/quoteForm-min.js

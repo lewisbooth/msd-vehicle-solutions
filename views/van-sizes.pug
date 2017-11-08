@@ -1,0 +1,70 @@
+extends layout
+
+block articleHeader
+  .container
+    .article-header
+      h1 Size Guide
+      h3 Which Van Should You Choose?
+          
+block articleContent
+  article
+    p Whether you're moving furniture, Spring cleaning, delivering parcels or carrying tools, or vans are ready for the job. We've put together this short guide to help you choose the most suitable vehicle for your needs. If you're still unsure, please call and we'll be happy to assist.
+    p Our #[a(href="/hire/vans") vans for hire] page shows the dimensions and load capacity for individual vehicles, and many are ply-lined for commercial use.
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/van-sizes/small-van.jpg", alt="Small van")
+      .split
+        h3 Small Van
+        ul.list-ticks.full-width
+          li Items up to 120cm
+          li Tools &amp; DIY projects
+          li 2 Seats
+        a(href="/hire/vans?size=small").button Hire A Small Van
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/van-sizes/medium-van.jpg", alt="Medium van")
+      .split
+        h3 Medium Van
+        ul.list-ticks.full-width
+          li Items up to 240cm
+          li Sofas &amp; mattresses
+          li 2 Seats
+        a(href="/hire/vans?size=medium").button Hire A Medium Van
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/van-sizes/large-van.jpg", alt="Large van")
+      .split
+        h3 Large Van
+        ul.list-ticks.full-width
+          li Items up to 340cm
+          li Multiple furniture items
+          li 3 Seats
+        a(href="/hire/vans?size=large").button Hire A Large Van
+    .split-container.vertical-padding
+      .split
+        img(src="/images/page-content/van-sizes/xl-van.jpg", alt="Extra large van")
+      .split
+        h3 Extra Large Van
+        ul.list-ticks.full-width
+          li Items up to 400cm
+          li Moving house
+          li 3 Seats
+        a(href="/hire/vans?size=xl").button Hire An X-Large Van
+
+block quoteForm
+
+block grey-strip
+    .container
+      h3 Promoted Hire Deals
+    section.grey.promoted-items.row
+      .container
+        .cards
+          +vehicleCard
+          +vehicleCard
+          +vehicleCard
+        .row.center-content
+          a(href="/").button.no-margin See all vehicles
+
+block extraFooterScripts
+  script
+    include scripts/dist/quoteForm-min.js

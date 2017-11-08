@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 require("dotenv").config({ path: "variables.env" });
+process.env.ROOT = __dirname;
 
 mongoose.connect(process.env.DATABASE, { useMongoClient: true });
 mongoose.Promise = global.Promise;

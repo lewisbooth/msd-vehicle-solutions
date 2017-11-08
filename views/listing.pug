@@ -1,0 +1,64 @@
+extends layout
+
+block coverImage
+block articleHeader
+block sidebar
+block articleContent
+  article.full-width
+    .split-container
+      .split
+        block heading
+          h1 Header
+          p Paragraph
+      .split
+        block headingImage
+          img(src="/images/page-content/listings/vans-forecourt.jpg", alt="Vans on forecourt").no-margin
+
+block listingResults
+  .container
+    block listingFilter
+      .listing-filter
+        span
+          label Sort by:
+          select(name="sort")
+            option(value="Price (Low-High)") Price (Low-High)
+            option(value="Price (High-Low)") Price (High-Low)
+        span
+          label Seats:
+          select(name="seats")
+            option(value="all") All
+            option(value="2") 2
+            option(value="3") 3
+            option(value="4") 4
+        span
+          label Transmission:
+          select(name="transmission")
+            option(value="all") All
+            option(value="manual") Manual
+            option(value="automatic") Automatic
+        span
+          label Cargo:
+          select(name="cargo")
+            option(value="all") All
+            option(value="0-1000kg") 0-1000kg
+            option(value="1000-2000kg") 1000-1500kg
+            option(value="2000-3000kg") 1500-2000kg
+        span
+          label Fuel type:
+          select(name="fuel")
+            option(value="all") All
+            option(value="petrol") Petrol
+            option(value="diesel") Diesel
+    .cards
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard
+      +vehicleCard

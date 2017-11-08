@@ -13,6 +13,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   position fixed
   z-index 9
   top 0
+  box-shadow 0px 10px 18px -5px rgba(0,0,0,0.1)
   
   &-container
     display flex
@@ -39,10 +40,15 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
       height 100%
       box-sizing border-box
 
+      &.active
+        border-bottom 2px solid white
+        border-top 2px solid $mainBlue
+        background-color rgba(255,255,255,0.05)
+
       &:hover
         background-color rgba(255,255,255,0.15)
         border-bottom 2px solid white
-        border-top 2px solid $lightBlue
+        border-top 2px solid $mainBlue
 
   .call-to-book
     height 90px
@@ -53,13 +59,13 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
       letter-spacing 0.07em
 
     &-number
-      font-size 2.4rem
-      letter-spacing 0.1em
+      font-size 2.6rem
+      letter-spacing 0.05em
       margin-top 3px
 
 .call-to-book
   background-color $mainGreen
-  padding 15px
+  padding 1.8rem 2rem 2rem 2rem
   display flex
   flex-direction column
   align-items center
@@ -69,7 +75,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   line-height 2.6rem
 
   &:hover
-    background-color $darkGreen
+    background-color $lightGreen
 
   &-text
     font-size 1.8rem
@@ -81,6 +87,24 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     letter-spacing 0.2rem
     margin-top 3px
 
+.top-flash
+  padding 0.8rem
+  margin-top 90px
+  background-color $lightBlue
+  color white
+  text-align center
+  display flex
+  align-items center
+
+  h4
+    font-family $exoSemibold
+    margin 0 
+    padding 0
+    color white
+    font-size 2rem
+    display inline-block
+    padding-right 2rem
+
 .cover-image-container
   height 530px
   overflow hidden
@@ -88,15 +112,10 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   align-items center
   justify-content center
   border-bottom 3px solid $mainBlue
-  margin-top 90px
-
-  img 
-    max-height initial 
-    max-width initial
-    min-height 100%
-    min-width 100%
-    width initial
-    height initial
+  background-color #ddd
+  background-position center 
+  background-size cover
+  background-repeat no-repeat
 
 .article-header
   position absolute
@@ -129,6 +148,15 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     margin-top 2.5rem
     margin-bottom 5rem
 
+    &.full-width
+      width 100%
+
+      a.button 
+        margin-bottom 0
+
+    h1
+      margin-top 2rem !important
+
     img 
       margin-bottom 1.6em
 
@@ -143,6 +171,87 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
       border-bottom 3px solid $mainBlue
       padding 1.8rem 2rem
 
+.instant-quote
+  width 100%
+  background-color $mainBlue
+  margin-top -185px
+  color white
+  padding 2rem 2rem 0 2rem
+  box-sizing border-box
+
+  h3
+    color white
+    margin-bottom 1.8rem
+
+  a
+    color white
+    text-decoration underline
+
+    &.small
+      float right
+
+  button[type=submit]
+    margin 1rem 0 0 0
+    padding 1rem 2rem
+
+  .options
+    display flex
+    margin 1.25rem 0 2.5rem 0
+
+    &.stretch input
+        width 100%
+
+    input
+      color white
+      border-radius 5px
+      outline none 
+      border none
+      margin 0
+      border-radius 0
+      background-color $darkBlue
+      background linear-gradient(to bottom, #133d6b 0%,#16467b 100%)
+      border-right 1px solid $mainBlue
+      text-transform none
+      font-size 1.6rem
+      padding 1rem 2rem
+      letter-spacing 0
+
+      &[checked]
+        background-color white
+        background linear-gradient(to bottom, #ffffff 20%,#dddddd 100%)
+        color $richBlack
+
+        &:hover
+          background-color white
+          background linear-gradient(to bottom, #ffffff 20%,#dddddd 100%)
+
+      &:hover
+        cursor pointer
+        background-color $lightBlue
+        background linear-gradient(to bottom, #3971ad 0%,#4282ca 100%)
+
+      &:first-child
+        border-radius 5px 0 0 5px
+
+      &:last-child
+        border-radius 0 5px 5px 0
+        border-right none
+
+  .result
+    background-color $darkBlue
+    margin 2.5rem -2rem 0 -2rem
+    padding 1.5rem 2rem 2rem 2rem
+    text-align center
+
+    p
+      margin 0 0 1.5rem 0
+
+    output 
+      font-family $exoSemibold
+      font-size 5.6rem
+
+    .per-day
+      font-family $exoSemibold
 
 .list-ticks
   width calc(100% - 42px)
@@ -160,7 +269,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     display inline-block
     width calc(49% - 20px)
     padding-bottom 20px
-    line-height 1.2em
+    line-height 1.6em
     position relative
     white-space normal
 
@@ -173,6 +282,9 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
       display inline-block
       content ""
       left -42px
+
+  &.full-width li
+    width 100%
 
 .opening-times
   padding-left 0
@@ -196,7 +308,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     display flex
     align-items center
     justify-content space-between
-    color black
+    color $richBlack
 
     &:hover
       background-color #f4f4f4
@@ -213,37 +325,264 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     height 2.6rem
     margin-right 10px
 
-.promoted-items
-  background-color $softGrey
-  padding 5rem 0
-  margin 2rem 0 5rem 0
-
-.vehicle-cards
+.gallery
   display flex
-  justify-content space-between
+  flex-wrap wrap
+  align-items flex-start
+  width 100%
+  margin-bottom 4rem
+
+  &-image
+    max-width 25%
+
+section.grey
+  background-color $softGrey
+  padding 4rem 0
+  margin 2rem 0 4rem 0
+
+.cards
+  display flex
   flex-wrap wrap
   width 100%
   align-items flex-start
 
-  &-card
-    width calc(33.3% - 0.5rem)
+  // 3 cards per row by default, adding .4-cards shows 4
+  &.cards-4 .card
+    width calc(25% - 0.5rem)
+    margin-right 0.666rem
+
+  .card
+    width calc(33.33% - 0.5rem)
+    margin 0 0.75rem 0 0
     background-color white
     padding 0.75rem
     padding-bottom 0
     box-sizing border-box
     border 1px solid $greyBorders
     margin-bottom 4rem
+    position relative
+    display inline-block
+    color $richBlack
+    transition all .3s
+
+    &:nth-child(3n)
+      margin-right 0
+
+    &-price
+      background-color $mainBlue
+      position absolute 
+      top 0
+      right 1.5rem
+      padding 2rem 1rem 1rem 1rem
+      color white
+      font-family $exoSemibold
+      font-size 3.2rem
+      line-height 2.4rem
+      display flex
+      flex-direction column
+      align-items center
+
+      &:after
+        content 'per day'
+        font-family $openSansRegular
+        font-size 1.6rem
 
     h5
-      padding 1rem 1.25rem 1rem 1.25rem
+      padding 1.5rem 1.25rem
+      margin 0
+      font-family $exoSemibold
 
     .vehicle-details
       margin-bottom 2rem
+      padding 0 1.25rem
 
       li
-        padding 0 1.25rem    
+        padding 0  
         display flex
+        flex-wrap wrap
         justify-content space-between
+        border-bottom 1px solid $greyBorders
 
-        &:nth-child(odd)
-          background-color $softGrey
+        span:last-child
+          font-family $openSansSemibold
+
+        &:last-child
+          border-bottom none
+
+    &-services
+      padding 0 1.25rem
+      font-size 1.6rem
+      line-height 1.8em
+      margin-left 1rem
+      margin-bottom 2.5rem
+
+      li::before
+        display inline-block
+        vertical-align middle
+        width 5px
+        height 5px
+        background-color #000000
+        margin-right 1em
+        content ' '
+        border-radius 100%
+
+a.card
+  will-change transform
+  transition all .15s
+
+  &:hover
+
+    .button-card
+      background-color $lightBlue
+      background-position right 1.5rem center
+
+.listing-filter
+  padding .75rem 2rem
+  margin-bottom 4rem
+  border 1px solid $greyBorders
+  box-sizing border-box
+  background-color $softGrey
+  width 100%
+  display flex
+  flex-wrap wrap
+  justify-content space-between
+  font-size 1.6rem
+
+  label 
+    margin-right 1rem
+  
+  select 
+    border 1px solid $greyBorders
+    padding 0.75rem
+    font-size 1em
+    outline 0
+    margin-right 2rem
+    min-width 120px
+
+  span:last-child select 
+    margin-right 0
+
+.our-services .card
+  margin-bottom 0
+
+.map
+  .container
+    display flex
+    justify-content space-between
+
+    .button
+      margin-right 0
+
+#map
+  height 500px
+
+#instafeed
+  display flex
+  flex-wrap wrap
+  margin-top 3rem
+  margin-bottom 4rem
+  clear both
+
+  a
+    width 20%
+    overflow hidden
+    height 250px
+
+.instagram-logo
+  width 38px
+  float left
+  margin-right 2rem
+
+.contact-form
+  margin-bottom 2rem
+
+  label 
+    margin-bottom 1rem
+    display block
+    font-family $exoSemibold
+
+  input, textarea
+    width 100%
+    max-width 100%
+    min-width 100%
+    margin-bottom 2rem
+    border 1px solid $greyBorders
+    padding 1rem
+    font-size 1.6rem
+
+input.bot-trap
+  width 0
+  min-width 0
+  height 0
+  margin 0
+  padding 0
+  border none
+
+.flash-message
+  p 
+    padding 1rem
+    color $mainGreen
+    border 1px solid $mainGreen
+    width 100%
+
+    &.error
+      color firebrick 
+      border-color firebrick  
+
+.footer
+  background-color $mainBlue
+  padding 4rem 0 2rem 0
+  color white
+  font-size 1.6rem
+
+  .container
+    display flex
+    flex-wrap wrap
+    align-items flex start
+
+    .footer-column
+      width 33.33%
+      
+
+      ul
+        display flex
+        flex-direction column
+        align-items flex-start
+        margin-bottom 1.6rem
+
+        .contact-icon
+          width 1.5rem
+          float left 
+          margin-right 0.75rem
+
+        a
+          color white
+          display flex
+
+          &:hover
+            text-decoration underline
+
+      h6
+        color white
+        font-size 1.8rem
+        margin-bottom 1rem
+
+.amp-footer
+  background-color $richBlack
+  color white
+  padding 1rem 0
+  font-size 1.4rem
+
+  .container
+    display flex
+    align-items center
+    justify-content space-between
+
+    p
+      padding 0
+      margin 0
+      color #c1c6cb
+
+    a
+      color white
+      font-family $openSansSemibold
