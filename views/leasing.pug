@@ -8,7 +8,7 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Car &amp; Van Leasing in Stoke-on-Trent
+      h1 Car &amp; Van Leasing in #[span.no-break Stoke-on-Trent]
       h3 Leasing Deals
           
 block articleContent
@@ -39,16 +39,25 @@ block articleContent
       li Flexible finance
 
 block grey-strip
-    .container
-      h3 Promoted Lease Deals
-    section.grey.promoted-items.row
-      .container
-        .cards
-          +vehicleCard
-          +vehicleCard
-          +vehicleCard
-        .row.center-content
-          a(href="/").button.no-margin See all vehicles
+  .article-strip
+    h3 Promoted Lease Deals
+    .promoted-items.row
+      .cards
+        +vehicleCard
+        +vehicleCard
+        +vehicleCard
+      .row.center-content
+        a(href="/leasing/cars").button.no-margin See all vehicles
+
+block services
+  .container
+    h3 Our Services
+    .promoted-items.our-services.row
+      .cards.cards-4
+        +serviceCardHire
+        +serviceCardConversions
+        +serviceCardMods
+        +serviceCardServicing  
 
 block extraFooterScripts
   script

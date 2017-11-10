@@ -1,15 +1,9 @@
-$openSansRegular = "Open Sans Regular", Helvetica, Arial, sans-serif
-$openSansSemibold = "Open Sans Semibold", Helvetica, Arial, sans-serif
-$exoLight = "Exo Light", Helvetica, Arial, sans-serif
-$exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
-
 @import '_partials/*'
 
 .main-nav
   background-color $darkBlue
   color white
-  height 90px
-  width 100%
+  width 100
   position fixed
   z-index 9
   top 0
@@ -17,25 +11,31 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   
   &-container
     display flex
-    flex-direction row
+    flex-flow row nowrap
     justify-content space-between
     align-items center
     height 100%
 
   &-main-logo
-    height 68px
+    height 6.5rem
     width auto
+    margin 0.75rem 0
 
   ul
     display flex
-    align-items center
+    align-items stretch
     padding-left 0
-    height 100%
+    margin 0 4rem
+    width 100%
+    align-self stretch
+    background-color $darkBlue
 
     a
+      flex-grow 1
       display flex
       align-items center
-      padding 0 20px
+      justify-content center
+      padding 0
       color white
       height 100%
       box-sizing border-box
@@ -50,8 +50,19 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
         border-bottom 2px solid white
         border-top 2px solid $mainBlue
 
+  &-dropdown-toggle
+    display none
+    color white
+
+    &-icon
+      font-size 4rem
+      line-height 1rem
+      font-family $openSansRegular
+      margin-top -1.2rem
+      margin-left 1rem
+
   .call-to-book
-    height 90px
+    height 8rem
     line-height 1.8rem
 
     &-text
@@ -67,6 +78,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   background-color $mainGreen
   padding 1.8rem 2rem 2rem 2rem
   display flex
+  white-space nowrap
   flex-direction column
   align-items center
   justify-content center
@@ -89,7 +101,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
 
 .top-flash
   padding 0.8rem
-  margin-top 90px
+  margin-top 8rem
   background-color $lightBlue
   color white
   text-align center
@@ -102,20 +114,27 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     padding 0
     color white
     font-size 2rem
+    line-height 1.4em
     display inline-block
     padding-right 2rem
 
 .cover-image-container
-  height 530px
+  height 53rem
   overflow hidden
   display flex
   align-items center
   justify-content center
   border-bottom 3px solid $mainBlue
-  background-color #ddd
+  background-color #bbb
   background-position center 
   background-size cover
   background-repeat no-repeat
+
+  img 
+    min-height 100%
+    min-width 100%
+    max-width auto
+    max-height auto
 
 .article-header
   position absolute
@@ -123,9 +142,9 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   background-color white
   border-top 3px solid $mainBlue
   margin 0 -30px -3px -30px
-  width 50%
+  width 63rem
   box-sizing content-box
-  padding 30px
+  padding 3rem
 
   h1
     font-size 3.2rem
@@ -142,14 +161,16 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
 .content
   display flex
   justify-content space-between
+  flex-wrap wrap
   
   article 
-    width 50%
-    margin-top 2.5rem
+    max-width 63rem
+    margin-top 3rem
     margin-bottom 5rem
 
     &.full-width
       width 100%
+      max-width 100%
 
       a.button 
         margin-bottom 0
@@ -161,7 +182,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
       margin-bottom 1.6em
 
   aside
-    width 33.32%
+    max-width 42rem
     margin-top 5rem
     margin-bottom 5rem
 
@@ -174,7 +195,7 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
 .instant-quote
   width 100%
   background-color $mainBlue
-  margin-top -185px
+  margin-top -18.5rem
   color white
   padding 2rem 2rem 0 2rem
   box-sizing border-box
@@ -196,10 +217,11 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
 
   .options
     display flex
+    flex-wrap wrap
     margin 1.25rem 0 2.5rem 0
 
     &.stretch input
-        width 100%
+      flex-grow 1
 
     input
       color white
@@ -313,16 +335,16 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
     &:hover
       background-color #f4f4f4
 
-  & span
-    display flex
-    align-items center
+    & span
+      display flex
+      align-items center
 
   &-icon
     width 4rem
     margin-right 2rem
 
   &-stars
-    height 2.6rem
+    width 13rem
     margin-right 10px
 
 .gallery
@@ -335,9 +357,12 @@ $exoSemibold = "Exo Semibold", Helvetica, Arial, sans-serif
   &-image
     max-width 25%
 
-section.grey
-  background-color $softGrey
-  padding 4rem 0
+.article-strip
+  flex-grow 3
+  width 100%
+
+.promoted-items
+  padding 1rem 0
   margin 2rem 0 4rem 0
 
 .cards
@@ -350,6 +375,12 @@ section.grey
   &.cards-4 .card
     width calc(25% - 0.5rem)
     margin-right 0.666rem
+
+    &:nth-child(3n)
+      margin-right 0.666rem
+
+    &:nth-child(4n)
+      margin-right 0
 
   .card
     width calc(33.33% - 0.5rem)
@@ -437,7 +468,7 @@ a.card
       background-position right 1.5rem center
 
 .listing-filter
-  padding .75rem 2rem
+  padding 1rem 2rem 0 2rem
   margin-bottom 4rem
   border 1px solid $greyBorders
   box-sizing border-box
@@ -450,6 +481,7 @@ a.card
 
   label 
     margin-right 1rem
+    font-family $openSansSemibold
   
   select 
     border 1px solid $greyBorders
@@ -457,7 +489,8 @@ a.card
     font-size 1em
     outline 0
     margin-right 2rem
-    min-width 120px
+    margin-bottom 1rem
+    min-width 80px
 
   span:last-child select 
     margin-right 0
@@ -478,6 +511,7 @@ a.card
 
 #instafeed
   display flex
+  align-items flex-start
   flex-wrap wrap
   margin-top 3rem
   margin-bottom 4rem
@@ -486,12 +520,20 @@ a.card
   a
     width 20%
     overflow hidden
-    height 250px
+    position relative
+
+    &:after
+      content ""
+      display block
+      padding-bottom 100%    
 
 .instagram-logo
   width 38px
   float left
   margin-right 2rem
+
+  & + h4
+    letter-spacing 0px
 
 .contact-form
   margin-bottom 2rem
@@ -562,6 +604,9 @@ input.bot-trap
           &:hover
             text-decoration underline
 
+          img 
+            height 24px
+
       h6
         color white
         font-size 1.8rem
@@ -577,6 +622,7 @@ input.bot-trap
     display flex
     align-items center
     justify-content space-between
+    flex-wrap wrap
 
     p
       padding 0
@@ -586,3 +632,5 @@ input.bot-trap
     a
       color white
       font-family $openSansSemibold
+
+@import '_mediaQueries/*'

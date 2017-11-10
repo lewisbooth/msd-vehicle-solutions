@@ -33,9 +33,12 @@ gulp.task("watch-scripts", ["scripts"], function() {
 });
 
 gulp.task("stylus", function() {
-  var plugins = [autoprefixer({ browsers: ["last 3 versions"] }), cssnano()];
+  var plugins = [
+    autoprefixer({ browsers: ["last 3 versions"] }),
+    cssnano({ discardUnused: false })
+  ];
   return gulp
-    .src("styles/style.styl")
+    .src("styles/*.styl")
     .pipe(stylus())
     .pipe(postcss(plugins))
     .pipe(gulp.dest("public/css"))

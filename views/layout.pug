@@ -12,8 +12,21 @@ html
     meta(name="description" content=`${description || "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."}`)
     meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="theme-color" content="#16467B")
     link(rel="icon" type="image/png" href="/images/favicon/favicon.png")
-    link(rel='stylesheet', href='/css/style.css')
+
+    style
+      include ../public/css/style.css
+    //- link(rel='stylesheet' href='/css/style.css' type="text/css")
+
+    //- Preload CSS assets rather than wait for CSS to parse and request them. Much faster page loading speed.
+    link(rel='preload' href='/fonts/exo2-semibold-webfont.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/exo2-light-webfont.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/OpenSans-Regular.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/OpenSans-Semibold.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/images/icons/tick.png' as='image' type="image/png")
+    link(rel='preload' href='/images/icons/arrow-right.svg' as='image' type="image/svg+xml")
+
   body
     block nav
       nav.main-nav.row
@@ -21,24 +34,25 @@ html
           a(href="/")
             img.main-nav-main-logo(src="/images/logos/msd-logo-white.svg", alt="MSD Vehicle Solutions Logo")
           ul
-            a(href="/" class=(currentPath === "/" ? 'active' : ''))
+            a(href="/" class=(currentPath.endsWith("/") ? 'active' : ''))
               li Hire
-            a(href="/sales" class=(currentPath === "/sales" ? 'active' : ''))
+            a(href="/sales" class=(currentPath.startsWith("/sales") ? 'active' : ''))
               li Sales
-            a(href="/leasing" class=(currentPath === "/leasing" ? 'active' : ''))
+            a(href="/leasing" class=(currentPath.startsWith("/leasing") ? 'active' : ''))
               li Leasing
-            a(href="/van-conversions" class=(currentPath === "/van-conversions" ? 'active' : ''))
+            a(href="/van-conversions" class=(currentPath.startsWith("/van-conversions") ? 'active' : ''))
               li Conversions
-            a(href="/modifications" class=(currentPath === "/modifications" ? 'active' : ''))
+            a(href="/modifications" class=(currentPath.startsWith("/modifications") ? 'active' : ''))
               li Modifications
-            a(href="/servicing" class=(currentPath === "/servicing" ? 'active' : ''))
+            a(href="/servicing" class=(currentPath.startsWith("/servicing") ? 'active' : ''))
               li Servicing
-            a(href="/contact" class=(currentPath === "/contact" ? 'active' : ''))
+            a(href="/contact" class=(currentPath.startsWith("/contact") ? 'active' : ''))
               li Contact
-          a(href="tel: +441782517782") 
-            .call-to-book
-              span.call-to-book-text CALL US TODAY
-              span.call-to-book-number 01782 517782
+          a(href="javascript:void(0);").main-nav-dropdown-toggle Menu 
+            span.main-nav-dropdown-toggle-icon &#9776;
+          a(href="tel: +441782517782").call-to-book
+            span.call-to-book-text CALL US TODAY
+            span.call-to-book-number 01782 517782
 
     block top-flash
       .top-flash
@@ -47,7 +61,8 @@ html
           a(href="/hire/vans").button.button-small See vehicles
 
     block coverImage
-      .cover-image-container.row(style="background-image: url('/images/cover-images/van-hire.jpg');")
+      .cover-image-container.row
+        img(src="/images/cover-images/van-hire.jpg", alt="")
 
     block articleHeader
       .container
@@ -65,10 +80,9 @@ html
           block quoteForm
             //- Instant quote form goes here
 
-          a(href="tel: +441782517782") 
-            .call-to-book
-              span.call-to-book-text CALL US TODAY
-              span.call-to-book-number 01782 517782
+          a(href="tel: +441782517782").call-to-book.medium-hide
+            span.call-to-book-text CALL US TODAY
+            span.call-to-book-number 01782 517782
 
           .sidebar-block
             h4 Opening Hours
@@ -106,29 +120,29 @@ html
               span
                 img(src="/images/icons/review-stars.svg", alt="Review stars").reviews-stars
                 span 5.0
+
+        block grey-strip  
     
     block listingResults
-    block grey-strip
     
     block services
       .container
         h3 Our Services
-      section.grey.our-services.row
-        .container
+        .promoted-items.our-services.row
           .cards.cards-4
             +serviceCardSales
             +serviceCardMods
             +serviceCardConversions
             +serviceCardServicing        
             
-    block map
-      section.map
-        .container
-          h3 Find Us
-          a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
-            img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
-            span Get Directions
-        #map
+    //- block map
+    //-   section.map
+    //-     .container
+    //-       h3 Find Us
+    //-       a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
+    //-         img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
+    //-         span Get Directions
+    //-     #map
 
     block footer
       section.footer
@@ -184,8 +198,8 @@ html
           a(href="/admin") Sign In
 
     block footerScripts
-      script
-        include scripts/dist/googleMaps-min.js
-      script(async defer src="https://maps.googleapis.com/maps/api/js?key= AIzaSyC_AdmAW49fbvOFD-xYJhW0nO6iyOzRPtk&callback=initMap")
+      //- script
+      //-   include scripts/dist/googleMaps-min.js
+      //- script(async defer src="https://maps.googleapis.com/maps/api/js?key= AIzaSyC_AdmAW49fbvOFD-xYJhW0nO6iyOzRPtk&callback=initMap")
 
     block extraFooterScripts

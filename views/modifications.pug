@@ -6,7 +6,7 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Car &amp; Van Mods in Stoke-on-Trent
+      h1 Car &amp; Van Mods in #[span.no-break Stoke-on-Trent]
       h3 Modifications &amp; Performance
 
 block articleContent
@@ -28,19 +28,18 @@ block articleContent
       li Race &amp; track day preparation
 
 block grey-strip
-  .container
-    .space-between
-      div.space-between-group
-        img(src="/images/icons/instagram.png").instagram-logo
-        h4.no-margin @msdcustomcommercials
-      a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
-    #instafeed
+  .space-between
+    div.space-between-group
+      img(src="/images/icons/instagram.png").instagram-logo
+      h4.no-margin @msdcustomcommercials
+    a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
+  #instafeed.row
 
 block services
   .container
+  .container
     h3 Our Services
-  section.grey.our-services.row
-    .container
+    .promoted-items.our-services.row
       .cards.cards-4
         +serviceCardHire
         +serviceCardSales

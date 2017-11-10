@@ -1,0 +1,121 @@
+@media (max-width: $breakpointMedium)
+  html
+    font-size 8.5px
+
+  .medium-hide
+    display none !important
+
+  .main-nav-container
+    flex-flow row wrap
+
+    ul
+      width auto
+      flex-grow 2
+      margin-right 0
+
+    .call-to-book
+      flex-grow 3
+      flex-flow row wrap
+      padding 0
+      align-items center
+      width 100vw
+      margin 0 -3rem
+      height 4rem
+
+      &-text
+        font-size 1.8rem
+        margin-right 1rem
+
+      &-number
+        font-size 2rem
+        margin-top 1px
+
+  .top-flash
+    margin-top 12rem
+
+  .cover-image-container
+    height 40rem
+
+  .article-header
+    width 100%
+    position relative
+    border none   
+    padding 0
+    margin 2rem 0 3rem 0
+
+  .content
+    flex-direction column
+
+    aside
+      max-width 100%
+      display flex
+      flex-wrap wrap
+      align-items flex-start
+      justify-content space-between
+      margin-top 0
+
+      .sidebar-block
+        margin-top 2rem
+        width calc(50% - 40px)
+
+    article
+      max-width 100%
+      margin-bottom 0
+
+      &.full-width
+
+        .split-container
+          flex-direction row
+          flex-wrap wrap
+
+          .split
+            width 100%
+
+            img 
+              width 100%
+              padding 3rem 0
+
+  .instant-quote
+    margin 2rem -2.35rem 0 -2.35rem
+    flex-grow 1
+
+    form 
+
+      .options
+        input
+          padding 1.75rem 5rem
+
+      .result
+        flex-grow 2
+        width 100%
+        padding 2rem 2rem 2.5rem 2rem
+
+        p
+          margin 0 0 2rem 0
+
+        output 
+          font-size 7rem
+
+        .per-day
+          font-size 2.8rem
+
+  .listing-filter
+    justify-content left
+
+  .listing-results
+    margin-bottom 3rem
+
+  .cards
+    .card, &.cards-4 .card
+      width calc(50% - 0.5rem)
+      margin-right 0.666rem
+      margin-bottom 2rem
+
+      &:nth-child(3n)        
+        margin-right 0.666rem
+
+      &:nth-child(2n)
+        margin-right 0
+
+  #instafeed a
+    width 25%

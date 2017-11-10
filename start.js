@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ip = require("ip");
 
 require("dotenv").config({ path: "variables.env" });
 process.env.ROOT = __dirname;
@@ -16,4 +17,10 @@ const app = require("./app");
 app.set("port", process.env.PORT || 8888);
 const server = app.listen(app.get("port"), () => {
   console.log(`Express running → PORT ${server.address().port}`);
+  if (process.env.NODE_ENV === "production") {
+    console.log("⚡  Production Mode ⚡");
+  } else {
+    console.log("🐌  Development Mode 🐌 ");
+    console.log("Local address: " + ip.address());
+  }
 });

@@ -12,7 +12,9 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.use(compression());
-app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600 }));
+
+const maxAge = process.env.NODE_ENV === "production" ? 31536000 : 1;
+app.use(express.static(path.join(__dirname, "public"), { maxAge: 31536000 }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

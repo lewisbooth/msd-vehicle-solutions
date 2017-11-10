@@ -37,7 +37,7 @@ exports.leaseListingVans = async (req, res) => {
   res.render("listing-leasing-vans", {
     title: "New Van Leasing Deals in Stoke-on-Trent",
     description:
-      "Find the Perfect Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Find the Perfect Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, BCH & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
   });
 };
 
@@ -45,6 +45,6 @@ exports.leaseListingCars = async (req, res) => {
   res.render("listing-leasing-cars", {
     title: "New Car Leasing Deals in Stoke-on-Trent",
     description:
-      "Find the Perfect Car Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Find the Perfect Car Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, BCH & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
   });
 };

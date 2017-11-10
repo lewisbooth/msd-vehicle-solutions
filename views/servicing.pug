@@ -6,7 +6,7 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Car &amp; Van Servicing in Stoke-on-Trent
+      h1 Car &amp; Van Servicing in #[span.no-break Stoke-on-Trent]
       h3 Servicing &amp; Tyres
 
 block articleContent
@@ -41,13 +41,12 @@ block grey-strip
 block services
   .container
     h3 Our Services
-  section.grey.our-services.row
-    .container
+    .promoted-items.our-services.row
       .cards.cards-4
         +serviceCardHire
         +serviceCardSales
+        +serviceCardConversions 
         +serviceCardMods
-        +serviceCardConversions
 
 block extraFooterScripts
   script

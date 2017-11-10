@@ -6,8 +6,8 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Van Conversions in Stoke-on-Trent
-      h3 Van Modifications &amp; Ply-Lining
+      h1 Van Conversions in #[span.no-break Stoke-on-Trent]
+      h3 Van Modifications &amp; #[span.no-break Ply-Lining]
 
 block articleContent
   article
@@ -28,25 +28,23 @@ block articleContent
       li Tow bars &amp; roof racks
 
 block grey-strip
-  .container
-    .space-between
-      div.space-between-group
-        img(src="/images/icons/instagram.png").instagram-logo
-        h4.no-margin @msdcustomcommercials
-      a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
-    #instafeed
+  .space-between
+    div.space-between-group
+      img(src="/images/icons/instagram.png").instagram-logo
+      h4.no-margin @msdcustomcommercials
+    a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
+  #instafeed.row
 
 block services
   .container
     h3 Our Services
-  section.grey.our-services.row
-    .container
+    .promoted-items.our-services.row
       .cards.cards-4
         +serviceCardHire
         +serviceCardSales
-        +serviceCardConversions
+        +serviceCardMods
         +serviceCardServicing  
-
+        
 block extraFooterScripts
   script
     include scripts/dist/instafeed-lib.js
