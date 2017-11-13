@@ -23,7 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", (req, res, next) => {
   const timestamp = new Date().toString();
-  console.log(`${timestamp} ${req.method} ${req.path} ${req.ip}`);
+  var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  console.log(`${timestamp} ${req.method} ${req.path} ${ip}`);
   next();
 });
 
