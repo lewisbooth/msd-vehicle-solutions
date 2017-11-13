@@ -15,11 +15,14 @@ html
     meta(name="theme-color" content="#16467B")
     link(rel="icon" type="image/png" href="/images/favicon/favicon.png")
 
-    style
-      include ../public/css/style.css
-    //- link(rel='stylesheet' href='/css/style.css' type="text/css")
+    //- Inline CSS for production mode, otherwise use <link> to allow BrowserSync to inject changes during development
+    if production
+      style
+        include ../public/css/style.css
+    else
+      link(rel='stylesheet' href=`/css/style.css?ver=${cssHash}` type="text/css")
 
-    //- Preload CSS assets rather than wait for CSS to parse and request them. Much faster page loading speed.
+    //- Preload fonts & CSS assets rather than wait for CSS to parse and request them. Much faster page loading speed in supported browsers.
     link(rel='preload' href='/fonts/exo2-semibold-webfont.woff2' as='font' type="font/woff2" crossorigin)
     link(rel='preload' href='/fonts/exo2-light-webfont.woff2' as='font' type="font/woff2" crossorigin)
     link(rel='preload' href='/fonts/OpenSans-Regular.woff2' as='font' type="font/woff2" crossorigin)
@@ -31,9 +34,15 @@ html
     block nav
       nav.main-nav.row
         .main-nav-container.container
-          a(href="/")
-            img.main-nav-main-logo(src="/images/logos/msd-logo-white.svg", alt="MSD Vehicle Solutions Logo")
-          ul
+          .mobile-nav-wrapper
+            a(href="/")
+              img.main-nav-main-logo(src="/images/logos/msd-logo-white.svg", alt="MSD Vehicle Solutions Logo")
+            .main-nav-dropdown-toggle Menu 
+              .main-nav-dropdown-toggle-icon
+                .main-nav-dropdown-toggle-icon-top
+                .main-nav-dropdown-toggle-icon-middle
+                .main-nav-dropdown-toggle-icon-bottom
+          ul.main-nav-menu
             a(href="/" class=(currentPath.endsWith("/") ? 'active' : ''))
               li Hire
             a(href="/sales" class=(currentPath.startsWith("/sales") ? 'active' : ''))
@@ -48,8 +57,6 @@ html
               li Servicing
             a(href="/contact" class=(currentPath.startsWith("/contact") ? 'active' : ''))
               li Contact
-          a(href="javascript:void(0);").main-nav-dropdown-toggle Menu 
-            span.main-nav-dropdown-toggle-icon &#9776;
           a(href="tel: +441782517782").call-to-book
             span.call-to-book-text CALL US TODAY
             span.call-to-book-number 01782 517782
@@ -135,14 +142,14 @@ html
             +serviceCardConversions
             +serviceCardServicing        
             
-    //- block map
-    //-   section.map
-    //-     .container
-    //-       h3 Find Us
-    //-       a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
-    //-         img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
-    //-         span Get Directions
-    //-     #map
+    block map
+      //- section.map
+      //-   .container
+      //-     h3 Find Us
+      //-     a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
+      //-       img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
+      //-       span Get Directions
+      //-   #map
 
     block footer
       section.footer
@@ -198,8 +205,7 @@ html
           a(href="/admin") Sign In
 
     block footerScripts
-      //- script
-      //-   include scripts/dist/googleMaps-min.js
-      //- script(async defer src="https://maps.googleapis.com/maps/api/js?key= AIzaSyC_AdmAW49fbvOFD-xYJhW0nO6iyOzRPtk&callback=initMap")
+      script
+        include scripts/dist/mobileMenu-min.js
 
     block extraFooterScripts

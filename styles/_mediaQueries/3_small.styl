@@ -1,18 +1,90 @@
 @media (max-width: $breakpointSmall)
 
+  h1
+    font-size 4.2rem
+
   .small-hide
     display none !important
 
   .main-nav
-    ul
-      display none 
-    
-    &-dropdown-toggle
+    .mobile-nav-wrapper
       display flex
+      width 100vw
+      margin 0 -2rem
+      padding 0 2rem
+      justify-content space-between
       align-items center
+      z-index 999
+      background-color $darkBlue
+
+    .call-to-book
+      z-index 999
+
+    ul
+      display block
+      position fixed
+      margin-left 0
+      top 12rem
+      left 0
+      width 100vw
+      transform translateY(-100%)
+      transition transform 0.3s
+      will-change transform
+
+      a
+        padding 1.5rem 0
+
+        &.active
+          border 0
+
+        &:hover
+          border 0
+
+    &.mobile-active
+      ul
+        box-shadow 0px 10px 15px 5px rgba(0,0,0,0.5)
+        transform translateY(0%)
+
+      .mobile-nav-wrapper 
+        .main-nav-dropdown-toggle
+          .main-nav-dropdown-toggle-icon
+            justify-content center
+            
+            &-top
+              transform rotate(-45deg)
+            &-middle
+              opacity 0
+              margin -2px 0
+            &-bottom
+              transform rotate(45deg)
+      
+    &-dropdown-toggle
+      display inline-flex
+      align-items center
+      box-sizing content-box
       border 1px solid white
       padding 1.5rem 1rem 1.5rem 1.5rem
       border-radius 5px
+      user-select none
+
+      &:hover
+        cursor pointer 
+
+      &-icon
+        display flex
+        height 20px
+        align-items center
+        flex-direction column
+        justify-content space-between
+        margin 0
+        margin-left 10px
+        transition all .3s ease-in-out    
+
+        div
+          width 30px
+          height 2px
+          background-color white
+          transition all .3s ease-in-out    
 
   .cover-image-container
     height 25rem
@@ -38,13 +110,16 @@
       .sidebar-block
         width 100%
 
+    article 
+
+      h1
+        margin-top 0 !important
+
   .instant-quote
-    margin 0 -2rem 4rem -2rem
-    box-sizing content-box
 
     h3
       font-size 3.6rem !important
-      margin 1.5rem 0 3rem 0
+      margin 0 0 2rem 0
 
     .options
 

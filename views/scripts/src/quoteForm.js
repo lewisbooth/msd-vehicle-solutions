@@ -26,23 +26,26 @@ const form = document.forms["instant-quote"];
 const fieldsets = form.querySelectorAll(".options");
 const inputs = form.querySelectorAll("input");
 const priceOutput = form.querySelector("output");
+const aside = document.querySelector("aside");
+const callToBook = aside.querySelector(".call-to-book");
 const formBlock = document.querySelector(".instant-quote");
 const content = document.querySelector(".article-header");
 const topSection = document.querySelector(".article-header").parentNode;
 
-// Move form to top on page on mobile, because CSS is hard okay?
+// Move form to top of page on mobile screens, because CSS is hard okay?
 function moveForm() {
-  if (window.innerWidth < 768) {
-    console.log("test");
+  if (window.innerWidth < 1024) {
     topSection.insertBefore(formBlock, content);
+  } else {
+    aside.insertBefore(formBlock, callToBook);
   }
 }
 
 moveForm();
 
-window.resize = function() {
+window.addEventListener("resize", function() {
   moveForm();
-};
+});
 
 // Event listeners
 form.addEventListener("submit", e => e.preventDefault());
