@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pageController = require("../controllers/pageController");
 const listingController = require("../controllers/listingController");
+const adminController = require("../controllers/adminController");
 
 // Standard pages
 router.get("/", pageController.homepage);
@@ -23,6 +24,6 @@ router.get("/leasing/vans", listingController.leaseListingVans);
 router.get("/leasing/cars", listingController.leaseListingCars);
 
 // Admin
-// router.get("/admin", adminController.signIn);
+router.get("/admin", adminController.dashboard);
 
 module.exports = router;
