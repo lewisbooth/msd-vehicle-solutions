@@ -3,7 +3,10 @@ extends layout
 include _mixins/_vehicleCard
 
 block coverImage
-  .cover-image-container.row(style="background-image: url('/images/cover-images/vehicle-sales.jpg');")
+  .cover-image-container.row
+    picture
+      source(media="(max-width: 767px)" srcset="/images/cover-images/vehicle-sales-600.jpg 1x")
+      img(src="/images/cover-images/vehicle-sales.jpg" alt="Cover Image - Vehicles for Sale")
 
 block articleHeader
   .container
