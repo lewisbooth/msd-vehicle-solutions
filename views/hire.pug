@@ -3,8 +3,7 @@ extends layout
 block articleHeader
   .container
     .article-header.quote-shift
-      h1 Car &amp; Van Hire in #[span.no-break Stoke-on-Trent]
-      h3 from £50 per day
+      h1 Car &amp; Van Hire #[br] from £50 per day
           
 block articleContent
   article.quote-shift
@@ -64,16 +63,18 @@ block quoteForm
         output £50
         span.per-day /day
 
-block grey-strip
-  .article-strip
-    h3 Promoted Hire Deals
-    .promoted-items.row
-      .cards
-        +vehicleCard
-        +vehicleCard
-        +vehicleCard
-      .row.center-content
-        a(href="/").button.no-margin See all vehicles
+block promoted-items
+  .container
+    h3 Van Hire Deals
+  section.grey
+    .container
+      .promoted-items.row
+        .cards
+          +vehicleCard({promoted: true})
+          +vehicleCard({promoted: true})
+          +vehicleCard({promoted: true})
+        .row.center-content
+          a(href="/hire/vans").button.no-margin See all vans   
 
 block extraFooterScripts
   script

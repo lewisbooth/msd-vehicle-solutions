@@ -8,7 +8,7 @@ exports.homepage = async (req, res) => {
 
 exports.sales = async (req, res) => {
   res.render("sales", {
-    title: "New & Used Cars & Vans for Sale in Stoke-on-Trent",
+    title: "New & Used Vehicles for Sale in Stoke-on-Trent",
     description:
       "Explore Our Range of New & Used Cars & Vans for Sale or Lease in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
   });

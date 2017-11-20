@@ -43,7 +43,7 @@ html
                 .main-nav-dropdown-toggle-icon-middle
                 .main-nav-dropdown-toggle-icon-bottom
           ul.main-nav-menu
-            a(href="/" class=(currentPath.endsWith("/") ? 'active' : ''))
+            a(href="/" class=(currentPath.startsWith("/hire") || currentPath === "/" ? 'active' : ''))
               li Hire
             a(href="/sales" class=(currentPath.startsWith("/sales") ? 'active' : ''))
               li Sales
@@ -131,27 +131,25 @@ html
                 span 5.0
 
         block grey-strip  
+
+    block promoted-items
     
     block listingResults
     
     block services
       .container
         h3 Our Services
-        .promoted-items.our-services.row
-          .cards.cards-4
-            +serviceCardSales
-            +serviceCardMods
-            +serviceCardConversions
-            +serviceCardServicing        
+      section.grey.no-margin
+        .container
+          .promoted-items.our-services.row
+            .cards.cards-4
+              block services-cards
+                +serviceCardSales
+                +serviceCardMods
+                +serviceCardConversions
+                +serviceCardServicing        
             
     block map
-      //- section.map
-      //-   .container
-      //-     h3 Find Us
-      //-     a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
-      //-       img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
-      //-       span Get Directions
-      //-   #map
 
     block footer
       section.footer

@@ -143,17 +143,11 @@
   padding 3rem
 
   h1
-    font-size 3.2rem
-    font-family $exoLight
-    line-height 1.2em
-    margin-bottom 5px
-
-  h3
-    font-size 7.2rem
+    font-size 6.8rem
     font-family $exoSemibold
     margin-bottom -40px
     line-height 1em
-
+    
 .content
   display flex
   justify-content space-between
@@ -353,13 +347,8 @@
   &-image
     max-width 25%
 
-.article-strip
-  flex-grow 3
-  width 100%
-
 .promoted-items
-  padding 1rem 0
-  margin 2rem 0 4rem 0
+  margin 2rem 0 3rem 0
 
 .cards
   display flex
@@ -390,7 +379,9 @@
     position relative
     display inline-block
     color $richBlack
-    transition all .3s
+
+    &-border-bottom
+      border-bottom 3px solid $mainBlue
 
     &:nth-child(3n)
       margin-right 0
@@ -400,7 +391,7 @@
       position absolute 
       top 0
       right 1.5rem
-      padding 2rem 1rem 1rem 1rem
+      padding 2rem 1rem 0 1rem
       color white
       font-family $exoSemibold
       font-size 3.2rem
@@ -409,39 +400,68 @@
       flex-direction column
       align-items center
 
-      &:after
+      &-text
         content 'per day'
         font-family $openSansRegular
-        font-size 1.6rem
+        font-size 1.4rem
+        margin-bottom .75rem
+
+      &-promoted
+        background-color $mainGreen
+        margin 0 -1rem
+        padding 0 0.4rem
+        font-size 1.4rem
+        text-transform uppercase
+        letter-spacing 0.05rem
+
+    &-text-container
+      padding 2rem 1.25rem
 
     h5
-      padding 1.5rem 1.25rem
       margin 0
       font-family $exoSemibold
 
+    h6
+      font-size 1.8rem
+      text-transform uppercase
+      font-family $exoLight
+      align-self flex-end
+      margin-bottom 0
+
     .vehicle-details
-      margin-bottom 2rem
-      padding 0 1.25rem
+      margin 2rem 0
+      display flex
+      flex-wrap wrap      
+
+    &-availability
+      display flex
 
       li
-        padding 0  
-        display flex
-        flex-wrap wrap
-        justify-content space-between
-        border-bottom 1px solid $greyBorders
+        position relative
+        margin-left 1.5rem
+        font-size 1.6rem
+        line-height 2rem
 
-        span:last-child
-          font-family $openSansSemibold
+        &:before
+          width 18px
+          height 14px
+          background-image url("/images/icons/tick.png")
+          background-size cover
+          display inline-block
+          content ""
+          margin-right .5rem
 
-        &:last-child
-          border-bottom none
+
+    &-link
+      color $mainBlue
+
+      &:hover
+        text-decoration underline
 
     &-services
-      padding 0 1.25rem
+      margin 1.5rem 0 0 0
       font-size 1.6rem
       line-height 1.8em
-      margin-left 1rem
-      margin-bottom 2.5rem
 
       li::before
         display inline-block
@@ -455,9 +475,13 @@
 
 a.card
   will-change transform
-  transition all .15s
+  transition transform .15s
 
   &:hover
+    border-bottom-color $lightBlue
+
+    & .card-link
+      text-decoration underline
 
     .button-card
       background-color $lightBlue
@@ -490,6 +514,11 @@ a.card
 
   span:last-child select 
     margin-right 0
+
+section.grey
+  background-color $softGrey
+  padding 1rem 0
+  margin-bottom 5rem
 
 .our-services .card
   margin-bottom 0

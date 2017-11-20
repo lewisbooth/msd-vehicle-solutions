@@ -41,15 +41,11 @@ block grey-strip
       img.gallery-image(src="/images/page-content/servicing/gallery-servicing-checklist.jpg", alt="Car on ramp")
       img.gallery-image(src="/images/page-content/servicing/gallery-spark-plugs.jpg", alt="Car on ramp")
   
-block services
-  .container
-    h3 Our Services
-    .promoted-items.our-services.row
-      .cards.cards-4
-        +serviceCardHire
-        +serviceCardSales
-        +serviceCardConversions 
-        +serviceCardMods
+block services-cards
+  +serviceCardHire
+  +serviceCardSales
+  +serviceCardConversions 
+  +serviceCardMods
 
 block extraFooterScripts
   script

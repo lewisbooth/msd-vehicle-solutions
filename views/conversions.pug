@@ -10,7 +10,6 @@ block articleHeader
   .container
     .article-header
       h1 Van Conversions in #[span.no-break Stoke-on-Trent]
-      h3 Van Modifications &amp; #[span.no-break Ply-Lining]
 
 block articleContent
   article
@@ -38,15 +37,11 @@ block grey-strip
     a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
   #instafeed.row
 
-block services
-  .container
-    h3 Our Services
-    .promoted-items.our-services.row
-      .cards.cards-4
-        +serviceCardHire
-        +serviceCardSales
-        +serviceCardMods
-        +serviceCardServicing  
+block services-cards
+  +serviceCardHire
+  +serviceCardSales
+  +serviceCardMods
+  +serviceCardServicing  
         
 block extraFooterScripts
   script
