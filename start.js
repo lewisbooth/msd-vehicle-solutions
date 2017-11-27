@@ -22,6 +22,6 @@ const server = app.listen(app.get("port"), () => {
     console.log("⚡  Production Mode ⚡");
   } else {
     console.log("🐌  Development Mode 🐌 ");
-    console.log("Local address: " + ip.address());
   }
+  console.log("Local address: " + ip.address());
 });
