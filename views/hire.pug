@@ -7,26 +7,26 @@ block articleHeader
           
 block articleContent
   article.quote-shift
-    p MSD Vehicle Solutions has offered flexible car and van #[a(href="/") hire], #[a(href="/sales") sales] and #[a(href="/leasing") leasing] for personal and commercial use across Staffordshire since 1986. Today we offer a wide range of bespoke vehicle #[a(href="/modification") modification], #[a(href="/servicing") servicing] and #[a(href="/van-conversions") van conversion] services. Whatever the job, call us or drop in today to see what we have to offer.
+    p MSD Vehicle Solutions has offered flexible car and van #[a(href="/") hire], #[a(href="/sales") sales] and #[a(href="/leasing") leasing] for personal and commercial use across Staffordshire since 1986. Today we offer bespoke vehicle #[a(href="/custom-vehicles") modifications] and #[a(href="/servicing") servicing] through our on-site garage. Whatever the job, call us or drop in today to see what we have to offer.
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/cars-for-sale.jpg" alt="Lineup of cars for hire")
       .split
         h3 Cars for hire
         p Rent the perfect car for your next family holiday, business trip or weekend adventure.
-        a(href="/hire/cars").button See car deals
+        a(href="/vehicles/hire/cars").button See car deals
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/vans-for-sale.jpg", alt="Lineup of vans for hire")
       .split
         h3 Vans for hire
         p Choose from a wide range of vans for furniture shopping, delivering parcels or moving home.
-        a(href="/hire/vans").button See van deals
+        a(href="/vehicles/hire/vans").button See van deals
     h4 Why hire with MSD?
     p As a proud family business with over 30 years experience, we offer only the highest quality vehicles and flexible contracts to ensure that you receive the best possible service.
     ul.list-ticks
       li Short and long term hire
-      li Brand new '67 registrations
+      li Brand new registrations
       li Clean, low mileage vehicles
       li Open 7 days a week
       li Business and personal use
@@ -44,13 +44,21 @@ block quoteForm
           input(type="button" name="van" value="Van" checked)
           input(type="button" name="car" value="Car")
       .block
-        label Vehicle Size
+        label Van Size
         a.small(href="/van-sizes" target="_blank") Size guide
-        .options.stretch(name="vehicle-size")
-          input(type="button" name="small" value="Small" checked)
-          input(type="button" name="medium" value="Medium")
-          input(type="button" name="large" value="Large")
-          input(type="button" name="x-large" value="X Large")
+        .options.stretch(name="van-size")
+          input(type="button" name="van-small" value="Small" checked)
+          input(type="button" name="van-medium" value="Medium")
+          input(type="button" name="van-large" value="Large")
+          input(type="button" name="van-x-large" value="X Large")
+      .block.hidden
+        label Car Size
+        a.small(href="/car-sizes" target="_blank") Size guide
+        .options.stretch(name="car-size")
+          input(type="button" name="car-economy" value="Economy" checked)
+          input(type="button" name="car-saloon" value="Saloon")
+          input(type="button" name="car-suv" value="SUV")
+          input(type="button" name="car-pickup" value="Pickup")
       .block
         label Days
         .options.stretch(name="days")
@@ -74,7 +82,7 @@ block promoted-items
           +vehicleCard({promoted: true})
           +vehicleCard({promoted: true})
         .row.center-content
-          a(href="/hire/vans").button.no-margin See all vans   
+          a(href="/vehicles/hire/vans").button.no-margin See all vans   
 
 block extraFooterScripts
   script

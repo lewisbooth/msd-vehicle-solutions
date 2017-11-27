@@ -1,16 +1,16 @@
 // Prices per day
 const prices = {
   van: {
-    small: 50,
-    medium: 70,
-    large: 90,
-    "x-large": 105
+    "van-small": 50,
+    "van-medium": 70,
+    "van-large": 90,
+    "van-x-large": 105
   },
   car: {
-    small: 35,
-    medium: 45,
-    large: 55,
-    "x-large": 65
+    "car-economy": 35,
+    "car-saloon": 45,
+    "car-suv": 55,
+    "car-pickup": 65
   }
 };
 
@@ -32,7 +32,12 @@ const formBlock = document.querySelector(".instant-quote");
 const content = document.querySelector(".article-header");
 const topSection = document.querySelector(".article-header").parentNode;
 
-// Move form to top of page on mobile screens, because CSS is hard okay?
+const vanBlock = form.querySelector("[name=van-size]").parentElement;
+const carBlock = form.querySelector("[name=car-size]").parentElement;
+const vanInput = form.querySelector("[name=van]");
+const carInput = form.querySelector("[name=car]");
+
+// Move form to top of page on mobile screens
 function moveForm() {
   if (window.innerWidth < 1024) {
     topSection.insertBefore(formBlock, content);
@@ -83,6 +88,7 @@ function getState() {
 // Check boxes based on state, and update the quote result
 function renderForm() {
   priceOutput.innerHTML = getPrice();
+
   fieldsets.forEach(fieldset => {
     const fieldsetName = fieldset.getAttribute("name");
     const inputs = fieldset.querySelectorAll("input");
@@ -95,6 +101,14 @@ function renderForm() {
       }
     });
   });
+
+  if (carInput.checked === true) {
+    carBlock.classList.remove("hidden");
+    vanBlock.classList.add("hidden");
+  } else {
+    vanBlock.classList.remove("hidden");
+    carBlock.classList.add("hidden");
+  }
 }
 
 // Checks the clicked input, and unchecks other inputs in the same fieldset
@@ -110,7 +124,9 @@ function checkInput(e) {
 }
 
 function getPrice() {
+  // Copy state without reference
   const query = JSON.parse(JSON.stringify(formState));
+
   // Format form state into a 1-layer query for easy processing, e.g. { "vehicle-type": "van", "vehicle-size": "small", "days": "3-7" }
   for (const fieldset in query) {
     for (const input in query[fieldset]) {
@@ -122,7 +138,7 @@ function getPrice() {
 
   // Calculate the price from query
   const vehicleType = query["vehicle-type"];
-  const vehicleSize = query["vehicle-size"];
+  const vehicleSize = query[`${vehicleType}-size`];
   const days = query["days"];
   let price = prices[vehicleType][vehicleSize];
   if (typeof discounts[days] !== "undefined") {

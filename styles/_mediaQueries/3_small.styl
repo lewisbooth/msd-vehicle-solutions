@@ -3,10 +3,17 @@
   h1
     font-size 4.2rem
 
+  body
+    padding-top 11.5rem
+
   .small-hide
     display none !important
 
   .main-nav
+
+    &-main-logo
+      height 6rem
+
     .mobile-nav-wrapper
       display flex
       width 100vw
@@ -14,8 +21,8 @@
       padding 0 2rem
       justify-content space-between
       align-items center
-      z-index 999
-      background-color $darkBlue
+      z-index 9
+      background-color white
 
     .call-to-book
       z-index 999
@@ -24,12 +31,13 @@
       display block
       position fixed
       margin-left 0
-      top 12rem
+      top 11.5rem
       left 0
       width 100vw
       transform translateY(-100%)
       transition transform 0.3s
       will-change transform
+      font-size 2rem
 
       a
         padding 1.5rem 0
@@ -42,7 +50,7 @@
 
     &.mobile-active
       ul
-        box-shadow 0px 10px 15px 5px rgba(0,0,0,0.5)
+        box-shadow 0px 10px 15px 5px rgba(0,0,0,0.25)
         transform translateY(0%)
 
       .mobile-nav-wrapper 
@@ -62,7 +70,8 @@
       display inline-flex
       align-items center
       box-sizing content-box
-      border 1px solid white
+      border 1px solid $darkBlue
+      color $darkBlue
       padding 1.5rem 1rem 1.5rem 1.5rem
       border-radius 5px
       user-select none
@@ -77,20 +86,21 @@
         flex-direction column
         justify-content space-between
         margin 0
-        margin-left 10px
+        margin-left 12px
         transition all .3s ease-in-out    
 
         div
           width 30px
           height 2px
-          background-color white
+          background-color $darkBlue
           transition all .3s ease-in-out    
 
   .cover-image-container
     height 25rem
 
-  .top-flash .button-small
-    display none
+  .top-flash     
+    .button-small
+      display none
 
   .article-header
 
@@ -131,6 +141,23 @@
 
   .list-ticks li
     width 100%
+
+
+  .listing-selection 
+    padding 3rem 0
+
+    &-dropdown
+      width 11rem
+
+      &-group-option
+        font-size 2rem
+
+    button
+      margin-top 2rem
+      width 100%
+
+    & .container > div
+      font-size 2.8rem
 
   .cards 
     .card, &.cards-4 .card

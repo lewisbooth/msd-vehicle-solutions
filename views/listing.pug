@@ -2,17 +2,25 @@ extends layout
 
 block coverImage
 block articleHeader
-block sidebar
-block articleContent
-  article.full-width
-    .split-container
-      .split
-        block heading
-          h1 Header
-          p Paragraph
-      .split
-        block headingImage
-          img(src="/images/page-content/listings/vans-forecourt.jpg", alt="Vans on forecourt").no-margin
+block pageContent
+  .full-width.listing-selection
+    .container
+      .listing-selection-text I want to
+      .listing-selection-dropdown.type 
+        span #{params.selectedOptionType}
+        .listing-selection-dropdown-group
+          .listing-selection-dropdown-group-triangle
+          .listing-selection-dropdown-group-option(data-value="Hire") Hire
+          .listing-selection-dropdown-group-option(data-value="Lease") Lease
+          .listing-selection-dropdown-group-option(data-value="Buy") Buy
+      .listing-selection-text a
+      .listing-selection-dropdown.vehicle
+        span #{params.selectedOptionVehicle}
+        .listing-selection-dropdown-group
+          .listing-selection-dropdown-group-triangle
+          .listing-selection-dropdown-group-option(data-value="Van") Van
+          .listing-selection-dropdown-group-option(data-value="Car") Car
+      button.button.button-secondary.button-ghost Update       
 
 block listingResults
   .container
@@ -62,3 +70,7 @@ block listingResults
       +vehicleCard
       +vehicleCard
       +vehicleCard
+
+block extraFooterScripts
+  script
+    include scripts/dist/listingSelection-min.js

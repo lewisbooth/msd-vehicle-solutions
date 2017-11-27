@@ -15,21 +15,21 @@ block articleHeader
           
 block articleContent
   article
-    p With over 30 years experience in family-run vehicle sales, we're proud to deliver high quality customer service and great prices. Our selection of  #[a(href="/sales/cars") cars] and #[a(href="/sales/vans") vans] is always changing and many of our vehicles can be #[a(href="/leasing") leased] or #[a(href="/") hired] with competitive financing rates.
+    p With over 30 years experience in family-run vehicle sales, we're proud to deliver high quality customer service and great prices. Our selection of  #[a(href="listing/sales/cars") cars] and #[a(href="listing/sales/vans") vans] is always changing and many of our vehicles can be #[a(href="/leasing") leased] or #[a(href="/") hired] with competitive financing rates.
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/cars-for-sale.jpg", alt="Lineup of cars for sale")
       .split
         h3 Cars for sale
         p Find your perfect new car at MSD and drive it away the same day!
-        a(href="/sales/cars").button See car deals
+        a(href="/vehicles/sales/cars").button See car deals
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/vans-for-sale.jpg", alt="Lineup of cars for vans")
       .split
         h3 Vans for sale
         p Browse our wide selection of vans of all shapes and sizes.
-        a(href="/sales/vans").button See van deals
+        a(href="/vehicles/sales/vans").button See van deals
     h4 Why buy with MSD?
     p All of our vehicles are fully inspected and quality-assured before going on sale, and our on-site #[a(href="/servicing" target="_blank") service and repair centre] offers long-term support for your new vehicle.
     ul.list-ticks
@@ -51,12 +51,11 @@ block promoted-items
           +vehicleCard
           +vehicleCard
         .row.center-content
-          a(href="/sales/cars").button.no-margin See all vehicles   
-
+          a(href="/vehicles/sales/cars").button.no-margin See all vehicles   
 block services-cards
   +serviceCardHire
-  +serviceCardConversions
-  +serviceCardMods
+  +serviceCardLeasing
+  +serviceCardCustoms
   +serviceCardServicing  
 
 block extraFooterScripts

@@ -3,13 +3,12 @@ extends layout
 block articleHeader
   .container
     .article-header
-      h1 Size Guide
-      h3 Which Van Should You Choose?
+      h1 Which Van Should You Choose?
           
 block articleContent
   article
     p Whether you're moving furniture, Spring cleaning, delivering parcels or carrying tools, or vans are ready for the job. We've put together this short guide to help you choose the most suitable vehicle for your needs. If you're still unsure, please call and we'll be happy to assist.
-    p Our #[a(href="/hire/vans") vans for hire] page shows the dimensions and load capacity for individual vehicles, and many are ply-lined for commercial use.
+    p Our #[a(href="/vehicles/hire/vans") van listings] show the dimensions and load capacity for individual vehicles, and many are ply-lined for commercial use.
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/van-sizes/small-van.jpg", alt="Small van")
@@ -53,17 +52,18 @@ block articleContent
 
 block quoteForm
 
-block grey-strip
+block promoted-items
+  .container
+    h3 Van Hire Deals
+  section.grey
     .container
-      h3 Promoted Hire Deals
-    section.grey.promoted-items.row
-      .container
+      .promoted-items.row
         .cards
-          +vehicleCard
-          +vehicleCard
-          +vehicleCard
+          +vehicleCard({promoted: true})
+          +vehicleCard({promoted: true})
+          +vehicleCard({promoted: true})
         .row.center-content
-          a(href="/").button.no-margin See all vehicles
+          a(href="/vehicles/hire/vans").button.no-margin See all vans   
 
 block extraFooterScripts
   script

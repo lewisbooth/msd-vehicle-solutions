@@ -1,0 +1,23 @@
+mixin head
+  head
+    title= `${title || "Car & Van Hire in Stoke on Trent"} | MSD Vehicle Solutions`
+    meta(name="description" content=`${description || "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."}`)
+    meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="theme-color" content="#16467B")
+    link(rel="icon" type="image/png" href="/images/favicon/favicon.png")
+
+    //- Inline CSS for rapid production mode, otherwise use <link> to allow BrowserSync to inject changes during development
+    if production
+      style
+        include ../../public/css/style.css
+    else
+      link(rel='stylesheet' href=`/css/style.css?ver=${cssHash}` type="text/css")
+
+    //- Preload fonts & CSS assets rather than wait for CSS to parse and request them. Much faster page loading speed in supported browsers.
+    link(rel='preload' href='/fonts/exo2-semibold-webfont.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/exo2-light-webfont.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/OpenSans-Regular.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/fonts/OpenSans-Semibold.woff2' as='font' type="font/woff2" crossorigin)
+    link(rel='preload' href='/images/icons/tick.png' as='image' type="image/png")
+    link(rel='preload' href='/images/icons/arrow-right.svg' as='image' type="image/svg+xml")

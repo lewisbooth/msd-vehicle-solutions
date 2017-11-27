@@ -1,50 +1,53 @@
 const mongoose = require("mongoose");
 const pug = require("pug");
 
-exports.hireListingVans = async (req, res) => {
-  res.render("listing-hire-vans", {
-    title: "Vans for Hire in Stoke-on-Trent",
-    description:
-      "Explore Our Range of Vans for Hire at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
+exports.listingPage = async (req, res) => {
+  const { type, vehicle } = req.params;
+
+  const titleCase = string => {
+    const stringArray = string.split("");
+    stringArray[0] = stringArray[0].toUpperCase();
+    return stringArray.join("");
+  };
+
+  // Because this is a dynamic route (/vehicles/:type/:vehicle) we can use the request parameters :type and :vehicle to generate the filters on the page, whilst rendering the same template. /vehicles/leasing/cars will filter cars for lease etc.
+
+  // Format the parameters for use in title/description
+  const vehicleFormatted = titleCase(vehicle);
+  const typeFormatted = titleCase(type);
+
+  // Format the parameters for use in dropdown options on the page
+  let selectedOptionVehicle, selectedOptionType;
+  if (vehicle === "vans") selectedOptionVehicle = "Van";
+  if (vehicle === "cars") selectedOptionVehicle = "Car";
+  if (type === "hire") selectedOptionType = "Hire";
+  if (type === "leasing") selectedOptionType = "Lease";
+  if (type === "sales") selectedOptionType = "Buy";
+
+  // If parameters aren't matched above, redirect to /hire/vans
+  if (selectedOptionVehicle === undefined || selectedOptionType === undefined) {
+    req.flash("error", "That category doesn't exist");
+    res.redirect("/vehicles/hire/vans");
+    next();
+  }
+
+  res.render("listing", {
+    params: { selectedOptionVehicle, selectedOptionType },
+    title: `${vehicleFormatted} for ${typeFormatted} in Stoke-on-Trent`,
+    description: `Explore Our Range of ${vehicleFormatted} for ${
+      typeFormatted
+    } at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today.`
   });
 };
 
-exports.hireListingCars = async (req, res) => {
-  res.render("listing-hire-cars", {
-    title: "Cars for Hire in Stoke-on-Trent",
-    description:
-      "Explore Our Range of Cars for Hire at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
-  });
-};
-
-exports.salesListingVans = async (req, res) => {
-  res.render("listing-sales-vans", {
-    title: "New & Used Vans for Sale in Stoke-on-Trent",
-    description:
-      "Explore Our Range of New & Used Vans for Sale in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
-  });
-};
-
-exports.salesListingCars = async (req, res) => {
-  res.render("listing-sales-cars", {
-    title: "New & Used Cars for Sale in Stoke-on-Trent",
-    description:
-      "Explore Our Range of New & Used Cars for Sale in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
-  });
-};
-
-exports.leaseListingVans = async (req, res) => {
-  res.render("listing-leasing-vans", {
-    title: "New Van Leasing Deals in Stoke-on-Trent",
-    description:
-      "Find the Perfect Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, BCH & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
-  });
-};
-
-exports.leaseListingCars = async (req, res) => {
-  res.render("listing-leasing-cars", {
-    title: "New Car Leasing Deals in Stoke-on-Trent",
-    description:
-      "Find the Perfect Car Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, BCH & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
+exports.vehiclePage = async (req, res) => {
+  const vehicle = {
+    name: "Ford Transit",
+    availability: ["hire", "sales"]
+  };
+  res.render("vehicle", {
+    vehicle,
+    title: `${vehicle.name} in Stoke-on-Trent`,
+    description: `Explore Our Range of Vehicles for Hire, Sale and Lease at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today.`
   });
 };

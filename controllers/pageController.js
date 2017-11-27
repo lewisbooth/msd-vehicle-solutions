@@ -3,7 +3,11 @@ const mail = require("../helpers/sendMail");
 const pug = require("pug");
 
 exports.homepage = async (req, res) => {
-  res.render("hire");
+  res.render("hire", {
+    title: "Car & Van Hire in Stoke on Trent",
+    description:
+      "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."
+  });
 };
 
 exports.sales = async (req, res) => {
@@ -30,19 +34,11 @@ exports.vanSizes = async (req, res) => {
   });
 };
 
-exports.conversions = async (req, res) => {
-  res.render("conversions", {
-    title: "Van Conversions, Ply-Lining & Bulk Heads in Stoke-on-Trent",
+exports.customVehicles = async (req, res) => {
+  res.render("custom-vehicles", {
+    title: "Custom Van Conversions & Bulk Heads in Stoke-on-Trent",
     description:
       "Specialists in Bespoke Van Conversions & Modifications. Create Your Unique Camper Van or Protect Your Vehicle With Ply-Lining, Window Tinting or a Bulk Head. Open 7 Days Per Week, Call Us Or Drop In Today."
-  });
-};
-
-exports.modifications = async (req, res) => {
-  res.render("modifications", {
-    title: "Vehicle Modifications & Performance in Stoke-on-Trent",
-    description:
-      "Experts in Car & Van Exhausts, Body Kits, Wheels, Performance Tuning and Custom Conversions in Stoke-on-Trent. Open 7 Days Per Week, Call Us Or Drop In Today."
   });
 };
 

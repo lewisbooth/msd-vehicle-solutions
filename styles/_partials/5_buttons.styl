@@ -4,7 +4,7 @@
   color white
   margin-right 1.8em
   margin-bottom 2em
-  border-radius 5px
+  border-radius 3px
   text-transform uppercase
   letter-spacing 0.1em
   box-sizing border-box
@@ -27,18 +27,20 @@
     
     margin 0
     font-size 1.4rem
-    background none 
-    border 1px solid white
-
-    &:hover
-      background-color white
-      color $mainBlue
     
   &-secondary
     background-color $mainBlue
 
     &:hover 
       background-color $lightBlue
+
+    &.button-ghost:hover
+      background-color white
+      color $mainBlue
+  
+  &-ghost
+    background none 
+    border 1px solid white
 
   &-icon
     width 2rem

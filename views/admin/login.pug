@@ -1,0 +1,18 @@
+extends admin-layout
+
+block articleHeader
+  .container
+    .article-header.no-shift
+      h1 Log In
+
+block articleContent
+  article
+    form(action="/login" method="POST").sign-in-form
+      label(for='email') Email
+      input(name="email" type="email")
+      label(for='password') Password
+      input(name="password" type="password")
+      button(type="submit").button.button-secondary.no-margin Log In
+      
+block sidebar
+block services

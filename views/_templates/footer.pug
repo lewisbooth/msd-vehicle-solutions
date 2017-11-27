@@ -1,0 +1,53 @@
+mixin footer
+  section.footer
+    .container
+      .footer-column
+        h6 Services
+        ul
+          a(href="/")
+            li Hire
+          a(href="/sales")
+            li Sales
+          a(href="/leasing")
+            li Leasing
+          a(href="/custom-vehicles")
+            li Custom Vehicles
+          a(href="/servicing")
+            li Servicing
+      .footer-column
+        h6 Links
+        ul
+          a(href="/")
+            li Facebook
+          a(href="/")
+            li Google
+          a(href="/")
+            li Yell.com
+          a(href="/")
+            li Terms &amp; Conditions
+          a(href="/")
+            li Privacy Policy
+      .footer-column
+        h6 Contact
+        ul
+          li MSD Vehicle Solutions
+          li Childerplay Road
+          li Knypersley
+          li Stoke-on-Trent
+          li ST8 7PZ
+        ul
+          li
+            a(href="tel:+441782517782")
+              img(src="/images/icons/phone.svg", alt="Phone Icon").contact-icon
+              span 01782 517782
+          li 
+            a(href="mailto:info@msdvehiclesolutions.co.uk")
+              img(src="/images/icons/email.svg", alt="Email Icon").contact-icon
+              span info@msdvehiclesolutions.co.uk
+  .amp-footer
+    .container
+      p Website design &amp; development by #[a(href="https://amp.studio" target="_blank") AMP Studio] // Built with #[a(href="https://amp.studio/cms" target="_blank") AMP CMS]
+      if user
+        a(href="/logout") Log out
+      else
+        a(href="/login") Log In
