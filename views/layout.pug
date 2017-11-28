@@ -24,25 +24,25 @@ html
         .main-nav-container.container
           .mobile-nav-wrapper
             a(href="/")
-              img.main-nav-main-logo(src="/images/logos/msd-logo-main-v1.svg", alt="MSD Vehicle Solutions Logo")
+              img.main-nav-main-logo(src="/images/logos/msd-logo-main.svg", alt="MSD Vehicle Solutions Logo")
             .main-nav-dropdown-toggle Menu 
               .main-nav-dropdown-toggle-icon
                 .main-nav-dropdown-toggle-icon-top
                 .main-nav-dropdown-toggle-icon-middle
                 .main-nav-dropdown-toggle-icon-bottom
           ul.main-nav-menu
-            a(href="/" class=(currentPath.startsWith("/hire") || currentPath === "/" ? 'active' : ''))
-              li Hire
-            a(href="/sales" class=(currentPath.startsWith("/sales") ? 'active' : ''))
-              li Sales
-            a(href="/leasing" class=(currentPath.startsWith("/leasing") ? 'active' : ''))
-              li Leasing
-            a(href="/custom-vehicles" class=(currentPath.startsWith("/custom-vehicles") ? 'active' : ''))
-              li Custom Vehicles
-            a(href="/servicing" class=(currentPath.startsWith("/servicing") ? 'active' : ''))
-              li Servicing
-            a(href="/contact" class=(currentPath.startsWith("/contact") ? 'active' : ''))
-              li Contact
+            li(class=(currentPath.startsWith("/hire") || currentPath === "/" ? 'active' : ''))
+              a(href="/") Hire
+            li(class=(currentPath.startsWith("/sales") ? 'active' : ''))
+              a(href="/sales" ) Sales
+            li(class=(currentPath.startsWith("/leasing") ? 'active' : ''))
+              a(href="/leasing") Leasing
+            li(class=(currentPath.startsWith("/custom-vehicles") ? 'active' : ''))
+              a(href="/custom-vehicles") Custom Vehicles
+            li(class=(currentPath.startsWith("/servicing") ? 'active' : ''))
+              a(href="/servicing") Servicing
+            li(class=(currentPath.startsWith("/contact") ? 'active' : ''))
+              a(href="/contact") Contact
           a(href="tel: +441782517782").call-to-book
             span.call-to-book-text CALL US TODAY
             span.call-to-book-number 01782 517782

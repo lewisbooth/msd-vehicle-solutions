@@ -26,7 +26,7 @@ body
     width auto
     margin .75rem 0
 
-  ul
+  &-menu
     display flex
     align-items stretch
     padding-left 0
@@ -35,16 +35,18 @@ body
     align-self stretch
     background-color white
 
-    a
+    li
       flex-grow 1
-      display flex
-      align-items center
-      justify-content center
-      padding 0
-      color $darkBlue
-      height 100%
       height calc(100% - 4px)
       box-sizing content-box
+
+      & a
+        color $darkBlue
+        height 100%
+        width 100%
+        display flex
+        align-items center
+        justify-content center
 
       &.active
         border-bottom 4px solid $darkBlue
@@ -493,6 +495,7 @@ a.card
       background-position right 1.5rem center
 
 .listing
+  margin-top 4rem
 
   &-selection
     background-color $lightBlue
@@ -565,14 +568,13 @@ a.card
 
   &-filter
     padding 1rem 2rem 0 2rem
-    margin 4rem 0
+    margin 2rem 0 4rem 0
     border 1px solid $greyBorders
     box-sizing border-box
     background-color $softGrey
     width 100%
     display flex
     flex-wrap wrap
-    justify-content space-between
     font-size 1.6rem
 
     label 
@@ -584,7 +586,7 @@ a.card
       padding 0.75rem
       font-size 1em
       outline 0
-      margin-right 2rem
+      margin-right 4rem
       margin-bottom 1rem
       min-width 80px
 

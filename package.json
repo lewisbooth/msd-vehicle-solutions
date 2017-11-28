@@ -5,6 +5,8 @@
   "main": "start.js",
   "scripts": {
     "start": "nodemon ./start.js --ignore public/ --ignore views/scripts",
+    "backup": "node mongo-backup.js",
+    "restore": "node mongo-restore.js",
     "dev": "gulp"
   },
   "repository": {
@@ -37,6 +39,7 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
+    "folder-hash": "^1.1.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-minify": "^1.0.0",
@@ -44,12 +47,18 @@
     "gulp-stylus": "^2.6.0",
     "ip": "^1.1.5",
     "md5": "^2.2.1",
+    "md5-file": "^3.2.3",
+    "mongodb-backup": "^1.6.9",
+    "mongodb-restore": "^1.6.2",
     "mongoose": "^4.12.4",
     "mongoose-mongodb-errors": "0.0.2",
+    "node-cron": "^1.2.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.2.1",
     "pug": "^2.0.0-rc.4",
+    "slugify": "^1.2.6",
+    "tar": "^4.0.2",
     "validator": "^9.1.1"
   }
 }

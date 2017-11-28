@@ -42,8 +42,7 @@ exports.listingPage = async (req, res) => {
 
 exports.vehiclePage = async (req, res) => {
   const vehicle = {
-    name: "Ford Transit",
-    availability: ["hire", "sales"]
+    name: "Ford Transit"
   };
   res.render("vehicle", {
     vehicle,

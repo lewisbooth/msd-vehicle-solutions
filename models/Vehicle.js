@@ -18,9 +18,7 @@ const vehicleSchema = new Schema(
       enum: [
         "car-hatchback",
         "car-saloon",
-        "car-estate",
         "car-suv",
-        "car-sports",
         "car-truck",
         "van-small",
         "van-medium",
@@ -28,6 +26,10 @@ const vehicleSchema = new Schema(
         "van-xlarge"
       ],
       required: "Please supply a category"
+    },
+    slug: {
+      type: String,
+      required: "Please supply a slug"
     },
     photos: {
       main: {

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const backup = require("./helpers/mongoBackup");
+const cron = require("node-cron");
 const ip = require("ip");
 
 require("dotenv").config({ path: "variables.env" });
@@ -8,6 +10,12 @@ mongoose.connect(process.env.DATABASE, { useMongoClient: true });
 mongoose.Promise = global.Promise;
 mongoose.connection.on("error", err => {
   console.error(`🚫 → ${err.message}`);
+});
+
+// Daily backups at 4am
+cron.schedule("0 4 * * *", () => {
+  console.log("Backing up database");
+  backup.mongoBackup("mongodb/backup");
 });
 
 require("./models/Vehicle");

@@ -10,7 +10,7 @@ const prices = {
     "car-economy": 35,
     "car-saloon": 45,
     "car-suv": 55,
-    "car-pickup": 65
+    "car-truck": 65
   }
 };
 

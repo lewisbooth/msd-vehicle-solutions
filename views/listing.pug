@@ -23,8 +23,11 @@ block pageContent
       button.button.button-secondary.button-ghost Update       
 
 block listingResults
-  .container
+  .container.listing
     block listingFilter
+      .space-between
+        h4.no-margin Filter Results
+        p.no-margin Showing #[strong 13] vehicles
       .listing-filter
         span
           label Sort by:
@@ -32,31 +35,27 @@ block listingResults
             option(value="Price (Low-High)") Price (Low-High)
             option(value="Price (High-Low)") Price (High-Low)
         span
+          label Size:
+          select(name="size")
+            option(value="all") All
+            option(value="van-small") Small
+            option(value="van-medium") Medium
+            option(value="van-large") Large
+            option(value="van-xlarge") X-Large
+        span
           label Seats:
           select(name="seats")
             option(value="all") All
             option(value="2") 2
             option(value="3") 3
-            option(value="4") 4
-        span
-          label Transmission:
-          select(name="transmission")
-            option(value="all") All
-            option(value="manual") Manual
-            option(value="automatic") Automatic
-        span
-          label Cargo:
-          select(name="cargo")
-            option(value="all") All
-            option(value="0-1000kg") 0-1000kg
-            option(value="1000-2000kg") 1000-1500kg
-            option(value="2000-3000kg") 1500-2000kg
+            option(value="4+") 4+
         span
           label Fuel:
           select(name="fuel")
             option(value="all") All
             option(value="petrol") Petrol
             option(value="diesel") Diesel
+        button.button.button-secondary.no-margin Filter
     .cards.listing-results
       +vehicleCard
       +vehicleCard
