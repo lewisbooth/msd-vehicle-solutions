@@ -1,3 +1,6 @@
+.admin-header
+  margin-top 6rem
+  
 .admin-nav
   height 4rem
   display flex
@@ -37,3 +40,47 @@
     padding 1rem
     width 100%
     font-size 1.6rem
+
+
+form.add-vehicle
+  display flex
+  justify-content space-between
+  align-items flex-start
+
+  .info-column
+    width calc(40% - 2rem)
+
+  p
+    margin 0 0 1rem 0
+    font-size 1.4rem
+
+  label, input, textarea, select
+    display block
+
+  label
+    margin-bottom 1rem
+    font-family $openSansSemibold
+
+  input, select, textarea
+    margin-bottom 3rem
+    margin-right 0
+    box-sizing border-box
+    width 100%
+    max-width 100%
+    min-width 100%
+
+  label.checkbox-label
+    display inline-block
+    margin-bottom 0
+    font-family $openSansRegular
+    margin-right 2rem
+  
+  input[type="checkbox"]
+    display inline-block
+    width auto
+    max-width auto
+    min-width auto
+    margin-right 1rem
+
+  .space-between div 
+    max-width 30%

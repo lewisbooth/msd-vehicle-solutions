@@ -3,7 +3,7 @@
 body
   padding-top 8.5rem
 
-  &.signed-in
+  &.admin
     padding-top 12.5rem
 
 .main-nav
@@ -382,103 +382,104 @@ body
     &:nth-child(4n)
       margin-right 0
 
-  .card
-    width calc(33.33% - 0.5rem)
-    margin 0 0.75rem 0 0
-    background-color white
-    padding 0.75rem
-    padding-bottom 0
-    box-sizing border-box
-    border 1px solid $greyBorders
-    margin-bottom 4rem
-    position relative
-    display inline-block
-    color $richBlack
+.card
+  width calc(33.33% - 0.5rem)
+  margin 0 0.75rem 0 0
+  background-color white
+  padding 0.75rem
+  padding-bottom 0
+  box-sizing border-box
+  border 1px solid $greyBorders
+  margin-bottom 4rem
+  position relative
+  display inline-block
+  color $richBlack
 
-    &-border-bottom
-      border-bottom 3px solid $mainBlue
+  &-border-bottom
+    border-bottom 3px solid $mainBlue
 
-    &:nth-child(3n)
-      margin-right 0
+  &:nth-child(3n)
+    margin-right 0
 
-    &-price
-      background-color $mainBlue
-      position absolute 
-      top 0
-      right 1.5rem
-      padding 2rem 1rem 0 1rem
-      color white
-      font-family $exoSemibold
-      font-size 3.2rem
-      line-height 2.4rem
-      display flex
-      flex-direction column
-      align-items center
+  &-price
+    background-color $mainBlue
+    position absolute 
+    top 0
+    right 1.5rem
+    padding 2rem 1rem 0 1rem
+    color white
+    font-family $exoSemibold
+    font-size 3.2rem
+    line-height 2.4rem
+    display flex
+    flex-direction column
+    align-items center
 
-      &-text
-        content 'per day'
-        font-family $openSansRegular
-        font-size 1.4rem
-        margin-bottom .75rem
+    &-text
+      content 'per day'
+      font-family $openSansRegular
+      font-size 1.4rem
+      margin-bottom .75rem
 
-      &-promoted
-        background-color $mainGreen
-        margin 0 -1rem
-        padding 0 0.4rem
-        font-size 1.4rem
-        text-transform uppercase
-        letter-spacing 0.05rem
-
-    &-text-container
-      padding 2rem 1.25rem
-
-    h5
-      font-family $exoSemibold
-
-    h6
-      font-size 1.8rem
+    &-promoted
+      background-color $mainGreen
+      margin 0 -1rem
+      padding 0 0.4rem
+      font-size 1.4rem
       text-transform uppercase
-      font-family $exoLight
+      letter-spacing 0.05rem
 
-    &-availability
-      display flex
+  &-text-container
+    padding 2rem 1.25rem
 
-      li
-        position relative
-        margin-left 1.5rem
-        font-size 1.6rem
-        line-height 2rem
+  h5
+    font-family $exoSemibold
 
-        &:before
-          width 18px
-          height 14px
-          background-image url("/images/icons/tick.png")
-          background-size cover
-          display inline-block
-          content ""
-          margin-right .5rem
+  h6
+    font-size 1.8rem
+    text-transform uppercase
+    font-family $exoLight
 
+  &-availability
+    display flex
 
-    &-link
-      color $mainBlue
-
-      &:hover
-        text-decoration underline
-
-    &-services
-      margin 1.5rem 0 0 0
+    li
+      position relative
+      margin-left 1.5rem
       font-size 1.6rem
-      line-height 1.8em
+      line-height 2rem
+      color $richBlack
 
-      li::before
+      &:before
+        width 18px
+        height 14px
+        background-image url("/images/icons/tick.png")
+        background-size cover
         display inline-block
-        vertical-align middle
-        width 5px
-        height 5px
-        background-color #000000
-        margin-right 1em
-        content ' '
-        border-radius 100%
+        content ""
+        margin-right .5rem
+
+
+  &-link
+    color $mainBlue
+
+    &:hover
+      text-decoration underline
+
+  &-services
+    margin 1.5rem 0 0 0
+    font-size 1.6rem
+    line-height 1.8em
+
+    li::before
+      display inline-block
+      vertical-align middle
+      width 5px
+      height 5px
+      background-color #000000
+      margin-right 1em
+      content ' '
+      border-radius 100%
 
 a.card
   will-change transform
@@ -495,11 +496,36 @@ a.card
       background-position right 1.5rem center
 
 .listing
-  margin-top 4rem
+
+  &-results
+    &-entry
+      display flex
+      align-items center
+      background-color $softGrey
+      margin-bottom 1rem
+
+      &:hover
+        background-color $hoverGrey
+
+      h5
+        font-family $exoSemibold !important
+
+      h6
+        font-size 1.8rem
+        text-transform uppercase
+        font-family $exoLight
+
+      img
+        max-width 180px
+
+      &-text-container
+        width 100%
+        padding 1rem 2rem
 
   &-selection
     background-color $lightBlue
     padding 5rem 0
+    margin-bottom 4rem
     text-align center
 
     button
@@ -567,13 +593,14 @@ a.card
           background-color $mainBlue
 
   &-filter
-    padding 1rem 2rem 0 2rem
+    padding 1rem 2rem
     margin 2rem 0 4rem 0
     border 1px solid $greyBorders
     box-sizing border-box
     background-color $softGrey
     width 100%
     display flex
+    align-items center
     flex-wrap wrap
     font-size 1.6rem
 
@@ -581,20 +608,13 @@ a.card
       margin-right 1rem
       font-family $openSansSemibold
     
-    select 
-      border 1px solid $greyBorders
-      padding 0.75rem
-      font-size 1em
-      outline 0
-      margin-right 4rem
-      margin-bottom 1rem
-      min-width 80px
 
-      &:hover
-        cursor pointer
+    button
+      padding .75rem 2rem
 
     span:last-child select 
       margin-right 0
+
 
 section.grey
   background-color $softGrey
@@ -640,6 +660,14 @@ section.grey
 
   & + h4
     letter-spacing 0px
+
+select, input, textarea
+  border 1px solid $greyBorders
+  padding 0.5rem
+  font-size 1em
+  outline 0
+  margin-right 4rem
+  min-width 80px
 
 .contact-form
   margin-bottom 2rem

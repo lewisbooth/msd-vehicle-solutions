@@ -1,0 +1,18 @@
+extends layout
+
+block coverImage
+block sidebar
+
+block articleHeader
+  .container.admin-header
+    h1= vehicle.name || "Nope"
+
+block articleContent
+  article
+    if vehicle.description
+      h4 Description
+      p= vehicle.description
+
+block extraFooterScripts
+  script
+    include scripts/dist/listingSelection-min.js

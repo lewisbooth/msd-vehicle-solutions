@@ -4,13 +4,14 @@ include _mixins/_serviceCardLeasing
 include _mixins/_serviceCardCustoms
 include _mixins/_serviceCardServicing
 include _mixins/_vehicleCard
+include _mixins/_vehicleListing
 include _templates/head
 include _templates/footer
 
 doctype html
 html
   +head
-  body(class=(user ? 'signed-in' : ''))
+  body(class=(user ? 'admin' : ''))
     block nav
       nav.main-nav.row
         //- Admin Nav
@@ -19,7 +20,7 @@ html
             .container
               p.no-margin Signed in as 
                 span.bold #{user.name}
-              a(href='/dashboard') Control panel >>
+              a(href='/admin') Edit listings >>
         //- Main Nav
         .main-nav-container.container
           .mobile-nav-wrapper
@@ -83,10 +84,11 @@ html
           aside
             block quoteForm
               //- Instant quote form goes here
-
-            a(href="tel: +441782517782").call-to-book.medium-hide
-              span.call-to-book-text CALL US TODAY
-              span.call-to-book-number 01782 517782
+            
+            block sidebarCallToday
+              a(href="tel: +441782517782").call-to-book.medium-hide
+                span.call-to-book-text CALL US TODAY
+                span.call-to-book-number 01782 517782
 
             .sidebar-block
               h4 Opening Hours

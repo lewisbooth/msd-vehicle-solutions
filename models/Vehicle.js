@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
@@ -29,7 +30,7 @@ const vehicleSchema = new Schema(
     },
     slug: {
       type: String,
-      required: "Please supply a slug"
+      trim: true
     },
     photos: {
       main: {
@@ -39,24 +40,9 @@ const vehicleSchema = new Schema(
       support: [String]
     },
     pricing: {
-      hire: {
-        type: Number,
-        required: function() {
-          return this.availability.hire === true;
-        }
-      },
-      sales: {
-        type: Number,
-        required: function() {
-          return this.availability.sales === true;
-        }
-      },
-      lease: {
-        type: Number,
-        required: function() {
-          return this.availability.lease === true;
-        }
-      }
+      hire: { type: Number },
+      sales: { type: Number },
+      lease: { type: Number }
     },
     availability: {
       hire: { type: Boolean, default: false },
@@ -76,7 +62,7 @@ const vehicleSchema = new Schema(
         depth: { type: Number }
       },
       cargo: { type: Number },
-      seats: { type: Number },
+      seats: { type: Number, required: "Please supply the number of seats" },
       doors: { type: Number },
       engineSize: { type: Number },
       fuelType: { type: String },
@@ -84,14 +70,28 @@ const vehicleSchema = new Schema(
       transmission: { type: String },
       height: { type: String },
       mileage: { type: String },
-      year: { type: String }
+      year: { type: String, required: "Please supply a year" }
     }
   },
   options
 );
 
 vehicleSchema.index({
-  price: -1
+  slug: "text"
+});
+
+// Create a slug, adding an index at the end if multiple stores are found with the same name
+vehicleSchema.pre("save", async function(next) {
+  if (!this.isModified("name")) {
+    return next();
+  }
+  this.slug = slugify(`${this.name}-${this.details.year}`);
+  const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)`, "i");
+  const vehiclesWithSlug = await this.constructor.find({ slug: slugRegEx });
+  if (vehiclesWithSlug.length) {
+    this.slug = `${this.slug}-${vehiclesWithSlug.length + 1}`;
+  }
+  next();
 });
 
 const Vehicle = mongoose.model("Vehicle", vehicleSchema);

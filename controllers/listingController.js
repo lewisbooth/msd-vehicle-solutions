@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const pug = require("pug");
 
 exports.listingPage = async (req, res) => {
+  // Because this is a dynamic route (/vehicles/:type/:vehicle) we can use the request parameters :type and :vehicle to generate the filters on the page, whilst rendering the same template. /vehicles/leasing/cars will filter cars for lease etc.
+
   const { type, vehicle } = req.params;
 
   const titleCase = string => {
@@ -9,8 +11,6 @@ exports.listingPage = async (req, res) => {
     stringArray[0] = stringArray[0].toUpperCase();
     return stringArray.join("");
   };
-
-  // Because this is a dynamic route (/vehicles/:type/:vehicle) we can use the request parameters :type and :vehicle to generate the filters on the page, whilst rendering the same template. /vehicles/leasing/cars will filter cars for lease etc.
 
   // Format the parameters for use in title/description
   const vehicleFormatted = titleCase(vehicle);
@@ -42,11 +42,15 @@ exports.listingPage = async (req, res) => {
 
 exports.vehiclePage = async (req, res) => {
   const vehicle = {
-    name: "Ford Transit"
+    name: "Ford Transit",
+    category: "van-large",
+    description: "The perfect all-rounder.",
+    storage: { height: "42" }
   };
   res.render("vehicle", {
     vehicle,
     title: `${vehicle.name} in Stoke-on-Trent`,
-    description: `Explore Our Range of Vehicles for Hire, Sale and Lease at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today.`
+    description:
+      "Explore Our Range of Vehicles for Hire, Sale and Lease at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
   });
 };

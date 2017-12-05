@@ -1,6 +1,6 @@
 mixin vehicleCard(vehicle = {})
   .card.card-border-bottom
-    img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small")
+    img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small").no-margin
     .card-price £60
       .card-price-text per day
       if vehicle.promoted
@@ -12,7 +12,7 @@ mixin vehicleCard(vehicle = {})
       //- .vehicle-details.
       //-   Manual  |  2 Seats  |  940kg cargo  |  2015
       .space-between
-        a(href="/vehicles/ford-transit-2015-small").card-link More Info
+        a(href="/vehicles/ford-transit-2015").card-link More Info
         ul.card-availability
           li Hire
           li Lease

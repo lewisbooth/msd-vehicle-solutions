@@ -1,12 +1,47 @@
 extends admin-layout
 
 block articleHeader
-  .container
-    .article-header.no-shift
-      h1 Vehicles
+  .container.admin-header
+    .space-between
+      h1 Vehicle Listings      
+      a(href="/admin/add").button.no-margin Add vehicle
 
 block articleContent
-  article
+  article.full-width
+    .listing
+      .space-between
+        h4.no-margin Filter Results
+        p.no-margin Showing #[strong 13] vehicles
+      form.listing-filter
+        .space-between
+          span
+            label Category:
+            select(name="size")
+              option(value="all") All
+              option(value="van-small") Small Van
+              option(value="van-medium") Medium Van
+              option(value="van-large") Large Van
+              option(value="van-xlarge") X-Large Van
+              option(value="car-economy") Economy Car
+              option(value="car-saloon") Saloon Car
+              option(value="car-suv") SUV
+              option(value="car-truck") Truck 
+          span
+            input(type="text" placeholder="Search" name="search")
+            button(type="submit").button.button-secondary.no-margin Filter
+      .listing-results
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
+        +vehicleListing
       
 block sidebar
 block services

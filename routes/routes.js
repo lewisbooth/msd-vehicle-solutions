@@ -17,12 +17,22 @@ router.post("/contact", pageController.contactSubmit);
 
 // Listings
 router.get("/vehicles/:type/:vehicle", listingController.listingPage);
-router.get("/vehicles/:id", listingController.listingPage);
+router.get("/vehicles/:id", listingController.vehiclePage);
 
 // Admin
 router.get("/login", adminController.login);
 router.post("/login", authController.login);
 router.get("/logout", authController.logout);
-router.get("/dashboard", authController.isLoggedIn, adminController.dashboard);
+router.get("/admin", authController.isLoggedIn, adminController.dashboard);
+router.get(
+  "/admin/add",
+  authController.isLoggedIn,
+  adminController.addVehiclePage
+);
+router.post(
+  "/admin/add",
+  authController.isLoggedIn,
+  adminController.addVehicle
+);
 
 module.exports = router;
