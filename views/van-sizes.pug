@@ -1,5 +1,11 @@
 extends layout
 
+block coverImage
+  .cover-image-container.row
+    picture
+      source(media="(max-width: 767px)" srcset="/images/services/loading-packages-into-van-600.jpg 1x")
+      img(src="/images/services/loading-packages-into-van.jpg" alt="Cover Image - Van sizes")
+
 block articleHeader
   .container
     .article-header
@@ -18,7 +24,7 @@ block articleContent
           li Items up to 120cm
           li Tools &amp; DIY projects
           li 2 Seats
-        a(href="/hire/vans?size=small").button Hire A Small Van
+        a(href="/vehicles/hire/vans?size=small").button Hire A Small Van
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/van-sizes/medium-van.jpg", alt="Medium van")
@@ -28,42 +34,42 @@ block articleContent
           li Items up to 240cm
           li Sofas &amp; mattresses
           li 2 Seats
-        a(href="/hire/vans?size=medium").button Hire A Medium Van
+        a(href="/vehicles/hire/vans?size=medium").button Hire A Medium Van
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/van-sizes/large-van.jpg", alt="Large van")
       .split
         h3 Large Van
         ul.list-ticks.full-width
-          li Items up to 340cm
+          li Items up to 400cm
           li Multiple furniture items
           li 3 Seats
-        a(href="/hire/vans?size=large").button Hire A Large Van
+        a(href="/vehicles/hire/vans?size=large").button Hire A Large Van
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/van-sizes/xl-van.jpg", alt="Extra large van")
       .split
-        h3 Extra Large Van
+        h3 Luton Van
         ul.list-ticks.full-width
           li Items up to 400cm
           li Moving house
-          li 3 Seats
-        a(href="/hire/vans?size=xl").button Hire An X-Large Van
+          li Tail Lift
+        a(href="/vehicles/hire/vans?size=xl").button Hire A Luton Van
 
 block quoteForm
 
 block promoted-items
-  .container
-    h3 Van Hire Deals
-  section.grey
+  if Object.keys(vehicles).length > 0
     .container
-      .promoted-items.row
-        .cards
-          +vehicleCard({promoted: true})
-          +vehicleCard({promoted: true})
-          +vehicleCard({promoted: true})
-        .row.center-content
-          a(href="/vehicles/hire/vans").button.no-margin See all vans   
+      h3 Latest Hire Deals
+    section.grey
+      .container
+        .promoted-items.row
+          .cards
+            each vehicle in vehicles
+              +vehicleCard(vehicle, "hire")
+          .row.center-content
+            a(href="/vehicles/hire/vans").button.no-margin See all vans  
 
 block extraFooterScripts
   script

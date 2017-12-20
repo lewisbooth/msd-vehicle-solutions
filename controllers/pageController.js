@@ -1,9 +1,16 @@
 const mongoose = require("mongoose");
+const Vehicle = mongoose.model("Vehicle");
 const mail = require("../helpers/sendMail");
+const { formatVehicleData } = require("../helpers/formatVehicleData");
 const pug = require("pug");
 
 exports.homepage = async (req, res) => {
+  const vehicles = await Vehicle.find({ "availability.hire": true })
+    .limit(3)
+    .sort({ "promoted.hire": -1, updatedAt: -1 });
+  const cleanVehicles = vehicles.map(vehicle => formatVehicleData(vehicle));
   res.render("hire", {
+    vehicles: cleanVehicles,
     title: "Car & Van Hire in Stoke on Trent",
     description:
       "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."
@@ -11,7 +18,11 @@ exports.homepage = async (req, res) => {
 };
 
 exports.sales = async (req, res) => {
+  const vehicles = await Vehicle.find({ "availability.sales": true })
+    .limit(3)
+    .sort({ "promoted.sales": -1, updatedAt: -1 });
   res.render("sales", {
+    vehicles,
     title: "New & Used Vehicles for Sale in Stoke-on-Trent",
     description:
       "Explore Our Range of New & Used Cars & Vans for Sale or Lease in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
@@ -19,7 +30,11 @@ exports.sales = async (req, res) => {
 };
 
 exports.leasing = async (req, res) => {
+  const vehicles = await Vehicle.find({ "availability.lease": true })
+    .limit(3)
+    .sort({ "promoted.lease": -1, updatedAt: -1 });
   res.render("leasing", {
+    vehicles,
     title: "Car & Van Leasing Deals in Stoke-on-Trent",
     description:
       "Find the Perfect Car & Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
@@ -27,7 +42,11 @@ exports.leasing = async (req, res) => {
 };
 
 exports.vanSizes = async (req, res) => {
+  const vehicles = await Vehicle.find({ "availability.hire": true })
+    .limit(3)
+    .sort({ "promoted.hire": -1, updatedAt: -1 });
   res.render("van-sizes", {
+    vehicles,
     title: "Which Van Size Should You Choose?",
     description:
       "Moving House? Delivering Parcels? Buying Furniture? Our Van Size Guide Helps You Choose The Best Vehicle For Your Needs"
@@ -35,7 +54,7 @@ exports.vanSizes = async (req, res) => {
 };
 
 exports.customVehicles = async (req, res) => {
-  res.render("custom-vehicles", {
+  res.render("customs", {
     title: "Custom Van Conversions & Bulk Heads in Stoke-on-Trent",
     description:
       "Specialists in Bespoke Van Conversions & Modifications. Create Your Unique Camper Van or Protect Your Vehicle With Ply-Lining, Window Tinting or a Bulk Head. Open 7 Days Per Week, Call Us Or Drop In Today."

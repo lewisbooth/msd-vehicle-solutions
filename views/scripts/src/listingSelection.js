@@ -29,7 +29,7 @@ searchButton.addEventListener("click", function() {
   if (vehicle === "Van") vehicle = "vans";
   if (vehicle === "Car") vehicle = "cars";
   if (type === "Hire") type = "hire";
-  if (type === "Lease") type = "leasing";
+  if (type === "Lease") type = "lease";
   if (type === "Buy") type = "sales";
   window.location = "/vehicles/" + type + "/" + vehicle;
 });

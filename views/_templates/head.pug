@@ -1,17 +1,18 @@
 mixin head
   head
-    title= `${title || "Car & Van Hire in Stoke on Trent"} | MSD Vehicle Solutions`
+    title= `${title || "Car & Van Hire in Stoke on Trent"} | MSD Vehicles`
     meta(name="description" content=`${description || "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."}`)
     meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    meta(name="theme-color" content="#16467B")
+    meta(name="theme-color" content="#ffffff")
     link(rel="icon" type="image/png" href="/images/favicon/favicon.png")
     link(rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png")
     link(rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png")
     link(rel="icon" type="image/png" sizes="96x96" href="/images/favicon/favicon-96x96.png")
     link(rel="apple-touch-icon" sizes="152x152" href="/images/favicon/apple-icon-152x152.png")
-    meta(name="msapplication-TileColor" content="#111111")
+    meta(name="msapplication-TileColor" content="#ffffff")
     meta(name="msapplication-TileImage" content="/ms-icon-144x144.png")
+    meta(name="format-detection" content="telephone=no")
 
     //- Inline CSS for rapid production mode, otherwise use <link> to allow BrowserSync to inject changes during development
     if production

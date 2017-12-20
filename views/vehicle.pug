@@ -5,13 +5,103 @@ block sidebar
 
 block articleHeader
   .container.admin-header
-    h1= vehicle.name || "Nope"
+    .space-between
+      h1= vehicle.name
+      p.no-margin
+        if referrer
+          a(href=referrer) << Back to listings
+        if user
+          a(href=`/admin/edit/${vehicle.slug}`) Edit Vehicle
 
 block articleContent
-  article
-    if vehicle.description
-      h4 Description
-      p= vehicle.description
+  article.full-width.split-container.vehicle-page
+    .split
+      img.vehicle-page-image(src=`/images/vehicles/${vehicle._id}/${vehicle.photos.length > 0 ? vehicle.photos[0] + "-1000.jpg" : "vehicle-photo-default.png"}`)
+      if vehicle.details.description
+        h4 Description
+        p.vehicle-page-description= vehicle.details.description
+    .split
+      .content-block.vehicle-page-pricing      
+        .vehicle-page-pricing-prices
+          div
+            if vehicle.availability.hire
+              h4 HIRE
+              h3= "£" + (vehicle.pricing.hire || "POA")
+              p per day
+            else
+              h4.grey HIRE
+              p.grey Unavailable
+          div
+            if vehicle.availability.lease
+              h4 LEASE
+              h3= "£" + (vehicle.pricing.lease.toLocaleString() || "POA")
+              p per month
+            else
+              h4.grey LEASE
+              p.grey Unavailable
+          div
+            if vehicle.availability.sales
+              h4 BUY
+              h3= "£" + (vehicle.pricing.sales.toLocaleString() || "POA")
+            else
+              h4.grey BUY
+              p.grey Unavailable
+        .vehicle-page-pricing-contact
+          h4 Contact us today to order this vehicle
+        .vehicle-page-pricing-phone
+          h3 01782 517782
+
+      .content-block
+        h4 Details
+        ul.alternate-grey.vehicle-page-details
+          li.split-container
+            .split Year
+            .split= vehicle.details.year || "-"
+          li.split-container
+            .split Category
+            .split= vehicle.category || "-"
+          li.split-container
+            .split Mileage
+            .split= vehicle.details.mileage || "-"
+          li.split-container
+            .split Engine Size
+            .split= vehicle.details.engineSize ? vehicle.details.engineSize + "L" : "-"
+          li.split-container
+            .split Transmission
+            .split= vehicle.details.transmission || "-"
+          li.split-container
+            .split Fuel Economy
+            .split= vehicle.details.fuelEconomy ? vehicle.details.fuelEconomy + "mpg" : "-"
+          li.split-container
+            .split Fuel Type
+            .split= vehicle.details.fuelType || "-"
+          li.split-container
+            .split Seats
+            .split= vehicle.details.seats || "-"
+          li.split-container
+            .split Doors
+            .split= vehicle.details.doors || "-"
+
+          if vehicle.category.includes("Van")
+            li.split-container
+              .split Height
+              .split= vehicle.details.height ? vehicle.details.height + "mm" : "-"
+            li.split-container
+              .split Max cargo
+              .split= vehicle.details.cargo ? vehicle.details.cargo + "kg" : "-"
+              
+block promoted-items
+  if relatedVehicles.length > 0
+    .container
+      h3 Related Vehicles
+    section.grey
+      .container
+        .promoted-items.row
+          .cards
+            each vehicle in relatedVehicles
+              +vehicleCard(vehicle, ref)
+          .row.center-content
+            a(href=`${referrer}`).button.no-margin Back to listings 
 
 block extraFooterScripts
   script

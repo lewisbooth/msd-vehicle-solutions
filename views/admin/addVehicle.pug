@@ -4,81 +4,134 @@ extends admin-layout
 block articleHeader
   .container.admin-header
     .space-between
-      if vehicle
-        h1 Edit Vehicle      
-      else
-        h1 Add a Vehicle      
-      a(href="/admin") Back to listings
+      h1= `${vehicle ? "Edit" : "Add"} Vehicle`        
+      p.no-margin
+        a(href="/admin") << Back to dashboard
+        if vehicle
+          a(href=`/vehicles/${vehicle.slug}` target="_blank") View public vehicle page
+
 
 block articleContent
   - const date = new Date()
   article.full-width
-    form(method="POST").add-vehicle
-      .info-column
-        label Name
-        input(type="text" name="name" value=(vehicle ? vehicle.name : "") required)
-        label Description
-        textarea(name="description")
-          =vehicle ? vehicle.description : ""
-        label Year
-        input(type="number" name="year" required value=((vehicle ? vehicle.year : date.getFullYear() )))
-        label Category
-        select(name="category" required)
-          option(value="van-small" selected=(vehicle && vehicle.category === "van-small")) Small Van
-          option(value="van-medium" selected=(vehicle && vehicle.category === "van-medium")) Medium Van
-          option(value="van-large" selected=(vehicle && vehicle.category === "van-large")) Large Van
-          option(value="van-xlarge" selected=(vehicle && vehicle.category === "van-xlarge")) X-Large Van
-          option(value="car-economy" selected=(vehicle && vehicle.category === "car-economy")) Economy Car
-          option(value="car-saloon" selected=(vehicle && vehicle.category === "car-saloon")) Saloon Car
-          option(value="car-suv" selected=(vehicle && vehicle.category === "car-suv")) SUV
-          option(value="car-truck" selected=(vehicle && vehicle.category === "car-truck")) Truck 
-        .space-between
-          label Storage dimensions (cm)
-          p Vans Only
-        .space-between
-          div
-            p Width
-            input(type="number" name="storageWidth" value=(vehicle && vehicle.storage ? vehicle.storage.width : ""))
-          div
-            p Height
-            input(type="number" name="storageHeight" value=(vehicle && vehicle.storage ? vehicle.storage.height : ""))
-          div
-            p Depth
-            input(type="number" name="storageDepth" value=(vehicle && vehicle.storage ? vehicle.storage.depth : ""))
-        .space-between
-          label Max cargo (kg)
-          p Vans Only
-        input(type="number" name="cargo" value=(vehicle ? vehicle.cargo : ""))
-        label Height (m)
-        input(type="number" name="height" value=(vehicle ? vehicle.height : ""))
-        label Seats
-        input(type="number" name="seats" value=(vehicle ? vehicle.seats : "2") required)
-        label Doors
-        input(type="number" name="doors" value=(vehicle ? vehicle.doors : "2") required)
-        label Transmission
-        select(name="transmission" required)
-          option(value="manual" selected=(vehicle && vehicle.transmission === "manual")) Manual
-          option(value="automatic" selected=(vehicle && vehicle.transmission === "automatic")) Automatic
-        label Engine Size (L)
-        input(type="number" name="engineSize" value=(vehicle ? vehicle.engineSize : ""))
-        label Fuel Type
-        select(name="fuelType" required)
-          option(value="petrol" selected=(vehicle && vehicle.fuelType === "petrol")) Petrol
-          option(value="diesel" selected=(vehicle && vehicle.fuelType === "diesel")) Diesel
-        label Fuel Economy (mpg)
-        input(type="number" name="fuelEconomy" value=(vehicle ? vehicle.fuelEconomy : ""))
-        label Mileage
-        input(type="number" name="mileage" value=(vehicle ? vehicle.mileage : ""))
-        label Availability
-        .checkbox-row
-          input(type="checkbox" name="availabilityHire")
-          label(for="availabilityHire").checkbox-label Hire
-          input(type="checkbox" name="availabilitySales")
-          label(for="availabilitySales").checkbox-label Sell
-          input(type="checkbox" name="availabilityLease")
-          label(for="availabilityLease").checkbox-label Lease
+    form(method="POST" enctype="multipart/form-data").add-vehicle
+      .split-container
+        .split
+          h4 Details
+          label Name
+          input(type="text" name="name" value=(vehicle ? vehicle.name : "") required)
+          label Condition
+          .form-row
+            input(type="radio" name="condition" value="new" checked=(vehicle ? vehicle.condition === "new" : true))
+            label.checkbox-label New
+            input(type="radio" name="condition" value="used" checked=(vehicle ? vehicle.condition === "used" : false))
+            label.checkbox-label Used
+          label Description
+          textarea(name="description" rows="5")
+            =vehicle ? vehicle.details.description : ""
+          label Year
+          input(type="number" name="year" required value=((vehicle ? vehicle.details.year : date.getFullYear() )))
+          label Category
+          select(name="category" required)
+            option(value="van-small" selected=(vehicle && vehicle.category === "van-small")) Small Van
+            option(value="van-medium" selected=(vehicle && vehicle.category === "van-medium")) Medium Van
+            option(value="van-large" selected=(vehicle && vehicle.category === "van-large")) Large Van
+            option(value="van-luton" selected=(vehicle && vehicle.category === "van-luton")) Luton Van
+            option(value="car-economy" selected=(vehicle && vehicle.category === "car-economy")) Economy Car
+            option(value="car-saloon" selected=(vehicle && vehicle.category === "car-saloon")) Saloon Car
+            option(value="car-suv" selected=(vehicle && vehicle.category === "car-suv")) SUV
+            option(value="car-truck" selected=(vehicle && vehicle.category === "car-truck")) Truck 
+          .space-between
+            label Storage dimensions (mm)
+            p Vans Only
+          .space-between
+            div
+              p Width
+              input(type="number" name="storageWidth" value=(vehicle && vehicle.details.storage ? vehicle.details.storage.width : ""))
+            div
+              p Height
+              input(type="number" name="storageHeight" value=(vehicle && vehicle.details.storage ? vehicle.details.storage.height : ""))
+            div
+              p Depth
+              input(type="number" name="storageDepth" value=(vehicle && vehicle.details.storage ? vehicle.details.storage.depth : ""))
+          .space-between
+            label Max cargo (kg)
+            p Vans Only
+          input(type="number" name="cargo" value=(vehicle ? vehicle.details.cargo : ""))
+          label Height (mm)
+          input(type="number" name="height" step=".01" value=(vehicle ? vehicle.details.height : ""))
+          label Seats
+          input(type="number" name="seats" value=(vehicle ? vehicle.details.seats : "2") required)
+          label Doors
+          input(type="number" name="doors" value=(vehicle ? vehicle.details.doors : "2") required)
+          label Transmission
+          select(name="transmission" required)
+            option(value="manual" selected=(vehicle && vehicle.details.transmission === "manual")) Manual
+            option(value="automatic" selected=(vehicle && vehicle.details.transmission === "automatic")) Automatic
+          label Engine Size (L)
+          input(type="number" name="engineSize" step=".01" value=(vehicle ? vehicle.details.engineSize : ""))
+          label Fuel Type
+          select(name="fuelType" required)
+            option(value="petrol" selected=(vehicle && vehicle.details.fuelType === "petrol")) Petrol
+            option(value="diesel" selected=(vehicle && vehicle.details.fuelType === "diesel")) Diesel
+          label Fuel Economy (mpg)
+          input(type="number" name="fuelEconomy" step=".01" value=(vehicle ? vehicle.details.fuelEconomy : ""))
+          label Mileage
+          input(type="number" name="mileage" value=(vehicle ? vehicle.details.mileage : "")) 
 
-        button.button(type="submit") Add Vehicle
-      
+        .split
+          h4 Imagery
+          label(for="photo") Main Image
+          if vehicle && vehicle.photos.length
+            for photo in vehicle.photos
+              img.add-vehicle-photo(src=(`/images/vehicles/${vehicle._id}/${photo}-1000.jpg`))
+          input(type="file" name="photo" accept="image/*")
+          h4 Pricing
+          label Hire
+          .form-row.split-container
+            .split
+              input(type="number" name="pricingHire" value=(vehicle ? vehicle.pricing.hire : ""))
+              span /day
+            .split
+              input(type="checkbox" name="availabilityHire" checked=(vehicle ? vehicle.availability.hire : false))
+              label(for="availabilityHire").checkbox-label Available
+              input(type="checkbox" name="promotedHire" checked=(vehicle ? vehicle.promoted.hire : false))
+              label(for="promotedHire").checkbox-label Promoted
+          label Lease
+          .form-row.split-container
+            .split
+              input(type="number" name="pricingLease" value=(vehicle ? vehicle.pricing.lease : ""))
+              span /month
+            .split
+              input(type="checkbox" name="availabilityLease" checked=(vehicle ? vehicle.availability.lease : false))
+              label(for="availabilityLease").checkbox-label Available
+              input(type="checkbox" name="promotedLease" checked=(vehicle ? vehicle.promoted.lease : false))
+              label(for="promotedLease").checkbox-label Promoted
+          label Sales
+          .form-row.split-container
+            .split
+              input(type="number" name="pricingSales" value=(vehicle ? vehicle.pricing.sales : ""))
+            .split
+              input(type="checkbox" name="availabilitySales" checked=(vehicle ? vehicle.availability.sales : false))
+              label(for="availabilitySales").checkbox-label Available
+              input(type="checkbox" name="promotedSales" checked=(vehicle ? vehicle.promoted.sales : false))
+              label(for="promotedSales").checkbox-label Promoted
+
+      button.button(type="submit")= vehicle ? "Update Vehicle" : "Add Vehicle"
+      if vehicle
+        .confirm-delete.button.button-danger Delete Vehicle      
+
+block modal
+  if vehicle
+    .modal
+      .modal-box
+        h3 Delete Vehicle
+        p Are you sure you want to permanently delete #[strong=vehicle.name]?
+        a.button.button-danger(href=`/admin/delete/${vehicle.slug}`) Delete
+        .button.button-grey.cancel Cancel
+
 block sidebar
 block services
+block extraFooterScripts
+  script
+    include ../scripts/dist/confirmDelete-min.js

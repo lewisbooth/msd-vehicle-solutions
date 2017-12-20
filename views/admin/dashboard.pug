@@ -11,37 +11,35 @@ block articleContent
     .listing
       .space-between
         h4.no-margin Filter Results
-        p.no-margin Showing #[strong 13] vehicles
-      form.listing-filter
-        .space-between
-          span
-            label Category:
-            select(name="size")
-              option(value="all") All
-              option(value="van-small") Small Van
-              option(value="van-medium") Medium Van
-              option(value="van-large") Large Van
-              option(value="van-xlarge") X-Large Van
-              option(value="car-economy") Economy Car
-              option(value="car-saloon") Saloon Car
-              option(value="car-suv") SUV
-              option(value="car-truck") Truck 
-          span
-            input(type="text" placeholder="Search" name="search")
-            button(type="submit").button.button-secondary.no-margin Filter
+        p.no-margin Showing #[strong= vehicles.length] vehicles
+      form(id="filter").listing-filter
+        .listing-filter-group        
+          label Category:
+          select(name="category")
+            option(value="all" selected=(query.category === "all")) All
+            option(value="van-small") Small Van
+            option(value="van-medium" selected=(query.category === "van-medium")) Medium Van
+            option(value="van-large") Large Van
+            option(value="van-luton") Luton Van
+            option(value="car-economy") Economy Car
+            option(value="car-saloon") Saloon Car
+            option(value="car-suv") SUV
+            option(value="car-truck") Truck 
+          label Sort:
+          select(name="sortBy")
+            option(value="last-modified" selected=(query.sort === "last-modified")) Last Modified
+            option(value="name" selected=(query.sort === "name")) Name
+          input(type="text" placeholder="Search" name="search" value=( query.search ? query.search : ""))
+        span
+          a.button.button-grey(href="/admin") Reset
+          button(type="submit").button.button-secondary Filter
       .listing-results
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
-        +vehicleListing
+        if vehicles.length > 0
+          each vehicle in vehicles
+            +vehicleListing(vehicle)
+        else
+          h5 No vehicles found.
+        
       
 block sidebar
 block services

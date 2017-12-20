@@ -11,7 +11,7 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Car &amp; Van Leasing in #[span.no-break Stoke-on-Trent]
+      h1 Cheap Car &amp; Van Leasing Deals
           
 block articleContent
   article
@@ -22,14 +22,14 @@ block articleContent
       .split
         h3 Cars for lease
         p Browse our current selection of affordable car lease deals.
-        a(href="/vehicles/leasing/cars").button See car deals
+        a(href="/vehicles/lease/cars").button See car deals
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/vans-for-sale.jpg", alt="Lineup of vans for lease")
       .split
         h3 Vans for lease
         p Our wide selection of van lease deals are perfect for any job.
-        a(href="/vehicles/leasing/vans").button See van deals
+        a(href="/vehicles/lease/vans").button See van deals
     h4 Why lease with MSD?
     p As an independent family business, we offer honest and friendly advice to help you pick the best leasing deal for your situation, and our #[a(href="/servicing" target="_blank") service and repair centre] can support your vehicle throughout the lease period and beyond. Need a specific vehicle? Call us and we'll order it directly for you.
     ul.list-ticks
@@ -41,17 +41,17 @@ block articleContent
       li Flexible finance
 
 block promoted-items
-  .container
-    h3 Promoted Lease Deals
-  section.grey
+  if vehicles
     .container
-      .promoted-items.row
-        .cards
-          +vehicleCard
-          +vehicleCard
-          +vehicleCard
-        .row.center-content
-          a(href="/vehicles/leasing/cars").button.no-margin See all vehicles   
+      h3 Promoted Lease Deals
+    section.grey
+      .container
+        .promoted-items.row
+          .cards
+            each vehicle in vehicles
+              +vehicleCard(vehicle, "lease")
+          .row.center-content
+            a(href="/vehicles/lease/cars").button.no-margin See all vehicles   
 
 block services-cards
   +serviceCardHire

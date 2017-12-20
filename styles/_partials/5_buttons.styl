@@ -1,4 +1,4 @@
-.button
+button, .button
   padding 1.2rem 2rem
   background-color $mainGreen
   color white
@@ -8,10 +8,12 @@
   text-transform uppercase
   letter-spacing 0.1em
   box-sizing border-box
-  display inline-block
+  display inline-flex
+  justify-content center
   outline none 
   border none
   font-size 1.6rem
+  line-height 1.8rem
 
   &.float-right
     float right 
@@ -19,7 +21,7 @@
     display inline-block
 
   &:hover 
-    background-color $lightGreen
+    background-color $darkGreen
     cursor pointer
 
   &-small
@@ -37,6 +39,18 @@
     &.button-ghost:hover
       background-color white
       color $mainBlue
+  
+  &-danger
+    background-color $error
+
+    &:hover 
+      background-color $errorDark
+  
+  &-grey
+    background-color $greyButton
+
+    &:hover 
+      background-color $greyButtonHover
   
   &-ghost
     background none 
@@ -60,3 +74,16 @@
 
     &:hover
       background-position right 1.5rem center
+
+  &-flash-remove
+    position absolute
+    right 1rem
+    margin 0
+    padding 1rem .7rem 1rem 1rem
+    box-sizing border-box
+    background-color $mainBlue
+    color $lightBlue
+    font-size 3rem
+
+    &:hover
+      background-color $darkBlue

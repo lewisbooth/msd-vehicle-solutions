@@ -3,10 +3,10 @@
     font-size 8.5px
 
   body
-    padding-top 12rem
+    padding-top 12.2rem
 
     &.admin
-      padding-top 16.5rem
+      padding-top 16rem
 
   h1
     font-size 6.4rem
@@ -44,10 +44,15 @@
 
   .article-header
     width 100%
+    max-width 85rem
+    margin 4rem auto 4rem auto
     position relative
     border none   
     padding 0
-    margin 2rem 0 3rem 0
+    box-sizing border-box
+
+    &.no-shift
+      margin 4rem 0 3rem 0
 
   .content
     flex-direction column
@@ -65,8 +70,8 @@
         width calc(50% - 40px)
 
     article
-      max-width 100%
-      margin-bottom 0
+      max-width 85rem
+      margin 4rem auto
 
       &.full-width
 
@@ -82,7 +87,7 @@
               padding 3rem 0
 
   .instant-quote
-    margin 0 -2rem 4rem -2rem
+    margin 4rem -2rem 0 -2rem
     box-sizing content-box
 
     form 
@@ -106,7 +111,8 @@
           font-size 2.8rem
 
   .listing-filter
-    justify-content left
+    select 
+      margin-right 2rem
 
   .listing-results
     margin-bottom 3rem

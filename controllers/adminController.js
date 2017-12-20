@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 const Vehicle = mongoose.model("Vehicle");
 const { cleanObject } = require("../helpers/cleanObject");
-const { bool } = require("../helpers/defaultBoolean");
-const pug = require("pug");
+const { inputVehicleData } = require("../helpers/inputVehicleData");
+const fs = require("fs");
+const sharp = require("sharp");
 
 exports.login = async (req, res) => {
   res.render("admin/login", {
@@ -12,10 +14,28 @@ exports.login = async (req, res) => {
 };
 
 exports.dashboard = async (req, res) => {
+  const { query } = req;
+  const filter = {};
+  let sort = {
+    updatedAt: -1
+  };
+  if (query.sortBy === "AZ") {
+    sort = { name: 1 };
+  } else if (query.sortBy === "ZA") {
+    sort = { name: -1 };
+  }
+  if (query.search) {
+    filter.name = { $regex: query.search, $options: "i" };
+  }
+  if (query.category && query.category !== "all") {
+    filter.category = query.category;
+  }
+  const vehicles = await Vehicle.find(filter).sort(sort);
   res.render("admin/dashboard", {
+    vehicles,
+    query,
     title: "Admin Dashboard",
-    description:
-      "Explore Our Range of Vans for Hire at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
+    description: "MSD Admin Dashboard"
   });
 };
 
@@ -27,74 +47,136 @@ exports.addVehiclePage = async (req, res) => {
   });
 };
 
-exports.addVehicle = async (req, res) => {
-  let {
-    name,
-    description,
-    year,
-    category,
-    storageWidth,
-    storageHeight,
-    storageDepth,
-    cargo,
-    height,
-    seats,
-    doors,
-    transmission,
-    engineSize,
-    fuelType,
-    fuelEconomy,
-    mileage,
-    availabilityHire,
-    availabilitySales,
-    availabilityLease,
-    promotedHire,
-    promotedSales,
-    promotedLease,
-    pricingHire,
-    pricingSales,
-    pricingLease
-  } = req.body;
-  const vehicle = {
-    name,
-    category,
-    availability: {
-      hire: bool(availabilityHire),
-      sales: bool(availabilitySales),
-      lease: bool(availabilityLease)
-    },
-    pricing: {
-      hire: bool(pricingHire),
-      sales: bool(pricingSales),
-      lease: bool(pricingLease)
-    },
-    promoted: {
-      hire: bool(promotedHire),
-      sales: bool(promotedSales),
-      lease: bool(promotedLease)
-    },
-    details: {
-      description,
-      storage: {
-        storageHeight,
-        storageWidth,
-        storageDepth
-      },
-      cargo,
-      seats,
-      doors,
-      height,
-      engineSize,
-      transmission,
-      fuelType,
-      fuelEconomy,
-      mileage,
-      year
+exports.editVehiclePage = async (req, res) => {
+  const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId }, err => {
+    if (err) {
+      req.flash("error", "Vehicle not found");
+      res.redirect("back");
     }
-  };
-  // cleanObject(vehicle);
-  console.log(vehicle);
-  const vehicleData = await new Vehicle(vehicle).save();
-  // req.flash("success", `Successfully created ${vehicle.name}`);
-  // res.redirect(`/admin/dashboard`);
+  });
+  const cleanVehicle = JSON.parse(JSON.stringify(vehicle));
+  cleanObject(cleanVehicle);
+  res.render("admin/addVehicle", {
+    vehicle: cleanVehicle,
+    title: `Edit ${cleanVehicle.name}`,
+    description:
+      "Explore Our Range of Vans for Hire at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
+  });
+};
+
+exports.addVehicle = async (req, res) => {
+  const vehicle = inputVehicleData(req);
+  if (req.body.photos) {
+    vehicle.photos = req.body.photos;
+  }
+  const vehicleSave = await new Vehicle(vehicle).save(err => {
+    if (err) {
+      req.flash("error", "Error adding vehicle");
+      res.redirect("back");
+    } else {
+      req.flash("success", "Successfully added vehicle");
+      res.redirect("/admin");
+    }
+  });
+};
+
+exports.editVehicle = async (req, res) => {
+  const vehicle = inputVehicleData(req);
+  if (req.body.photos) {
+    vehicle.photos = req.body.photos;
+  }
+  let redirect = "back";
+  const vehicleSave = await Vehicle.findOneAndUpdate(
+    { slug: req.params.vehicleId },
+    { $set: vehicle },
+    { new: true },
+    (err, item) => {
+      if (err || !item) {
+        req.flash("error", "Vehicle not found");
+        res.redirect("/admin");
+        return;
+      }
+      const slug = slugify(`${vehicle.name}-${vehicle.details.year}`, {
+        lower: true
+      });
+      if (!item.slug.includes(slug)) {
+        const slugRegEx = new RegExp(`^(${slug})((-[0-9]*$)?)`, "i");
+        const vehiclesWithSlug = Vehicle.find({ slug: slugRegEx });
+        if (vehiclesWithSlug.length) {
+          slug = `${slug}-${vehiclesWithSlug.length + 1}`;
+        }
+        item.slug = redirect = slug;
+      }
+      item.save().then(saved => {
+        req.flash("success", "Successfully updated vehicle");
+        res.redirect(redirect);
+      });
+    }
+  );
+};
+
+exports.deleteVehicle = async (req, res) => {
+  const deleted = await Vehicle.remove({ slug: req.params.vehicleId }, err => {
+    if (err) {
+      req.flash("error", "Error deleting vehicle");
+      res.redirect("/admin");
+    } else {
+      req.flash("success", "Successfully deleted vehicle");
+      res.redirect("/admin");
+    }
+  });
+};
+
+exports.uploadVehiclePhoto = async (req, res, next) => {
+  if (!req.file) {
+    next();
+    return;
+  }
+
+  const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId })
+
+  if (!vehicle) {
+    next();
+    return;
+  }
+
+  const photo = req.file.buffer;
+  const photoFolder = `${process.env.ROOT}/public/images/vehicles/${vehicle._id}`;
+  const timestamp = new Date().getTime().toString();
+
+  if (!fs.existsSync(photoFolder)) {
+    fs.mkdirSync(photoFolder)
+  }
+
+  sharp(photo)
+    .rotate()
+    // Resize to 1000px on longest side
+    .resize(1000, 1000)
+    .max()
+    .toFormat("jpg")
+    .toFile(`${photoFolder}/${timestamp}-1000.jpg`)
+    .then(() => {
+      sharp(photo)
+        .rotate()
+        // Resize to 400px on longest side
+        .resize(400, 400)
+        .max()
+        .toFormat("jpg")
+        .toFile(
+        `${photoFolder}/${timestamp}-400.jpg`
+        )
+        .then(() => {
+          req.body.photos = [timestamp];
+          next();
+          return;
+        });
+    })
+    .catch(err => {
+      console.error(err);
+      req.flash(
+        "error",
+        "Sorry, there was an error uploading the photo. Please try again."
+      );
+      res.redirect("back");
+    });
 };

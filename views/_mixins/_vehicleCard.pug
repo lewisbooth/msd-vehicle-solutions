@@ -1,18 +1,30 @@
-mixin vehicleCard(vehicle = {})
-  .card.card-border-bottom
-    img(src="/images/vehicles/ford-transit-small.jpg", alt="Ford Transit Small").no-margin
-    .card-price £60
-      .card-price-text per day
-      if vehicle.promoted
+mixin vehicleCard(vehicle = {}, type = "hire")
+  - const vehicleClean = formatVehicleData(vehicle)
+  if vehicleClean.name.length > 20
+    - vehicleClean.name = vehicleClean.name.split("").slice(0,20).join("") + "..."
+  a.card.card-border-bottom(href=`/vehicles/${vehicleClean.slug}?ref=${type}` target="_blank")
+    .card-image(style=`background-image: url(/images/vehicles/${vehicleClean._id}/${vehicleClean.photos[0]}-400.jpg);`, alt="Ford Transit Small").no-margin
+    .card-price
+      if vehicleClean.pricing[type] > 0
+        = "£" + vehicleClean.pricing[type].toLocaleString()
+        if type === "hire"
+          .card-price-text per day
+        if type === "lease"
+          .card-price-text per month
+      else
+        = "POA"
+      if vehicleClean.promoted[type]
         .card-price-promoted Promoted
     .card-text-container
       .space-between
-        h5 Ford Transit
-        h6 2015
-      //- .vehicle-details.
-      //-   Manual  |  2 Seats  |  940kg cargo  |  2015
+        h5.card-link= vehicleClean.name
+        h6= vehicleClean.details.year
       .space-between
-        a(href="/vehicles/ford-transit-2015").card-link More Info
+        div= vehicleClean.category
         ul.card-availability
-          li Hire
-          li Lease
+          if vehicleClean.availability.hire
+            li Hire
+          if vehicleClean.availability.lease
+            li Lease
+          if vehicleClean.availability.sales
+            li Buy

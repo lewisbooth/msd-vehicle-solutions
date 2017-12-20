@@ -12,6 +12,7 @@ doctype html
 html
   +head
   body(class=(user ? 'admin' : ''))
+    block modal
     block nav
       nav.main-nav.row
         //- Admin Nav
@@ -25,7 +26,7 @@ html
         .main-nav-container.container
           .mobile-nav-wrapper
             a(href="/")
-              img.main-nav-main-logo(src="/images/logos/msd-logo-main.svg", alt="MSD Vehicle Solutions Logo")
+              img.main-nav-main-logo(src="/images/logos/msd-logo-main-v3.svg", alt="MSD Vehicle Solutions Logo")
             .main-nav-dropdown-toggle Menu 
               .main-nav-dropdown-toggle-icon
                 .main-nav-dropdown-toggle-icon-top
@@ -38,8 +39,8 @@ html
               a(href="/sales" ) Sales
             li(class=(currentPath.startsWith("/leasing") ? 'active' : ''))
               a(href="/leasing") Leasing
-            li(class=(currentPath.startsWith("/custom-vehicles") ? 'active' : ''))
-              a(href="/custom-vehicles") Custom Vehicles
+            li(class=(currentPath.startsWith("/customs") ? 'active' : ''))
+              a(href="/customs") Custom Vehicles
             li(class=(currentPath.startsWith("/servicing") ? 'active' : ''))
               a(href="/servicing") Servicing
             li(class=(currentPath.startsWith("/contact") ? 'active' : ''))
@@ -51,7 +52,7 @@ html
     block top-flash
       .top-flash
         .container
-          h4 Website launch deal: 10% off all vehicle hire until Jan 31st!
+          h4 Get #[strong 10% off] all van hire until Jan 31st!
           a(href="/vehicles/hire/vans").button.button-secondary.button-ghost.button-small See vehicles
 
     block flash-messages
@@ -62,6 +63,7 @@ html
             .top-flash(class=`top-flash-${category}`)
               .container
                 h4= message
+              .button.button-flash-remove(onClick="this.parentElement.remove()") &times;
 
     block coverImage
       .cover-image-container.row
@@ -105,21 +107,21 @@ html
             .sidebar-block.reviews
               h4 Reviews
               p If you like our services, we’d appreciate you leaving a review on one of the below:
-              a(href="/")
+              a(href="https://www.yell.com/biz/moorland-self-drive-stoke-on-trent-1450665/" target="_blank")
                 span
                   img(src="/images/icons/yell.svg", alt="Yell Logo").reviews-icon
                   span Yell
                 span
                   img(src="/images/icons/review-stars.svg", alt="Review stars").reviews-stars
                   span 5.0
-              a(href="/")
+              a(href="https://www.facebook.com/msdcustomcommercials" target="_blank")
                 span
                   img(src="/images/icons/facebook.svg", alt="Facebook Logo").reviews-icon
                   span Facebook
                 span
                   img(src="/images/icons/review-stars.svg", alt="Review stars").reviews-stars
                   span 5.0
-              a(href="/")
+              a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank")
                 span
                   img(src="/images/icons/google.svg", alt="Google Logo").reviews-icon
                   span Google
@@ -147,12 +149,23 @@ html
                 +serviceCardServicing
             
     block map
+      section.map
+        .container
+          h3 Find Us
+          a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
+            img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
+            span Get Directions
+        #map
 
     block footer
-      +footer     
+      +footer
 
     block footerScripts
       script
         include scripts/dist/mobileMenu-min.js
+      script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_AdmAW49fbvOFD-xYJhW0nO6iyOzRPtk&callback=initMap")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.0/axios.min.js" async defer)
+      script
+        include scripts/dist/googleMaps-min.js
 
     block extraFooterScripts

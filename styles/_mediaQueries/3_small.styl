@@ -3,14 +3,25 @@
   h1
     font-size 4.2rem
 
+  h3
+    max-width 50rem
+    margin 2rem auto
+
   body
     padding-top 11.5rem
 
     &.admin
       padding-top 15.5rem
 
+      .main-nav.mobile-active ul
+        transform translateY(25px)
+
   .small-hide
     display none !important
+
+  .button, button
+    width 100%
+    margin-right 0
 
   .main-nav
 
@@ -29,6 +40,7 @@
 
     .call-to-book
       z-index 999
+      font-size 1.8rem
 
     ul
       display block
@@ -38,16 +50,18 @@
       left 0
       width 100vw
       transform translateY(-100%)
-      transition transform 0.3s
+      transition all 0.3s ease-in-out
       will-change transform
       font-size 2rem
+      padding 2rem 0
 
       a
-        padding 1.5rem 0
+        padding 1rem 0
 
       li
         &.active
           border 0
+          background-color #f1f1f1
 
         &:hover
           border 0
@@ -55,7 +69,7 @@
     &.mobile-active
       ul
         box-shadow 0px 10px 15px 5px rgba(0,0,0,0.25)
-        transform translateY(0%)
+        transform translateY(0)
 
       .mobile-nav-wrapper 
         .main-nav-dropdown-toggle
@@ -66,7 +80,7 @@
               transform rotate(-45deg)
             &-middle
               opacity 0
-              margin -2px 0
+              margin -3px 0
             &-bottom
               transform rotate(45deg)
       
@@ -79,53 +93,91 @@
       padding 1.5rem 1rem 1.5rem 1.5rem
       border-radius 5px
       user-select none
+      font-family $openSansSemibold
 
       &:hover
         cursor pointer 
 
       &-icon
         display flex
-        height 20px
+        height 2rem
         align-items center
         flex-direction column
         justify-content space-between
         margin 0
-        margin-left 12px
+        margin-left 1.6rem
         transition all .3s ease-in-out    
 
         div
-          width 30px
-          height 2px
+          width 2.5rem
+          height 3px
           background-color $darkBlue
           transition all .3s ease-in-out    
 
+  .admin-header
+    margin-top 3rem !important
+
+    .space-between
+      flex-direction column
+      align-items flex-start
+    
+    p.no-margin 
+      display flex 
+      flex-direction column
+      a
+        margin .25rem 0
+
+    h1
+      font-size 4rem
+      margin 1rem 0 2rem 0
+
   .cover-image-container
-    height 25rem
+    height auto
 
   .top-flash     
     .button-small
       display none
 
   .article-header
+    max-width 50rem
+    margin 3rem 0
+    display block
 
     h1
       font-size 4.2rem
+      line-height 1.2
+
+    &.no-shift
+      margin 4rem 0 3rem 0
 
   .content
     
     aside
-      max-width 100vw
-      margin 0 0 4rem 0
+      max-width 50rem
+      margin 0 auto 5rem auto
 
       .sidebar-block
         width 100%
 
+        &.reviews
+          a 
+            img.reviews-icon
+              width 20px
+
+            img.reviews-stars
+              max-width 70px
+
     article 
+      max-width 50rem
+      margin 0 auto
+      padding-top 4rem
 
       h1
         margin-top 0 !important
 
   .instant-quote
+    margin-top 4rem
+    margin-bottom 0
 
     h3
       font-size 3.6rem !important
@@ -147,23 +199,79 @@
     width 100%
 
 
-  .listing-selection 
-    padding 3rem 0
+  .listing
 
-    &-dropdown
-      width 11rem
+    &-filter
+      flex-direction column
+      align-items flex-start
+      margin-bottom 2rem
 
-      &-group-option
-        font-size 2rem
+      &-group
+        display flex
+        flex-direction column
+        width 100%
 
-    button
-      margin-top 2rem
-      width 100%
+      select, input 
+        margin-bottom 1.5rem
+        width 100%
+        box-sizing border-box
+      
+      label
+        margin-bottom 1rem
 
-    & .container > div
-      font-size 2.8rem
+      .button
+        margin-left 0
+        margin-top 1rem
+        padding 1.5rem 2rem
 
+      span 
+        width 100%
+    
+    &-results-entry
+      flex-direction column
+      height auto
+      margin 3rem 0
+
+      img 
+        max-width 100%
+
+      &-text-container
+        padding 2rem 2rem
+        box-sizing border-box
+
+        h5, h6, .card-link
+          margin-bottom 1.5rem
+
+        .space-between
+          flex-direction column
+          align-items flex-start
+
+          .card-availability
+            li:first-child
+              margin-left 0
+
+    &-selection 
+      padding 3rem 0
+
+      &-dropdown
+        width 11rem
+
+        &-group-option
+          font-size 2rem
+
+      button
+        margin-top 2rem
+        width 100%
+
+      & .container > div
+        font-size 2.8rem
+
+  select, input, textarea
+    margin-right 0
+    
   .cards 
+    justify-content center
+
     .card, &.cards-4 .card
       width 100%
       margin 2rem 0
@@ -189,3 +297,38 @@
       display flex
       flex-wrap wrap
       justify-content space-between
+
+  .vehicle-page
+    padding-top 3rem !important
+    
+    &-pricing
+      padding 4rem 1rem 0 1rem
+      
+      &-prices
+        flex-direction column
+        align-items center
+        padding 0 1rem
+
+        div
+          display flex
+          flex-direction column
+          width 100%
+          align-items baseline 
+          justify-content center
+          margin-bottom 2rem
+
+          > *
+            margin 0 .25rem
+            line-height 1.2
+
+    &-details
+      .split-container
+        .split
+          width 50% !important
+
+  .map
+    .container
+      display flex
+      flex-direction column
+      h3
+        margin 0 0 2rem 0

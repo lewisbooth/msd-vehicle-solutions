@@ -4,20 +4,29 @@ const pageController = require("../controllers/pageController");
 const listingController = require("../controllers/listingController");
 const adminController = require("../controllers/adminController");
 const authController = require("../controllers/authController");
+const { catchErrors } = require("../helpers/errorHandlers");
+const multer = require("multer");
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: "20MB",
+    files: 1
+  }
+});
 
 // Standard pages
-router.get("/", pageController.homepage);
+router.get("/", catchErrors(pageController.homepage));
 router.get("/sales", pageController.sales);
 router.get("/leasing", pageController.leasing);
 router.get("/van-sizes", pageController.vanSizes);
-router.get("/custom-vehicles", pageController.customVehicles);
+router.get("/customs", pageController.customVehicles);
 router.get("/servicing", pageController.servicing);
 router.get("/contact", pageController.contact);
 router.post("/contact", pageController.contactSubmit);
 
 // Listings
 router.get("/vehicles/:type/:vehicle", listingController.listingPage);
-router.get("/vehicles/:id", listingController.vehiclePage);
+router.get("/vehicles/:vehicleId", listingController.vehiclePage);
 
 // Admin
 router.get("/login", adminController.login);
@@ -32,7 +41,25 @@ router.get(
 router.post(
   "/admin/add",
   authController.isLoggedIn,
-  adminController.addVehicle
+  upload.single("photo"),
+  catchErrors(adminController.uploadVehiclePhoto),
+  catchErrors(adminController.addVehicle)
 );
-
+router.get(
+  "/admin/edit/:vehicleId",
+  authController.isLoggedIn,
+  catchErrors(adminController.editVehiclePage)
+);
+router.post(
+  "/admin/edit/:vehicleId",
+  authController.isLoggedIn,
+  upload.single("photo"),
+  catchErrors(adminController.uploadVehiclePhoto),
+  catchErrors(adminController.editVehicle)
+);
+router.get(
+  "/admin/delete/:vehicleId",
+  authController.isLoggedIn,
+  catchErrors(adminController.deleteVehicle)
+);
 module.exports = router;

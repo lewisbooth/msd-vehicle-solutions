@@ -1,4 +1,5 @@
 mongodb/
+backups/
 
 # Logs
 logs

@@ -4,7 +4,7 @@ const prices = {
     "van-small": 50,
     "van-medium": 70,
     "van-large": 90,
-    "van-x-large": 105
+    "van-luton": 105
   },
   car: {
     "car-economy": 35,
@@ -27,30 +27,15 @@ const fieldsets = form.querySelectorAll(".options");
 const inputs = form.querySelectorAll("input");
 const priceOutput = form.querySelector("output");
 const aside = document.querySelector("aside");
+const mobileLocation = document.querySelector("article");
 const callToBook = aside.querySelector(".call-to-book");
-const formBlock = document.querySelector(".instant-quote");
-const content = document.querySelector(".article-header");
-const topSection = document.querySelector(".article-header").parentNode;
+const quoteForm = document.querySelector(".instant-quote");
+const topSection = document.querySelector("article").parentNode;
 
 const vanBlock = form.querySelector("[name=van-size]").parentElement;
 const carBlock = form.querySelector("[name=car-size]").parentElement;
 const vanInput = form.querySelector("[name=van]");
 const carInput = form.querySelector("[name=car]");
-
-// Move form to top of page on mobile screens
-function moveForm() {
-  if (window.innerWidth < 1024) {
-    topSection.insertBefore(formBlock, content);
-  } else {
-    aside.insertBefore(formBlock, callToBook);
-  }
-}
-
-moveForm();
-
-window.addEventListener("resize", function() {
-  moveForm();
-});
 
 // Event listeners
 form.addEventListener("submit", e => e.preventDefault());
@@ -146,4 +131,25 @@ function getPrice() {
     price = Math.floor(price * modifier);
   }
   return `£${price}`;
+}
+
+////////////////////////////////////////////////
+
+// Move form to top of page on mobile screens
+function moveForm() {
+  if (window.innerWidth < 1024) {
+    topSection.insertBefore(quoteForm, mobileLocation);
+  } else {
+    aside.insertBefore(quoteForm, callToBook);
+  }
+}
+
+moveForm();
+
+window.addEventListener("resize", function () {
+  moveForm();
+});
+
+function insertAfter(el, referenceNode) {
+  referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
 }

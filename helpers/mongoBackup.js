@@ -3,7 +3,6 @@ const backup = require("mongodb-backup");
 const hasher = require("folder-hash");
 const tar = require("tar");
 const fs = require("fs");
-const S3 = require("./uploadToS3");
 
 exports.mongoBackup = backupFolder => {
   let timestamp = new Date()
@@ -22,17 +21,11 @@ exports.mongoBackup = backupFolder => {
       else {
         tar
           .c(
-            {
-              file: `${backupFolder}-${timestamp}.tgz`
-            },
-            [backupFolder]
+          {
+            file: `${backupFolder}-${timestamp}.tgz`
+          },
+          [backupFolder]
           )
-          .then(_ => {
-            S3.upload(
-              `${backupFolder}-${timestamp}.tgz`,
-              process.env.S3_BACKUP_BUCKET_NAME
-            );
-          });
       }
     }
   });

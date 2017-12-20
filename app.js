@@ -13,6 +13,9 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo")(session);
 const routes = require("./routes/routes");
+const errorHandlers = require("./helpers/errorHandlers");
+const { titleCase } = require("./helpers/titleString");
+const { formatVehicleData } = require("./helpers/formatVehicleData");
 const app = express();
 
 app.set("views", path.join(__dirname, "views"));
@@ -56,14 +59,17 @@ app.use("/", (req, res, next) => {
   if (req.method === "POST") {
     console.log(req.body);
   }
-  console.log(`${timestamp} ${req.method} ${req.path} ${ip}`);
   next();
 });
 
+// Exposes variables and functions for use in Pug templates
 app.use((req, res, next) => {
+  res.locals.formatVehicleData = formatVehicleData;
+  res.locals.titleCase = titleCase;
   res.locals.flashes = req.flash();
   res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
+  res.locals.query = req.query;
   if (process.env.NODE_ENV === "production") {
     res.locals.production = true;
   } else {
@@ -87,5 +93,8 @@ app.use((req, res, next) => {
     res.render("404");
   }
 });
+
+app.use(errorHandlers.flashValidationErrors);
+app.use(errorHandlers.productionErrors);
 
 module.exports = app;

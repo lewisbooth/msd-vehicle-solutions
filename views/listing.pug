@@ -23,52 +23,51 @@ block pageContent
       button.button.button-secondary.button-ghost Update       
 
 block listingResults
+  - const vehicleCount = Object.keys(vehicles).length
   .container.listing
     block listingFilter
       .space-between
         h4.no-margin Filter Results
-        p.no-margin Showing #[strong 13] vehicles
-      .listing-filter
-        span
-          label Sort by:
-          select(name="sort")
-            option(value="Price (Low-High)") Price (Low-High)
-            option(value="Price (High-Low)") Price (High-Low)
-        span
-          label Size:
-          select(name="size")
-            option(value="all") All
-            option(value="van-small") Small
-            option(value="van-medium") Medium
-            option(value="van-large") Large
-            option(value="van-xlarge") X-Large
-        span
-          label Seats:
-          select(name="seats")
-            option(value="all") All
-            option(value="2") 2
-            option(value="3") 3
-            option(value="4+") 4+
-        span
-          label Fuel:
-          select(name="fuel")
-            option(value="all") All
-            option(value="petrol") Petrol
-            option(value="diesel") Diesel
+        p.no-margin Showing #[strong= vehicleCount] vehicles
+      
+      form.listing-filter
+        .listing-filter-group
+          span
+            label Sort by:
+            select(name="sort")
+              option(value="price-low" selected=(query.sort === "price-low" || !query.sort)) Price (Low-High)
+              option(value="price-high" selected=(query.sort === "price-high")) Price (High-Low)
+          span
+            label Size:
+            select(name="size")
+              option(value="all" selected=(query.size === "all" || !query.size)) All
+              option(value="van-small" selected=(query.size === "van-small")) Small
+              option(value="van-medium" selected=(query.size === "van-medium")) Medium
+              option(value="van-large" selected=(query.size === "van-large")) Large
+              option(value="van-luton" selected=(query.size === "van-luton")) Luton
+          span
+            label Seats:
+            select(name="seats")
+              option(value="all" selected=(query.seats === "all" || !query.seats)) All
+              option(value="2" selected=(query.seats === "2")) 2
+              option(value="3" selected=(query.seats === "3")) 3
+              option(value="4+" selected=(query.seats === "4+")) 4+
+          span
+            label Fuel:
+            select(name="fuel")
+              option(value="all") All
+              option(value="petrol") Petrol
+              option(value="diesel") Diesel
         button.button.button-secondary.no-margin Filter
-    .cards.listing-results
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
-      +vehicleCard
+    if vehicleCount > 0
+      .cards.listing-results
+        each vehicle in vehicles
+          +vehicleCard(vehicle, type)
+      p Can't find what you're looking for? Our stock is always changing, so #[a(href="/contact") call us today] to find out how we can help.
+      
+    else
+      h5 No vehicles found
+        
 
 block extraFooterScripts
   script

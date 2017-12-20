@@ -1,5 +1,11 @@
 .admin-header
-  margin-top 6rem
+  margin-top 5rem
+
+  h1
+    font-size 5.4rem
+
+  a
+    margin-left 3rem
   
 .admin-nav
   height 4rem
@@ -41,14 +47,7 @@
     width 100%
     font-size 1.6rem
 
-
 form.add-vehicle
-  display flex
-  justify-content space-between
-  align-items flex-start
-
-  .info-column
-    width calc(40% - 2rem)
 
   p
     margin 0 0 1rem 0
@@ -62,10 +61,14 @@ form.add-vehicle
     font-family $openSansSemibold
 
   input, select, textarea
+    font-size 1.6rem
     margin-bottom 3rem
     margin-right 0
     box-sizing border-box
     width 100%
+    padding 1rem
+
+  textarea
     max-width 100%
     min-width 100%
 
@@ -82,5 +85,24 @@ form.add-vehicle
     min-width auto
     margin-right 1rem
 
+  img.add-vehicle-photo
+    padding 0 !important
+
   .space-between div 
     max-width 30%
+
+  .form-row
+    input[type="number"]
+      max-width 100px
+      display inline-block
+      margin-right 1rem
+      
+    input[type="radio"]
+      width auto
+      max-width auto
+      min-width auto
+      margin-right 2rem
+      display inline-block
+
+      & span 
+        margin-right 2rem

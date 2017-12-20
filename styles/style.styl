@@ -12,7 +12,7 @@ body
   position fixed
   z-index 999
   top 0
-  box-shadow 0px 10px 18px -5px rgba(0,0,0,0.1) 
+  box-shadow 0px 10px 5px -5px rgba(0,0,0,0.05) 
   
   &-container
     display flex
@@ -22,7 +22,7 @@ body
     height 100%
 
   &-main-logo
-    height 7rem
+    height 6.8rem
     width auto
     margin .75rem 0
 
@@ -91,7 +91,7 @@ body
   line-height 2.6rem
 
   &:hover
-    background-color $lightGreen
+    background-color $darkGreen
 
   &-text
     font-size 1.8rem
@@ -106,19 +106,47 @@ body
 .top-flash
   padding 0.8rem
   background-color $mainBlue
+  background linear-gradient(to bottom right, $lightBlue 0%, $mainBlue 100%)
   color white
   text-align center
   display flex
   align-items center
 
   &-success
+    background none
     background-color $mainGreen
 
+    .button-flash-remove
+      background-color $mainGreen
+      color $lightGreen
+
+      &:hover
+        background-color $darkGreen
+
   &-error
+    background none
     background-color $error
 
+    .button-flash-remove
+      background-color $error
+      color $errorLight
+
+      &:hover
+        background-color $errorDark
+
+  &-warning
+    background none
+    background-color $warning
+
+    .button-flash-remove
+      background-color $warning
+      color $warningLight
+
+      &:hover
+        background-color $warningDark
+
   h4
-    font-family $exoSemibold
+    font-family $exoLight
     margin 0 
     padding 0
     color white
@@ -126,6 +154,20 @@ body
     line-height 1.4em
     display inline-block
     padding-right 2rem
+
+    & strong
+      font-family $exoSemibold
+
+.flash-message
+  p 
+    padding 1rem
+    color $mainGreen
+    border 1px solid $mainGreen
+    width 100%
+
+    &.error
+      color firebrick 
+      border-color firebrick
 
 .cover-image-container
   height 53rem
@@ -135,11 +177,41 @@ body
   justify-content center
   border-bottom 3px solid $mainBlue
 
-  img, picture
+  img, picture, source
     min-height 100%
     min-width 100%
     max-width auto
     max-height auto
+
+body.modal-active
+  overflow hidden
+
+  .modal
+    display flex
+
+    .button
+      margin-bottom 0
+      
+
+.modal
+  z-index 999999999
+  background-color rgba(0,0,0,0.5)
+  height 100vh
+  width 100%
+  position fixed
+  top 0
+  left 0
+  box-sizing border-box
+  display none
+  align-items center
+  justify-content center
+  padding 2rem
+
+  &-box
+    background-color white
+    padding 3rem
+    border-radius 5px
+    max-width 380px
 
 .article-header
   position absolute
@@ -149,7 +221,7 @@ body
   margin 0 -30px -3px -30px
   width 63rem
   box-sizing content-box
-  padding 2rem 3rem 3rem 3rem
+  padding 2.5rem 3rem 3rem 3rem
 
   &.no-shift
     position relative
@@ -162,11 +234,27 @@ body
     font-family $exoSemibold
     margin-bottom -40px
     line-height 1em
-    
+
+.alternate-grey  
+  & li
+    padding .5rem 1rem
+
+    & .split:first-child
+      font-family $openSansSemibold
+
+    &:nth-child(odd)
+      background-color $softGrey
+      
 .content
   display flex
   flex-wrap wrap
   justify-content space-between
+
+  &-block
+    padding 2rem
+    border 1px solid $greyBorders
+    border-bottom 2px solid $mainBlue
+    margin-bottom 4rem
   
   article 
     max-width 63rem
@@ -199,8 +287,9 @@ body
 
 .instant-quote
   width 100%
-  background-color $mainBlue
-  margin-top -20rem
+  background $mainBlue
+  background linear-gradient(to bottom, $lightBlue 0%, $mainBlue 100%)
+  margin-top -20.5rem
   color white
   padding 2rem 2rem 0 2rem
   box-sizing border-box
@@ -384,6 +473,7 @@ body
 
 .card
   width calc(33.33% - 0.5rem)
+  max-width 60rem
   margin 0 0.75rem 0 0
   background-color white
   padding 0.75rem
@@ -398,15 +488,24 @@ body
   &-border-bottom
     border-bottom 3px solid $mainBlue
 
+  &:hover
+    outline 2px solid $greyBorders
+
   &:nth-child(3n)
     margin-right 0
+
+  &-image
+    height 25rem
+    width 100%
+    background-position center
+    background-size cover
 
   &-price
     background-color $mainBlue
     position absolute 
     top 0
     right 1.5rem
-    padding 2rem 1rem 0 1rem
+    padding 2rem 1rem 1rem 1rem
     color white
     font-family $exoSemibold
     font-size 3.2rem
@@ -419,15 +518,17 @@ body
       content 'per day'
       font-family $openSansRegular
       font-size 1.4rem
-      margin-bottom .75rem
+      
 
     &-promoted
       background-color $mainGreen
-      margin 0 -1rem
-      padding 0 0.4rem
+      margin 1rem -1rem -2rem -1rem
+      padding 0 1rem
       font-size 1.4rem
       text-transform uppercase
       letter-spacing 0.05rem
+      width 100%
+      text-align center
 
   &-text-container
     padding 2rem 1.25rem
@@ -459,6 +560,13 @@ body
         content ""
         margin-right .5rem
 
+      &.cross
+        color #888
+        
+        &:before
+          width 15px
+          height 15px
+          background-image url("/images/icons/cross.png")
 
   &-link
     color $mainBlue
@@ -496,6 +604,7 @@ a.card
       background-position right 1.5rem center
 
 .listing
+  margin-bottom 6rem
 
   &-results
     &-entry
@@ -503,9 +612,15 @@ a.card
       align-items center
       background-color $softGrey
       margin-bottom 1rem
+      height 12rem
+      overflow hidden
+      border 1px solid $greyBorders
 
       &:hover
         background-color $hoverGrey
+
+        .card-link
+          text-decoration underline
 
       h5
         font-family $exoSemibold !important
@@ -520,7 +635,7 @@ a.card
 
       &-text-container
         width 100%
-        padding 1rem 2rem
+        padding 0 2rem
 
   &-selection
     background-color $lightBlue
@@ -601,20 +716,65 @@ a.card
     width 100%
     display flex
     align-items center
+    justify-content space-between
     flex-wrap wrap
     font-size 1.6rem
 
     label 
       margin-right 1rem
       font-family $openSansSemibold
-    
 
-    button
+    .button
       padding .75rem 2rem
-
+      margin-left 2rem
+      margin-right 0
+      margin-bottom 0
+    
     span:last-child select 
       margin-right 0
 
+.vehicle-page
+  &-pricing
+    text-align center
+    padding 3rem 1rem 0 1rem
+    box-sizing border-box
+    border-bottom none
+
+    &-prices
+      display flex
+      flex-direction row
+      justify-content space-around
+      flex-wrap wrap
+
+      div
+        width 33%
+
+    h4
+      color $richBlack
+      font-size 2rem
+      margin-bottom 1rem
+    
+    h3
+      margin-bottom 0
+    
+    &-contact
+      padding 1rem 2rem
+      margin 0 -1rem
+      background-color $mainGreen
+
+      h4
+        color white
+        margin 0
+        font-family $exoLight
+
+    &-phone
+      background linear-gradient(to bottom right, $lightBlue 0%, $mainBlue 100%)
+      padding 1.5rem 2rem
+      margin 0 -1rem
+
+      h3
+        color white
+        margin 0        
 
 section.grey
   background-color $softGrey
@@ -625,6 +785,7 @@ section.grey
   margin-bottom 0
 
 .map
+  margin-top 6rem
   .container
     display flex
     justify-content space-between
@@ -695,17 +856,6 @@ input.bot-trap
   padding 0
   border none
 
-.flash-message
-  p 
-    padding 1rem
-    color $mainGreen
-    border 1px solid $mainGreen
-    width 100%
-
-    &.error
-      color firebrick 
-      border-color firebrick  
-
 .footer
   background-color $mainBlue
   padding 4rem 0 2rem 0
@@ -768,5 +918,5 @@ input.bot-trap
       color white
       font-family $openSansSemibold
 
-@import '_mediaQueries/*'
 @import 'admin/*'
+@import '_mediaQueries/*'

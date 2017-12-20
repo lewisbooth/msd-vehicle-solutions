@@ -11,11 +11,11 @@ block coverImage
 block articleHeader
   .container
     .article-header
-      h1 Car &amp; Van Sales in #[span.no-break Stoke-on-Trent]
+      h1 New &amp; Used Vehicles for Sale
           
 block articleContent
   article
-    p With over 30 years experience in family-run vehicle sales, we're proud to deliver high quality customer service and great prices. Our selection of  #[a(href="listing/sales/cars") cars] and #[a(href="listing/sales/vans") vans] is always changing and many of our vehicles can be #[a(href="/leasing") leased] or #[a(href="/") hired] with competitive financing rates.
+    p With over 30 years experience in family-run vehicle sales, we're proud to deliver high quality customer service and great prices. Our selection of #[a(href="listing/sales/cars") cars] and #[a(href="listing/sales/vans") vans] is always changing and many of our vehicles can also be #[a(href="/leasing") leased] or #[a(href="/") hired] with competitive financing rates.
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/cars-for-sale.jpg", alt="Lineup of cars for sale")
@@ -41,17 +41,17 @@ block articleContent
       li Same day drive away
 
 block promoted-items
-  .container
-    h3 Promoted Vehicle Sales
-  section.grey
+    if vehicles
     .container
-      .promoted-items.row
-        .cards
-          +vehicleCard
-          +vehicleCard
-          +vehicleCard
-        .row.center-content
-          a(href="/vehicles/sales/cars").button.no-margin See all vehicles   
+      h3 Promoted Vehicle Sales
+    section.grey
+      .container
+        .promoted-items.row
+          .cards
+            each vehicle in vehicles
+              +vehicleCard(vehicle, "sales")
+          .row.center-content
+            a(href="/vehicles/sales/cars").button.no-margin See all vehicles   
 block services-cards
   +serviceCardHire
   +serviceCardLeasing

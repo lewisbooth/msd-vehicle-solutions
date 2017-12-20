@@ -2,12 +2,12 @@ extends layout
 
 block articleHeader
   .container
-    .article-header.quote-shift
-      h1 Car &amp; Van Hire #[br] from £50 per day
+    .article-header
+      h1 Car &amp; Van Hire #[br] in Stoke on Trent
           
 block articleContent
   article.quote-shift
-    p MSD Vehicle Solutions has offered flexible car and van #[a(href="/") hire], #[a(href="/sales") sales] and #[a(href="/leasing") leasing] for personal and commercial use across Staffordshire since 1986. Today we offer bespoke vehicle #[a(href="/custom-vehicles") modifications] and #[a(href="/servicing") servicing] through our on-site garage. Whatever the job, call us or drop in today to see what we have to offer.
+    p MSD Vehicle Solutions has offered flexible car and van #[a(href="/") hire], #[a(href="/sales") sales] and #[a(href="/leasing") leasing] for personal and commercial use across Staffordshire since 1986. Today we offer bespoke vehicle #[a(href="/customs") modifications] and #[a(href="/servicing") servicing] through our on-site garage. Whatever the job, call us or drop in today to see what we have to offer.
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/cars-for-sale.jpg" alt="Lineup of cars for hire")
@@ -50,10 +50,9 @@ block quoteForm
           input(type="button" name="van-small" value="Small" checked)
           input(type="button" name="van-medium" value="Medium")
           input(type="button" name="van-large" value="Large")
-          input(type="button" name="van-x-large" value="X Large")
+          input(type="button" name="van-luton" value="Luton")
       .block.hidden
         label Car Size
-        a.small(href="/car-sizes" target="_blank") Size guide
         .options.stretch(name="car-size")
           input(type="button" name="car-economy" value="Economy" checked)
           input(type="button" name="car-saloon" value="Saloon")
@@ -72,17 +71,17 @@ block quoteForm
         span.per-day /day
 
 block promoted-items
-  .container
-    h3 Van Hire Deals
-  section.grey
+  if Object.keys(vehicles).length > 0
     .container
-      .promoted-items.row
-        .cards
-          +vehicleCard({promoted: true})
-          +vehicleCard({promoted: true})
-          +vehicleCard({promoted: true})
-        .row.center-content
-          a(href="/vehicles/hire/vans").button.no-margin See all vans   
+      h3 Latest Hire Deals
+    section.grey
+      .container
+        .promoted-items.row
+          .cards
+            each vehicle in vehicles
+              +vehicleCard(vehicle, "hire")
+          .row.center-content
+            a(href="/vehicles/hire/vans").button.no-margin See all vehicles   
 
 block extraFooterScripts
   script

@@ -17,6 +17,7 @@ const vehicleSchema = new Schema(
     category: {
       type: String,
       enum: [
+        "car-economy",
         "car-hatchback",
         "car-saloon",
         "car-suv",
@@ -24,20 +25,21 @@ const vehicleSchema = new Schema(
         "van-small",
         "van-medium",
         "van-large",
-        "van-xlarge"
+        "van-luton"
       ],
-      required: "Please supply a category"
+      default: "van-small"
+    },
+    condition: {
+      type: String,
+      enum: ["new", "used"],
+      default: "used"
     },
     slug: {
       type: String,
       trim: true
     },
     photos: {
-      main: {
-        type: String,
-        default: "vehicle-photo-default.jpg"
-      },
-      support: [String]
+      type: [String]
     },
     pricing: {
       hire: { type: Number },
@@ -62,30 +64,32 @@ const vehicleSchema = new Schema(
         depth: { type: Number }
       },
       cargo: { type: Number },
-      seats: { type: Number, required: "Please supply the number of seats" },
+      seats: { type: Number },
       doors: { type: Number },
       engineSize: { type: Number },
       fuelType: { type: String },
-      fuelEconomy: { type: String },
+      fuelEconomy: { type: Number },
       transmission: { type: String },
-      height: { type: String },
-      mileage: { type: String },
-      year: { type: String, required: "Please supply a year" }
+      height: { type: Number },
+      mileage: { type: Number },
+      year: { type: Number }
     }
   },
   options
 );
 
 vehicleSchema.index({
-  slug: "text"
+  slug: 1
+});
+vehicleSchema.index({
+  name: "text"
 });
 
-// Create a slug, adding an index at the end if multiple stores are found with the same name
 vehicleSchema.pre("save", async function(next) {
   if (!this.isModified("name")) {
     return next();
   }
-  this.slug = slugify(`${this.name}-${this.details.year}`);
+  this.slug = slugify(`${this.name}-${this.details.year}`, { lower: true });
   const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)`, "i");
   const vehiclesWithSlug = await this.constructor.find({ slug: slugRegEx });
   if (vehiclesWithSlug.length) {
@@ -94,6 +98,4 @@ vehicleSchema.pre("save", async function(next) {
   next();
 });
 
-const Vehicle = mongoose.model("Vehicle", vehicleSchema);
-
-module.exports = Vehicle;
+module.exports = mongoose.model("Vehicle", vehicleSchema);
