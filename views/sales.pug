@@ -41,9 +41,9 @@ block articleContent
       li Same day drive away
 
 block promoted-items
-    if vehicles
+  if Object.keys(vehicles).length > 0
     .container
-      h3 Promoted Vehicle Sales
+      h3 Latest Vehicle Sales
     section.grey
       .container
         .promoted-items.row
@@ -51,7 +51,7 @@ block promoted-items
             each vehicle in vehicles
               +vehicleCard(vehicle, "sales")
           .row.center-content
-            a(href="/vehicles/sales/cars").button.no-margin See all vehicles   
+            a(href="/vehicles/sales/cars").button.no-margin See all vehicles    
 block services-cards
   +serviceCardHire
   +serviceCardLeasing

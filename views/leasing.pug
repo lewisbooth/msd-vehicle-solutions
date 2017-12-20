@@ -41,9 +41,9 @@ block articleContent
       li Flexible finance
 
 block promoted-items
-  if vehicles
+  if Object.keys(vehicles).length > 0
     .container
-      h3 Promoted Lease Deals
+      h3 Latest Lease Deals
     section.grey
       .container
         .promoted-items.row
@@ -51,7 +51,7 @@ block promoted-items
             each vehicle in vehicles
               +vehicleCard(vehicle, "lease")
           .row.center-content
-            a(href="/vehicles/lease/cars").button.no-margin See all vehicles   
+            a(href="/vehicles/lease/cars").button.no-margin See all vehicles  
 
 block services-cards
   +serviceCardHire
