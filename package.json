@@ -5,8 +5,7 @@
   "main": "start.js",
   "scripts": {
     "start": "nodemon ./start.js --ignore public/ --ignore views/scripts",
-    "backup": "node mongo-backup.js",
-    "restore": "node mongo-restore.js",
+    "restore": "node mongodb/restore.js",
     "dev": "gulp"
   },
   "repository": {
