@@ -84,6 +84,6 @@ block promoted-items
             a(href="/vehicles/hire/vans").button.no-margin See all vehicles  
 
 block extraFooterScripts
-  if device !== "bot"
+  if !bot
     script
       include scripts/dist/quoteForm-min.js
