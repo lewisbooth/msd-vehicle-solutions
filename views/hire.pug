@@ -81,7 +81,9 @@ block promoted-items
             each vehicle in vehicles
               +vehicleCard(vehicle, "hire")
           .row.center-content
-            a(href="/vehicles/hire/vans").button.no-margin See all vehicles   
+            a(href="/vehicles/hire/vans").button.no-margin See all vehicles  
+
 block extraFooterScripts
-  script
-    include scripts/dist/quoteForm-min.js
+  if device !== "bot"
+    script
+      include scripts/dist/quoteForm-min.js
