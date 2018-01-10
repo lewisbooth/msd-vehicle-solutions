@@ -17,13 +17,30 @@ exports.upload = (Bucket, Key) => {
   });
 };
 
-exports.download = (Bucket, Key) => {
-  const options = { Bucket }
-  s3.listObjectsV2(options, (err, data) => {
-    console.log(data)
+exports.downloadLatest = (Bucket, saveFolder) => {
+  s3.listObjectsV2({ Bucket }, (err, data) => {
+    if (data.Contents.KeyCount === 0) {
+      console.log("No items found in bucket: " + Bucket)
+      return null;
+    }
+    const Key = data.Contents[data.KeyCount - 1].Key
+    console.log("Downloading " + Key)
+    const options = { Bucket, Key }
+    if (!fs.existsSync(saveFolder)) {
+      fs.mkdirSync(saveFolder)
+    }
+    const writeStream = fs.createWriteStream(`${saveFolder}/latestBackup.tgz`)
+    const fileStream = s3.getObject(options, (err => {
+      if (err) {
+        console.log("Error downloading file")
+        console.log(err)
+        return false
+      }
+    })).createReadStream().pipe(writeStream)
+    console.log("Successfully downloaded file")
+    return true
   })
-  // const fileStream = s3.getObject(options).createReadStream()
-};
+}
 
 exports.cleanBucket = (Bucket, limit) => {
   const options = { Bucket }
@@ -48,5 +65,4 @@ exports.cleanBucket = (Bucket, limit) => {
       })
     }
   })
-  // const fileStream = s3.getObject(options).createReadStream()
 };

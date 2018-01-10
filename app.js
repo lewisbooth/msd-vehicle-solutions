@@ -18,25 +18,28 @@ const { titleCase } = require("./helpers/titleString");
 const { formatVehicleData } = require("./helpers/formatVehicleData");
 const app = express();
 
+// Load the Pug template views
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+// Enable gzip
 app.use(compression());
 
+// Set cache headers for static content
 const maxAge = process.env.NODE_ENV === "production" ? 31536000 : 1;
 app.use(express.static(path.join(__dirname, "public"), { maxAge }));
 
+// BodyParser middleware to parse POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Exposes a bunch of methods for validating data. Used heavily on userController.validateRegister
+// Data validation library
 app.use(expressValidator());
 
-// // The flash middleware let's us use req.flash('error', 'Shit!'), which will then pass that message to the next page the user requests
+// Dynamic flash messages that are passed to the template (e.g. "Successfully logged in" or "Incorrect login details")
 app.use(flash());
 
-// Sessions allow us to store data on visitors from request to request
-// This keeps users logged in and allows us to send flash messages
+// Cookies for tracking users login sessions
 app.use(
   session({
     secure: true,
@@ -48,10 +51,11 @@ app.use(
   })
 );
 
-// // Passport JS is what we use to handle our logins
+// PassportJS handles user logins
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Log requests with a timestamp, HTTP method, path and IP address
 app.use("/", (req, res, next) => {
   const timestamp = new Date().toString();
   var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
@@ -79,14 +83,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// promisify some callback based APIs
+// Promisify some callback based APIs
 app.use((req, res, next) => {
   req.login = promisify(req.login, req);
   next();
 });
 
+// Route handler
 app.use("/", routes);
 
+// 404 if no routes are found
 app.use((req, res, next) => {
   if (req.accepts("html") && res.status(404)) {
     console.error(`🚫  🔥  Error 404 ${req.method} ${req.path}`);
@@ -94,6 +100,7 @@ app.use((req, res, next) => {
   }
 });
 
+// Flash any errors thatt occurred
 app.use(errorHandlers.flashValidationErrors);
 app.use(errorHandlers.productionErrors);
 
