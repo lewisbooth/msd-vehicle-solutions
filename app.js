@@ -7,6 +7,7 @@ const passport = require("passport");
 require("./helpers/passport");
 const promisify = require("es6-promisify");
 const flash = require("connect-flash");
+const device = require("device");
 const bodyParser = require("body-parser");
 const expressValidator = require("express-validator");
 const session = require("express-session");
@@ -68,6 +69,10 @@ app.use("/", (req, res, next) => {
 
 // Exposes variables and functions for use in Pug templates
 app.use((req, res, next) => {
+  // Parses the User Agent into desktop, phone, tablet, phone, bot or car
+  res.locals.device = device(req.headers['user-agent']).type
+  console.log(res.locals.device)
+  // Function to remove 0s and empty entries from vehicle object
   res.locals.formatVehicleData = formatVehicleData;
   res.locals.titleCase = titleCase;
   res.locals.flashes = req.flash();
@@ -100,7 +105,7 @@ app.use((req, res, next) => {
   }
 });
 
-// Flash any errors thatt occurred
+// Flash any errors that occurred
 app.use(errorHandlers.flashValidationErrors);
 app.use(errorHandlers.productionErrors);
 

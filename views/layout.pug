@@ -78,15 +78,16 @@ html
 
     block pageContent
       section.container.content
+        if device === "phone"
+          block quoteForm
         block articleContent
           article
             p Article content
 
         block sidebar
           aside
-            block quoteForm
-              //- Instant quote form goes here
-            
+            if device !== "phone"
+              block quoteForm            
             block sidebarCallToday
               a(href="tel: +441782517782").call-to-book.medium-hide
                 span.call-to-book-text CALL US TODAY
