@@ -45,7 +45,7 @@ inputs.forEach(input => {
 
 // Trigger immediate setup & price calculation
 let formState = getState();
-renderForm();
+// renderForm();
 
 // Lightweight state management for one-way data flow
 function setState(newState) {
