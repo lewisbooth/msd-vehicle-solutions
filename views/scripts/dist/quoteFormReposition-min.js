@@ -1,0 +1,1 @@
+"use strict";function moveForm(){window.innerWidth<1024?topSection.insertBefore(quoteForm,mobileLocation):aside.insertBefore(quoteForm,callToBook)}function insertAfter(e,o){o.parentNode.insertBefore(e,o.nextSibling)}moveForm(),window.addEventListener("resize",function(){moveForm()});
