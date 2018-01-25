@@ -39,9 +39,10 @@ const carInput = form.querySelector("[name=car]");
 
 // Event listeners
 form.addEventListener("submit", e => e.preventDefault());
-inputs.forEach(input => {
-  input.addEventListener("click", e => checkInput(e));
-});
+
+for (var i = 0; i < inputs.length; i++) {
+  inputs[i].addEventListener("click", e => checkInput(e));
+}
 
 // Trigger immediate setup & price calculation
 let formState = getState();
@@ -56,17 +57,18 @@ function setState(newState) {
 // Loops through the form DOM elements and returns an object containing the current form state
 function getState() {
   const currentState = {};
-  fieldsets.forEach(fieldset => {
-    const fieldsetName = fieldset.getAttribute("name");
-    const inputs = fieldset.querySelectorAll("input");
+  for (var i = 0; i < fieldsets.length; i++) {
+    const fieldsetName = fieldsets[i].getAttribute("name");
+    const fieldsetInputs = fieldsets[i].querySelectorAll("input");
     const inputStates = {};
-    inputs.forEach(input => {
-      const name = input.getAttribute("name");
-      const checked = input.getAttribute("checked") !== null;
+    for (var j = 0; j < fieldsetInputs.length; j++) {
+      const name = fieldsetInputs[j].getAttribute("name");
+      const checked = fieldsetInputs[j].getAttribute("checked") !== null;
       inputStates[name] = { checked };
-    });
+    };
     currentState[fieldsetName] = inputStates;
-  });
+    console.log(inputStates, fieldsetName)
+  };
   return currentState;
 }
 
@@ -74,18 +76,18 @@ function getState() {
 function renderForm() {
   priceOutput.innerHTML = getPrice();
 
-  fieldsets.forEach(fieldset => {
-    const fieldsetName = fieldset.getAttribute("name");
-    const inputs = fieldset.querySelectorAll("input");
-    inputs.forEach(input => {
-      const inputName = input.getAttribute("name");
+  for (var i = 0; i < fieldsets.length; i++) {
+    const fieldsetName = fieldsets[i].getAttribute("name");
+    const fieldsetInputs = fieldsets[i].querySelectorAll("input");
+    for (var j = 0; j < fieldsetInputs.length; j++) {
+      const inputName = fieldsetInputs[j].getAttribute("name");
       if (formState[fieldsetName][inputName].checked === true) {
-        input.setAttribute("checked", true);
+        fieldsetInputs[j].setAttribute("checked", true);
       } else {
-        input.removeAttribute("checked");
+        fieldsetInputs[j].removeAttribute("checked");
       }
-    });
-  });
+    };
+  };
 
   if (carInput.checked === true) {
     carBlock.classList.remove("hidden");
