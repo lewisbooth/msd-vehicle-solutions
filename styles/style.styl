@@ -7,7 +7,7 @@ body
     padding-top 12.5rem
 
 .main-nav
-  background-color white
+  background-color $darkBlue
   width 100%
   position fixed
   z-index 999
@@ -33,15 +33,15 @@ body
     margin 0 8rem
     width 100%
     align-self stretch
-    background-color white
+    background-color $darkBlue
 
     li
       flex-grow 1
-      height calc(100% - 4px)
+      height calc(100% - 2px)
       box-sizing content-box
 
       & a
-        color $darkBlue
+        color white
         height 100%
         width 100%
         display flex
@@ -49,10 +49,12 @@ body
         justify-content center
 
       &.active
-        border-bottom 4px solid $darkBlue
+        border-bottom 2px solid white
+        background-color $mainBlue
 
       &:hover
-        border-bottom 4px solid $darkBlue
+        border-bottom 2px solid white
+        background-color $mainBlue
 
   &-dropdown-toggle
     display none
