@@ -50,6 +50,7 @@
     "ip": "^1.1.5",
     "md5": "^2.2.1",
     "md5-file": "^3.2.3",
+    "moment": "^2.20.1",
     "mongodb-backup": "^1.6.9",
     "mongodb-restore": "^1.6.2",
     "mongoose": "^4.12.4",
