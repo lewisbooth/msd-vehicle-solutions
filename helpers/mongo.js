@@ -24,7 +24,7 @@ exports.restore = async () => {
     if (fs.existsSync("mongodb/temp/mongodb")) {
       mongoRestore({
         uri: process.env.DATABASE,
-        root: "mongodb/temp/mongodb/backup",
+        root: "mongodb/temp/mongodb/backup/msd",
         callback: err => {
           if (err) {
             console.log("Error restoring database")
