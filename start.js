@@ -10,11 +10,20 @@ require("dotenv").config({ path: "variables.env" });
 process.env.ROOT = __dirname;
 
 // Initiate the database connection
-mongoose.connect(process.env.DATABASE, { useMongoClient: true });
-mongoose.Promise = global.Promise;
-mongoose.connection.on("error", err => {
-  console.error(`🚫 → ${err.message}`);
+mongoose.connect(process.env.DATABASE, {
+  useMongoClient: true,
+  autoReconnect: true,
+  reconnectTries: Number.MAX_VALUE,
+  reconnectInterval: 1000
+}, err => {
+  if (err) {
+    console.error("🚫 Error connecting to MongoDB");
+    console.error(err.message)
+  } else {
+    console.log("Connected to MongoDB")
+  }
 });
+mongoose.Promise = global.Promise;
 
 // Load the MongoDB models
 require("./models/Vehicle");
