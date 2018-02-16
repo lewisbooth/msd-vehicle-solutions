@@ -149,14 +149,7 @@ html
                 +serviceCardCustoms
                 +serviceCardServicing
             
-    block map
-      //- section.map
-      //-   .container
-      //-     h3 Find Us
-      //-     a(href="https://www.google.co.uk/maps/place/Moorland+Self+Drive/@53.0941029,-2.1798971,15z/data=!4m5!3m4!1s0x0:0x1b87236bea61478f!8m2!3d53.0941029!4d-2.1798971" target="_blank").button
-      //-       img(src="/images/icons/directions.svg", alt="Get directions icon").button-icon
-      //-       span Get Directions
-      //-   #map
+    block map      
 
     block footer
       +footer
@@ -164,8 +157,5 @@ html
     block footerScripts
       script
         include scripts/dist/mobileMenu-min.js
-      //- script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_AdmAW49fbvOFD-xYJhW0nO6iyOzRPtk&callback=initMap")
-      //- script
-      //-   include scripts/dist/googleMaps-min.js
 
     block extraFooterScripts
