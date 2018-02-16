@@ -13,7 +13,7 @@ exports.homepage = async (req, res) => {
     vehicles: cleanVehicles,
     title: "Car & Van Hire in Stoke on Trent",
     description:
-      "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week | Call Us On 01782 517782 Today"
   });
 };
 
@@ -25,7 +25,7 @@ exports.sales = async (req, res) => {
     vehicles,
     title: "New & Used Vehicles for Sale in Stoke-on-Trent",
     description:
-      "Explore Our Range of New & Used Cars & Vans for Sale or Lease in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Explore Our Range of New & Used Cars & Vans for Sale or Lease in Stoke-on-Trent. Competitive Financing Available. Open 7 Days Per Week | Call Us On 01782 517782 Today"
   });
 };
 
@@ -37,7 +37,7 @@ exports.leasing = async (req, res) => {
     vehicles,
     title: "Car & Van Leasing Deals in Stoke-on-Trent",
     description:
-      "Find the Perfect Car & Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Find the Perfect Car & Van Lease Deals for Personal & Business Use in Stoke-on-Trent. PCP, PCH, & HP Options With Competitive Rates & Financing Available. Open 7 Days Per Week | Call Us On 01782 517782 Today"
   });
 };
 
@@ -55,9 +55,9 @@ exports.vanSizes = async (req, res) => {
 
 exports.customVehicles = async (req, res) => {
   res.render("customs", {
-    title: "Custom Van Conversions & Bulk Heads in Stoke-on-Trent",
+    title: "Van Conversions & Ply Lining in Stoke-on-Trent",
     description:
-      "Specialists in Bespoke Van Conversions & Modifications. Create Your Unique Camper Van or Protect Your Vehicle With Ply-Lining, Window Tinting or a Bulk Head. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Specialists in Bespoke Van Conversions & Modifications. Create Your Unique Camper Van or Protect Your Vehicle With Ply-Lining, Window Tinting or a Bulk Head. Open 7 Days Per Week | Call Us On 01782 517782 Today"
   });
 };
 
@@ -65,7 +65,7 @@ exports.servicing = async (req, res) => {
   res.render("servicing", {
     title: "Vehicle Servicing, Repair & Tyres in Stoke-on-Trent",
     description:
-      "Professional Car & Van Servicing, Tyre Changes, Wheel Alignment & Bodywork Repairs in Stoke-on-Trent. Open 7 Days Per Week, Call Us Or Drop In Today."
+      "Professional Car & Van Servicing, Tyre Changes, Wheel Alignment & Bodywork Repairs in Stoke-on-Trent. Open 7 Days Per Week | Call Us On 01782 517782 Today"
   });
 };
 

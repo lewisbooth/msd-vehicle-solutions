@@ -1,6 +1,6 @@
 mixin head
   head
-    title= `${title || "Car & Van Hire in Stoke on Trent"} | MSD Vehicles`
+    title= `${title || "Car & Van Hire in Stoke on Trent"} | ${currentPath.startsWith("/customs") ? "MSD Custom Commercials" : "Moorland Self-Drive"}`
     meta(name="description" content=`${description || "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use Across Staffordshire Since 1986. Open 7 Days Per Week, Call Us Or Drop In Today."}`)
     meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")

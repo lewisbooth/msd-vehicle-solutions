@@ -26,18 +26,18 @@ html
         .main-nav-container.container
           .mobile-nav-wrapper
             a(href="/")
-              img.main-nav-main-logo(src=(currentPath.startsWith("/customs") ? "/images/logos/msd-custom-commercials-logo-white.svg" : "/images/logos/msd-logo-white.svg"), alt="MSD Vehicle Solutions Logo")
+              img.main-nav-main-logo(src=(currentPath.startsWith("/customs") ? "/images/logos/msd-custom-commercials-logo-white.svg" : "/images/logos/msd-logo-white.svg"), alt="Moorland Self-Drive Logo")
             .main-nav-dropdown-toggle Menu 
               .main-nav-dropdown-toggle-icon
                 .main-nav-dropdown-toggle-icon-top
                 .main-nav-dropdown-toggle-icon-middle
                 .main-nav-dropdown-toggle-icon-bottom
           ul.main-nav-menu
-            li(class=(currentPath.startsWith("/hire") || currentPath === "/" ? 'active' : ''))
+            li(class=(currentPath.startsWith("/hire") || currentPath.startsWith("/vehicles/hire") || currentPath === "/" ? 'active' : ''))
               a(href="/") Hire
-            li(class=(currentPath.startsWith("/sales") ? 'active' : ''))
+            li(class=(currentPath.startsWith("/sales") || currentPath.startsWith("/vehicles/sales") ? 'active' : ''))
               a(href="/sales" ) Sales
-            li(class=(currentPath.startsWith("/leasing") ? 'active' : ''))
+            li(class=(currentPath.startsWith("/leasing") || currentPath.startsWith("/vehicles/lease") ? 'active' : ''))
               a(href="/leasing") Leasing
             li(class=(currentPath.startsWith("/customs") ? 'active' : ''))
               a(href="/customs") Custom Vehicles
@@ -52,7 +52,7 @@ html
     block top-flash
       .top-flash
         .container
-          h4 Get #[strong 10% off] all van hire until Jan 31st!
+          h4 Get #[strong 10% off] all van hire until March 31st!
           a(href="/vehicles/hire/vans").button.button-secondary.button-ghost.button-small See vehicles
 
     block flash-messages

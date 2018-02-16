@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 const mongo = require("./helpers/mongo");
 const cron = require("node-cron");
-const tar = require("tar");
 const ip = require("ip");
-const fs = require("fs");
-const S3 = require("./helpers/S3");
 
 // Load environment variables from file
 require("dotenv").config({ path: "variables.env" });
@@ -23,7 +20,7 @@ mongoose.connection.on("error", err => {
 require("./models/Vehicle");
 require("./models/User");
 
-mongo.restore()
+// mongo.restore()
 // Schedule daily backups at 4am
 cron.schedule("0 4 * * *", () => {
   mongo.backup()

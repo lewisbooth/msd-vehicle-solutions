@@ -76,11 +76,12 @@ exports.listingPage = async (req, res) => {
     title: `${vehicleFormatted} for ${
       selectedOptionType !== "Buy" ? selectedOptionType : "Sale"
       } in Stoke-on-Trent`,
-    description: `Explore Our Range of ${vehicleFormatted} for ${selectedOptionType} at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today.`
+    description: `Explore Our Range of ${vehicleFormatted} for ${selectedOptionType} at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week | Call Us On 01782 517782 Today`
   });
 };
 
 exports.vehiclePage = async (req, res) => {
+  // Find a vehicle that matches the vehicleId parameter
   const vehicle = await Vehicle.findOne(
     { slug: req.params.vehicleId },
     (err, item) => {
@@ -96,24 +97,38 @@ exports.vehiclePage = async (req, res) => {
     _id: { $ne: vehicle.id },
     category: vehicle.category
   };
-
   if (req.query.ref) {
     filter[`availability.${req.query.ref}`] = true;
   }
-
   const relatedVehicles = await Vehicle.find(filter).limit(3);
 
+  // Customise the page title based on the reference type
+  let selectedOptionType;
+  if (req.query.ref === "hire") selectedOptionType = " for Hire";
+  if (req.query.ref === "lease") selectedOptionType = " for Lease";
+  if (req.query.ref === "sales") selectedOptionType = " for Sale";
+
+  // Useful for 'back' links
   const vehicleType = vehicle.category.split("-")[0] + "s";
   const referrer = `/vehicles/${req.query.ref || "hire"}/${vehicleType}`;
+
+  // Generate a description, use the vehicle description if it exists
+  let description
+  if (vehicle.details.description) {
+    description = vehicle.details.description.split("").slice(0, 250).join("")
+  } else {
+    description = "Explore Our Range of Vehicles for Hire, Sale and Lease at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week"
+  }
+  description += " | Call Us On 01782 517782 Today"
+
+  const title = `${vehicle.details.year ? ` ${vehicle.details.year}` : ""} ${vehicle.name}${selectedOptionType ? selectedOptionType : ""} in Stoke-on-Trent`
+
   res.render("vehicle", {
     vehicle: formatVehicleData(vehicle),
     relatedVehicles,
     referrer,
     ref: req.query.ref,
-    title: `${vehicle.name}${
-      vehicle.details.year ? ` ${vehicle.details.year}` : ""
-      } in Stoke-on-Trent`,
-    description:
-      "Explore Our Range of Vehicles for Hire, Sale and Lease at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week, Call Us Or Drop In Today."
+    title,
+    description
   });
 };

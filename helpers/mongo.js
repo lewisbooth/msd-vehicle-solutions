@@ -1,29 +1,55 @@
 require("dotenv").config({ path: "variables.env" });
 const mongoBackup = require("mongodb-backup");
 const mongoRestore = require("mongodb-restore");
-const hasher = require("folder-hash");
+const copydir = require('copy-dir');
 const tar = require("tar");
 const fs = require("fs");
 const S3 = require("./S3");
-
+// Restore database from S3, giving user a choice of most recent backups
 exports.restore = async () => {
   // Downloads most recent S3 backup
-  const downloadFile = await S3.downloadIndex(process.env.S3_BACKUP_BUCKET_NAME, './mongodb/temp')
-  console.log(downloadFile)
+  const downloadFile = await S3.downloadIndex(process.env.S3_BACKUP_BUCKET_NAME, 'mongodb/temp')
   if (downloadFile === false) process.exit()
+  // Extract the tarball into a temp folder
+  tar.x({
+    file: downloadFile,
+    cwd: "mongodb/temp"
+  }).then(err => {
+    if (err) {
+      console.log("Error extracting tarball")
+      console.log(err)
+      process.exit()
+    }
+    // Restore database if a backup was in the tarball
+    if (fs.existsSync("mongodb/temp/mongodb")) {
+      mongoRestore({
+        uri: process.env.DATABASE,
+        root: "mongodb/temp/mongodb",
+        callback: err => {
+          console.log("Error restoring database")
+          if (err) console.log(err);
+          else {
+            console.log("Successfully restored database")
+          }
+        }
+      });
+    } else {
+      console.log("No database backup found in tarball")
+    }
+    // Copy vehicle imagery into /public if it exists in the tarball
+    if (fs.existsSync("mongodb/temp/public/images/vehicles")) {
+      copydir("mongodb/temp/public/images/vehicles", "public/images/vehicles", err => {
+        if (err) {
+          console.log("Error copying files")
+          console.log(err)
+        }
+      })
+    } else {
+      console.log("No vehicle image backup found in tarball")
+    }
+  })
 
 
-  // mongoRestore({
-  //   uri: process.env.DATABASE,
-  //   root: "mongodb/backup",
-  //   callback: err => {
-  //     console.log("Error restoring database")
-  //     if (err) console.log(err);
-  //     else {
-  //       console.log("Successfully restored database")
-  //     }
-  //   }
-  // });
 };
 
 exports.backup = () => {
@@ -47,7 +73,10 @@ exports.backup = () => {
     uri: process.env.DATABASE,
     root: "mongodb/backup",
     callback: err => {
-      if (err) console.log(err);
+      if (err) {
+        console.log(err);
+        return;
+      }
       else {
         console.log("Successfully backed up database to mongodb/backup")
       }
