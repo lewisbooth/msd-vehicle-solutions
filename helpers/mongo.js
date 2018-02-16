@@ -4,6 +4,7 @@ const mongoRestore = require("mongodb-restore");
 const copydir = require('copy-dir');
 const tar = require("tar");
 const fs = require("fs");
+const rmdir = require("rmdir");
 const S3 = require("./S3");
 
 // Restore database from S3, giving user a choice of most recent backups
@@ -39,6 +40,15 @@ exports.restore = async () => {
           }
           else {
             console.log("Successfully restored database")
+            // Remove temp folder
+            rmdir('mongodb/temp', err => {
+              if (err) {
+                console.log("Error deleting temp folder")
+                console.log(err)
+              } else {
+                console.log("Cleaned up temp folder")
+              }
+            })
           }
         }
       });
@@ -51,13 +61,13 @@ exports.restore = async () => {
         if (err) {
           console.log("Error copying files")
           console.log(err)
+        } else {
         }
       })
     } else {
       console.log("No vehicle image backup found in tarball")
     }
   })
-
 
 };
 
@@ -100,6 +110,14 @@ exports.backup = () => {
       process.env.S3_BACKUP_BUCKET_NAME,
       `mongodb/${timestamp}.tgz`
     );
+    rmdir('mongodb/backup', err => {
+      if (err) {
+        console.log("Error deleting temp folder")
+        console.log(err)
+      } else {
+        console.log("Cleaned up temp folder")
+      }
+    })
   })
   // Restrict S3 bucket to 30 entries
   S3.cleanBucket(process.env.S3_BACKUP_BUCKET_NAME, 30)
