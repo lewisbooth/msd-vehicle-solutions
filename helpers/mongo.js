@@ -26,8 +26,10 @@ exports.restore = async () => {
         uri: process.env.DATABASE,
         root: "mongodb/temp/mongodb",
         callback: err => {
-          console.log("Error restoring database")
-          if (err) console.log(err);
+          if (err) {
+            console.log("Error restoring database")
+            console.log(err);
+          }
           else {
             console.log("Successfully restored database")
           }

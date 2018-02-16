@@ -20,7 +20,6 @@ mongoose.connection.on("error", err => {
 require("./models/Vehicle");
 require("./models/User");
 
-// mongo.restore()
 // Schedule daily backups at 4am
 cron.schedule("0 4 * * *", () => {
   mongo.backup()
