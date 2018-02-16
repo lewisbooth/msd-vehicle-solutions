@@ -23,6 +23,7 @@ exports.restore = async () => {
     // Restore database if a backup was in the tarball
     if (fs.existsSync("mongodb/temp/mongodb")) {
       mongoRestore({
+        drop: true,
         uri: process.env.DATABASE,
         root: "mongodb/temp/mongodb/backup/msd",
         callback: err => {
