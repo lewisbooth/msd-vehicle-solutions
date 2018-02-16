@@ -5,8 +5,14 @@ const copydir = require('copy-dir');
 const tar = require("tar");
 const fs = require("fs");
 const S3 = require("./S3");
+
 // Restore database from S3, giving user a choice of most recent backups
 exports.restore = async () => {
+  console.log("Restoring files")
+  // Create backup folder if it doesn't already exist
+  if (!fs.existsSync("mongodb")) {
+    fs.mkdirSync("mongodb")
+  }
   // Downloads most recent S3 backup
   const downloadFile = await S3.downloadIndex(process.env.S3_BACKUP_BUCKET_NAME, 'mongodb/temp')
   if (downloadFile === false) process.exit()
