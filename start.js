@@ -1,13 +1,14 @@
+process.env.ROOT = __dirname;
+
 const mongoose = require("mongoose");
 const mongo = require("./helpers/mongo");
 const cron = require("node-cron");
+const sitemap = require("./helpers/sitemap");
 const ip = require("ip");
 
 // Load environment variables from file
 require("dotenv").config({ path: "variables.env" });
 
-// Store the project root directory as an environment variable, so it can be easily accessed in other JS files
-process.env.ROOT = __dirname;
 
 // Initiate the database connection
 mongoose.connect(process.env.DATABASE, {
@@ -32,6 +33,12 @@ require("./models/User");
 // Schedule daily backups at 4am
 cron.schedule("0 4 * * *", () => {
   mongo.backup()
+});
+
+sitemap.generate()
+// Schedule daily sitemap generations at 5am
+cron.schedule("0 5 * * *", () => {
+  sitemap.generate()
 });
 
 // Load the server files & set the port to 8888

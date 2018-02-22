@@ -3,6 +3,9 @@ const compression = require("compression");
 const path = require("path");
 const md5 = require("md5");
 const fs = require("fs");
+const session = require("express-session");
+const mongoose = require("mongoose");
+const MongoStore = require("connect-mongo")(session);
 const passport = require("passport");
 require("./helpers/passport");
 const promisify = require("es6-promisify");
@@ -10,13 +13,12 @@ const flash = require("connect-flash");
 const device = require("device");
 const bodyParser = require("body-parser");
 const expressValidator = require("express-validator");
-const session = require("express-session");
-const mongoose = require("mongoose");
-const MongoStore = require("connect-mongo")(session);
 const routes = require("./routes/routes");
-const errorHandlers = require("./helpers/errorHandlers");
+const { logging } = require("./helpers/logging");
+const sitemap = require("./helpers/sitemap");
 const { titleCase } = require("./helpers/titleString");
 const { formatVehicleData } = require("./helpers/formatVehicleData");
+const errorHandlers = require("./helpers/errorHandlers");
 const app = express();
 
 // Load the Pug template views
@@ -57,15 +59,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Log requests with a timestamp, HTTP method, path and IP address
-app.use("/", (req, res, next) => {
-  const timestamp = new Date().toString();
-  var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-  console.log(`${timestamp} ${req.method} ${req.path} ${ip}`);
-  if (req.method === "POST") {
-    console.log(req.body);
-  }
-  next();
-});
+app.use(logging);
 
 // Exposes variables and functions for use in Pug templates
 app.use((req, res, next) => {
@@ -97,10 +91,15 @@ app.use((req, res, next) => {
 // Route handler
 app.use("/", routes);
 
+// Handle sitemap
+app.use("/sitemap.xml", sitemap.send);
+
 // 404 if no routes are found
 app.use((req, res, next) => {
   if (req.accepts("html") && res.status(404)) {
-    console.error(`🚫  🔥  Error 404 ${req.method} ${req.path}`);
+    if (!req.headers['user-agent'].includes('Node/SitemapGenerator')) {
+      console.error(`🚫  🔥  Error 404 ${req.method} ${req.path}`);
+    }
     res.render("404");
   }
 });
