@@ -65,7 +65,7 @@ app.use(logging);
 app.use((req, res, next) => {
   // Parses the User Agent into desktop, phone, tablet, phone, bot or car
   res.locals.device = device(req.headers['user-agent']).type
-  if (req.headers['user-agent'].includes("Insights")) res.locals.bot = true
+  if (req.headers['user-agent'].includes("sights")) res.locals.bot = true
   // Function to remove 0s and empty entries from vehicle object
   res.locals.formatVehicleData = formatVehicleData;
   res.locals.titleCase = titleCase;

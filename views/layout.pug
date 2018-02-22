@@ -157,5 +157,9 @@ html
     block footerScripts
       script
         include scripts/dist/mobileMenu-min.js
+      if !bot
+        script(async src="https://www.googletagmanager.com/gtag/js?id=UA-104172468-2")
+        script
+          include scripts/dist/googleAnalytics-min.js
 
     block extraFooterScripts

@@ -8,7 +8,7 @@ exports.generate = () => {
   const sitemap = generateSitemap(process.env.PUBLIC_URL, {
     stripQuerystring: true,
     changeFreq: 'weekly',
-    filePath: sitemapFile
+    filepath: sitemapFile
   });
 
   sitemap.on('done', () => {
