@@ -91,9 +91,6 @@ app.use((req, res, next) => {
 // Route handler
 app.use("/", routes);
 
-// Handle sitemap
-app.use("/sitemap.xml", sitemap.send);
-
 // 404 if no routes are found
 app.use((req, res, next) => {
   if (req.accepts("html") && res.status(404)) {

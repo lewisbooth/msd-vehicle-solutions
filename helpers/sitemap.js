@@ -2,19 +2,24 @@ const generateSitemap = require("sitemap-generator");
 const fs = require('fs')
 
 const timeout = 3600000 // 1 hour expiry
-const sitemapFile = process.env.ROOT + '/sitemap.xml'
+const sitemapFile = process.env.ROOT + '/public/sitemap.xml'
 
 exports.generate = () => {
   const sitemap = generateSitemap(process.env.PUBLIC_URL, {
     stripQuerystring: true,
-    changeFreq: 'weekly'
+    changeFreq: 'weekly',
+    filePath: sitemapFile
   });
 
   sitemap.on('done', () => {
     console.log('🤖  Successfully created sitemap.xml')
   });
 
-  const lastModified = fs.statSync(sitemapFile).mtimeMs;
+  let lastModified = 0
+  if (fs.existsSync(sitemapFile)) {
+    lastModified = fs.statSync(sitemapFile).mtimeMs;
+  }
+
   const currentTime = new Date().getTime()
 
   if (currentTime - lastModified < timeout) {
@@ -23,11 +28,5 @@ exports.generate = () => {
   } else {
     console.log("Generating new sitemap...")
     sitemap.start();
-  }
-}
-
-exports.send = (req, res) => {
-  if (fs.existsSync(sitemapFile)) {
-    res.sendFile(sitemapFile)
   }
 }

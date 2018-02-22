@@ -5,22 +5,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/fonts/exo2-semibold-webfont.woff2</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/fonts/exo2-light-webfont.woff2</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/fonts/OpenSans-Regular.woff2</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/fonts/OpenSans-Semibold.woff2</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://moorlandselfdrive.co.uk/sales</loc>
     <changefreq>weekly</changefreq>
   </url>
@@ -69,11 +53,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/sales/cars</loc>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/sales/vans</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/sales/vans</loc>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/sales/cars</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
