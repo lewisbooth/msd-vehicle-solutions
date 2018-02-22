@@ -5,6 +5,7 @@ const { cleanObject } = require("../helpers/cleanObject");
 const { inputVehicleData } = require("../helpers/inputVehicleData");
 const fs = require("fs");
 const sharp = require("sharp");
+const rmdir = require("rmdir");
 
 exports.login = async (req, res) => {
   res.render("admin/login", {
@@ -121,6 +122,15 @@ exports.deleteVehicle = async (req, res) => {
       req.flash("error", "Error deleting vehicle");
       res.redirect("/admin");
     } else {
+      // Remove imagery folder
+      rmdir(`public/images/vehicles/${req.params.vehicleId}`, err => {
+        if (err) {
+          console.log("Error deleting vehicle images folder")
+          console.log(err)
+        } else {
+          console.log("Deleted vehicle images")
+        }
+      })
       req.flash("success", "Successfully deleted vehicle");
       res.redirect("/admin");
     }
@@ -163,7 +173,7 @@ exports.uploadVehiclePhoto = async (req, res, next) => {
         .max()
         .toFormat("jpg")
         .toFile(
-        `${photoFolder}/${timestamp}-400.jpg`
+          `${photoFolder}/${timestamp}-400.jpg`
         )
         .then(() => {
           req.body.photos = [timestamp];
