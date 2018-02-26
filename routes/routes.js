@@ -25,6 +25,9 @@ router.get("/contact", pageController.contact);
 router.post("/contact", pageController.contactSubmit);
 
 // Listings
+router.get("/vehicles", (req, res) => {
+  res.redirect("/vehicles/hire/vans");
+});
 router.get("/vehicles/:type/:vehicle", listingController.listingPage);
 router.get("/vehicles/:vehicleId", listingController.vehiclePage);
 

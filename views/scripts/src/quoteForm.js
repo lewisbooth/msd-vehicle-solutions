@@ -67,7 +67,6 @@ function getState() {
       inputStates[name] = { checked };
     };
     currentState[fieldsetName] = inputStates;
-    console.log(inputStates, fieldsetName)
   };
   return currentState;
 }
