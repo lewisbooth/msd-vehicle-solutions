@@ -94,6 +94,7 @@ app.use("/", routes);
 // 404 if no routes are found
 app.use((req, res, next) => {
   if (req.accepts("html") && res.status(404)) {
+    // Avoid spamming 404 console errors when sitemap is generated
     if (!req.headers['user-agent'].includes('Node/SitemapGenerator')) {
       console.error(`🚫  🔥  Error 404 ${req.method} ${req.path}`);
     }
