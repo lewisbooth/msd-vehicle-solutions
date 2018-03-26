@@ -77,6 +77,22 @@ exports.contact = async (req, res) => {
   });
 };
 
+exports.privacy = async (req, res) => {
+  res.render("privacy", {
+    title: "Privacy Policy",
+    description:
+      "Our Privacy Policy"
+  });
+};
+
+exports.terms = async (req, res) => {
+  res.render("terms-and-conditions", {
+    title: "Terms and Conditions",
+    description:
+      "Terms and Conditions"
+  });
+};
+
 exports.contactSubmit = async (req, res) => {
   const timestamp = new Date().toString();
   const { name, email, message, botTrap } = req.body;

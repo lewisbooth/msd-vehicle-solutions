@@ -23,6 +23,8 @@ router.get("/customs", pageController.customVehicles);
 router.get("/servicing", pageController.servicing);
 router.get("/contact", pageController.contact);
 router.post("/contact", pageController.contactSubmit);
+router.get("/privacy", pageController.privacy);
+router.get("/terms-and-conditions", pageController.terms);
 
 // Listings
 router.get("/vehicles", (req, res) => {

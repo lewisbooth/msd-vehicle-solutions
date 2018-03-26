@@ -37,18 +37,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/mercedes-sprinter-2017-2</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-transit-2015</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/mercedes-sprinter-2017</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://moorlandselfdrive.co.uk/login</loc>
     <changefreq>weekly</changefreq>
   </url>
@@ -61,23 +49,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-fiesta-ecoboost-zetec-2014</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/vauxhall-insignia-sri-2017</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://moorlandselfdrive.co.uk/vehicles/lease/cars</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://moorlandselfdrive.co.uk/vehicles/lease/vans</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-transit-2014</loc>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>
