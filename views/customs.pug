@@ -32,20 +32,22 @@ block articleContent
       li Tow bars &amp; roof racks
 
 block grey-strip
-  .space-between
-    div.space-between-group
-      img(src="/images/icons/instagram.png").instagram-logo
-      h4.no-margin @msdcustomcommercials
-    a(href="https://www.instagram.com/msdcustomcommercials" target="_blank").button.no-margin Follow on instagram
-  #instafeed.row
+  .gallery          
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-vw-airlift-suspension.jpg", alt="Airlift suspension - VW Transporter")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-cutter.jpg", alt="Large cutting machine")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-m3-custom-seats.jpg", alt="BMW M3 racing seat")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-cutting-wood.jpg", alt="Table saw cutting wood")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-m3-roll-cage.jpg", alt="BMW M3 roll cage")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-wood-panels.jpg", alt="Wood panels")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-table-saw.jpg", alt="Table saw")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-m3-engine-bay.jpg", alt="M3 engine bay")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-marking-templates.jpg", alt="Marking wooden templates")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-mustang-engine-bay.jpg", alt="Mustang engine bay")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-vw-transporter.jpg", alt="VW TRansporter")
+    img.gallery-image(src="/images/page-content/van-conversions/gallery-mustang-on-ramp.jpg", alt="Car on ramp")
 
 block services-cards
   +serviceCardHire
   +serviceCardSales
   +serviceCardLeasing
   +serviceCardServicing  
-        
-block extraFooterScripts
-  script
-    include scripts/dist/instafeed-lib.js
-    include scripts/dist/instafeed-min.js

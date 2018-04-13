@@ -17,18 +17,18 @@ block articleContent
           label Category:
           select(name="category")
             option(value="all" selected=(query.category === "all")) All
-            option(value="van-small") Small Van
+            option(value="van-small" selected=(query.category === "van-small")) Small Van
             option(value="van-medium" selected=(query.category === "van-medium")) Medium Van
-            option(value="van-large") Large Van
-            option(value="van-luton") Luton Van
-            option(value="car-economy") Economy Car
-            option(value="car-saloon") Saloon Car
-            option(value="car-suv") SUV
-            option(value="car-truck") Truck 
+            option(value="van-large" selected=(query.category === "van-large")) Large Van
+            option(value="van-luton" selected=(query.category === "van-luton")) Luton Van
+            option(value="car-economy" selected=(query.category === "car-economy")) Economy Car
+            option(value="car-saloon" selected=(query.category === "car-saloon")) Saloon Car
+            option(value="car-suv" selected=(query.category === "car-suv")) SUV
+            option(value="car-truck" selected=(query.category === "car-truck")) Truck 
           label Sort:
           select(name="sortBy")
-            option(value="last-modified" selected=(query.sort === "last-modified")) Last Modified
-            option(value="name" selected=(query.sort === "name")) Name
+            option(value="last-modified" selected=(query.sortBy === "last-modified")) Last Modified
+            option(value="name" selected=(query.sortBy === "name")) Name
           input(type="text" placeholder="Search" name="search" value=( query.search ? query.search : ""))
         span
           a.button.button-grey(href="/admin") Reset

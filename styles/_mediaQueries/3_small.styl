@@ -74,15 +74,13 @@
       .mobile-nav-wrapper 
         .main-nav-dropdown-toggle
           .main-nav-dropdown-toggle-icon
-            justify-content center
             
             &-top
-              transform rotate(-45deg)
+              transform translateY(8px) rotate(-45deg) 
             &-middle
               opacity 0
-              margin -3px 0
             &-bottom
-              transform rotate(45deg)
+              transform translateY(-8px) rotate(45deg)
       
     &-dropdown-toggle
       display inline-flex
@@ -109,8 +107,8 @@
         transition all .3s ease-in-out    
 
         div
-          width 2.5rem
-          height 3px
+          width 3rem
+          height 1px
           background-color white
           transition all .3s ease-in-out    
 
@@ -332,3 +330,9 @@
       flex-direction column
       h3
         margin 0 0 2rem 0
+
+  .gallery
+
+    &-image
+      max-width 100%
+      margin-bottom 2rem

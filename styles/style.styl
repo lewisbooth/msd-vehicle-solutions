@@ -182,7 +182,7 @@ body
   img, picture, source
     min-height 100%
     min-width 100%
-    max-width auto
+    max-width gallery-image
     max-height auto
 
 body.modal-active
@@ -452,7 +452,12 @@ body.modal-active
   margin-bottom 4rem
 
   &-image
-    max-width 25%
+    max-width calc(33.333% - 1rem)
+    margin-right 1.5rem
+    margin-bottom 1.5rem
+
+    &:nth-child(3n)
+      margin-right 0
 
 .promoted-items
   margin 2rem 0 3rem 0

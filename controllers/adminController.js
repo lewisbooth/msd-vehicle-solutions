@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const Vehicle = mongoose.model("Vehicle");
+const { move } = require("../helpers/move");
 const { cleanObject } = require("../helpers/cleanObject");
 const { inputVehicleData } = require("../helpers/inputVehicleData");
 const fs = require("fs");
@@ -20,10 +21,8 @@ exports.dashboard = async (req, res) => {
   let sort = {
     updatedAt: -1
   };
-  if (query.sortBy === "AZ") {
+  if (query.sortBy === "name") {
     sort = { name: 1 };
-  } else if (query.sortBy === "ZA") {
-    sort = { name: -1 };
   }
   if (query.search) {
     filter.name = { $regex: query.search, $options: "i" };
@@ -70,11 +69,28 @@ exports.addVehicle = async (req, res) => {
   if (req.body.photos) {
     vehicle.photos = req.body.photos;
   }
-  const vehicleSave = await new Vehicle(vehicle).save(err => {
+  const vehicleSave = await new Vehicle(vehicle).save((err, data) => {
     if (err) {
       req.flash("error", "Error adding vehicle");
       res.redirect("back");
     } else {
+      if (req.body.photos) {
+        fs.mkdirSync(`public/images/vehicles/${data._id}`)
+        move(
+          `public/images/vehicles/temp/${req.body.photos}-1000.jpg`,
+          `public/images/vehicles/${data._id}/${req.body.photos}-1000.jpg`,
+          (err) => {
+            if (err) console.log
+          }
+        )
+        move(
+          `public/images/vehicles/temp/${req.body.photos}-400.jpg`,
+          `public/images/vehicles/${data._id}/${req.body.photos}-400.jpg`,
+          (err) => {
+            if (err) console.log
+          }
+        )
+      }
       req.flash("success", "Successfully added vehicle");
       res.redirect("/admin");
     }
@@ -140,18 +156,13 @@ exports.deleteVehicle = async (req, res) => {
 exports.uploadVehiclePhoto = async (req, res, next) => {
   if (!req.file) {
     next();
-    return;
+    return
   }
 
   const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId })
 
-  if (!vehicle) {
-    next();
-    return;
-  }
-
   const photo = req.file.buffer;
-  const photoFolder = `${process.env.ROOT}/public/images/vehicles/${vehicle._id}`;
+  const photoFolder = `${process.env.ROOT}/public/images/vehicles/${vehicle ? vehicle._id : "temp"}`;
   const timestamp = new Date().getTime().toString();
 
   if (!fs.existsSync(photoFolder)) {
