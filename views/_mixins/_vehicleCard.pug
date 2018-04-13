@@ -2,7 +2,7 @@ mixin vehicleCard(vehicle = {}, type = "hire")
   - const vehicleClean = formatVehicleData(vehicle)
   if vehicleClean.name.length > 20
     - vehicleClean.name = vehicleClean.name.split("").slice(0,20).join("") + "..."
-  a.card.card-border-bottom(href=`/vehicles/${vehicleClean.slug}?ref=${type}` target="_blank")
+  a.card.card-border-bottom(href=`/vehicles/${vehicleClean.slug}?ref=${type}`)
     .card-image(style=`background-image: url(/images/vehicles/${vehicleClean._id}/${vehicleClean.photos[0]}-400.jpg);`, alt="Ford Transit Small").no-margin
     .card-price
       if vehicleClean.pricing[type] > 0

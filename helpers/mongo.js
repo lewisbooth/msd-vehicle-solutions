@@ -77,6 +77,9 @@ exports.backup = () => {
   if (!fs.existsSync("mongodb")) {
     fs.mkdirSync("mongodb")
   }
+  if (!fs.existsSync("mongodb/backup")) {
+    fs.mkdirSync("mongodb/backup")
+  }
   // Format timestamp to weekday-month-date-year-hour-min-sec
   // E.g thu-feb-15-2018-10-11-01 
   const timestamp = new Date()
