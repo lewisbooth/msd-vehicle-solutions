@@ -97,32 +97,38 @@ exports.cleanBucket = (Bucket, limit) => {
   // Get a list of all bucket items
   s3.listObjectsV2(options, (err, data) => {
     if (err) {
-      console.log("🚫 Error retrieving bucket information")
-      console.log(err)
-      return;
+      console.log("🚫  Error retrieving bucket information")
+      console.log(err.message)
+      return
     }
     // If there are more files than the given limit, delete them
-    if (data.KeyCount > limit) {
-      // Find the oldest items
-      const outdatedItems = data.Contents
-        .slice(0, data.KeyCount - limit)
-        .map(item => {
-          return { Key: item.Key }
-        })
-      const deleteOptions = {
-        Bucket,
-        Delete: { Objects: outdatedItems }
-      }
-      // Delete the outdated items
-      s3.deleteObjects(deleteOptions, (err, data) => {
-        if (err) {
-          console.log("🚫 Error deleting items")
-          console.log(err)
-        }
+    if (!data.KeyCount > limit)
+      return
+    // Find the oldest items
+    const outdatedItems = data.Contents
+      .sort((a, b) => {
+        const dateA = new Date(a.LastModified)
+        const dateB = new Date(b.LastModified)
+        return dateA - dateB
       })
+      .slice(0, data.KeyCount - limit)
+      .map(item => {
+        return { Key: item.Key }
+      })
+    const deleteOptions = {
+      Bucket,
+      Delete: { Objects: outdatedItems }
     }
+    // Delete the outdated items
+    s3.deleteObjects(deleteOptions, (err, data) => {
+      if (err) {
+        console.log("🚫  Error deleting items")
+        console.log(err.message)
+      }
+    })
   })
-};
+}
+
 
 // Ask user to select which file they want via terminal input
 function userSelect(files) {
