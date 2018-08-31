@@ -72,14 +72,12 @@ exports.restore = async () => {
 };
 
 exports.backup = () => {
-  console.log("Backing up files");
+  console.log("Backing up files")
   // Create backup folder if it doesn't already exist
-  if (!fs.existsSync("mongodb")) {
+  if (!fs.existsSync("mongodb"))
     fs.mkdirSync("mongodb")
-  }
-  if (!fs.existsSync("mongodb/backup")) {
+  if (!fs.existsSync("mongodb/backup"))
     fs.mkdirSync("mongodb/backup")
-  }
   // Format timestamp to weekday-month-date-year-hour-min-sec
   // E.g thu-feb-15-2018-10-11-01 
   const timestamp = new Date()
@@ -89,39 +87,33 @@ exports.backup = () => {
     .splice(0, 5)
     .join("-")
     .split(":")
-    .join("-");
+    .join("-")
   // Dump database into local backup folder
   mongoBackup({
     uri: process.env.DATABASE,
     root: "mongodb/backup",
     callback: err => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      else {
-        console.log("Successfully backed up database to mongodb/backup")
-      }
+      if (err)
+        return console.log(err)
+      // Tarball the database dump
+      tar.c({ file: `mongodb/${timestamp}.tgz` },
+        ["./mongodb/backup", "./public"]
+      ).then(_ => {
+        // Upload the tarball to S3
+        S3.upload(
+          process.env.S3_BACKUP_BUCKET_NAME,
+          `mongodb/${timestamp}.tgz`
+        )
+        // Restrict S3 bucket to 30 entries
+        S3.cleanBucket(process.env.S3_BACKUP_BUCKET_NAME, 30)
+        // Clean up temp folder
+        rmdir('mongodb/backup', err => {
+          if (err) {
+            console.log("Error deleting temp folder")
+            console.log(err)
+          }
+        })
+      })
     }
-  });
-  // Tarball the database dump and vehicle imagery folder
-  tar.c({ file: `mongodb/${timestamp}.tgz` },
-    ["./public/images/vehicles", "./mongodb/backup"]
-  ).then(_ => {
-    // Upload the tarball to S3
-    S3.upload(
-      process.env.S3_BACKUP_BUCKET_NAME,
-      `mongodb/${timestamp}.tgz`
-    );
-    rmdir('mongodb/backup', err => {
-      if (err) {
-        console.log("Error deleting temp folder")
-        console.log(err)
-      } else {
-        console.log("Cleaned up temp folder")
-      }
-    })
   })
-  // Restrict S3 bucket to 30 entries
-  S3.cleanBucket(process.env.S3_BACKUP_BUCKET_NAME, 30)
 }
