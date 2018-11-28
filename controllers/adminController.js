@@ -155,8 +155,7 @@ exports.deleteVehicle = async (req, res) => {
 
 exports.uploadVehiclePhoto = async (req, res, next) => {
   if (!req.file) {
-    next();
-    return
+    return next()    
   }
 
   const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId })
