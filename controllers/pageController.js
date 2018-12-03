@@ -97,7 +97,7 @@ exports.contactSubmit = async (req, res) => {
 
   if ((botTrap && botTrap.length > 0) || (telephone && telephone.length > 0)) {
     console.log(`🤖  Stopped bot attempt`);
-    res.status(200).send();
+    return res.status(200).send();
   }
 
   console.log(timestamp + " New contact message");
