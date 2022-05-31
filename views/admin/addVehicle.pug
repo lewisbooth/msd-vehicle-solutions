@@ -25,10 +25,14 @@ block articleContent
             input(type="radio" name="condition" value="new" checked=(vehicle ? vehicle.condition === "new" : true))
             label.checkbox-label New
             input(type="radio" name="condition" value="used" checked=(vehicle ? vehicle.condition === "used" : false))
-            label.checkbox-label Used
+            label.checkbox-label Used          
+          label Status
+          input(type="checkbox" name="sold" checked=(vehicle ? vehicle.sold : false))
+          label(for="sold").checkbox-label Sold
           label Description
-          textarea(name="description" rows="5")
-            =vehicle ? vehicle.details.description : ""
+          .pell
+                textarea(rows="8" name="description")#description= vehicle ? vehicle.details.description : ""
+                .pell__editor
           label Year
           input(type="number" name="year" required value=((vehicle ? vehicle.details.year : date.getFullYear() )))
           label Category
@@ -39,8 +43,10 @@ block articleContent
             option(value="van-luton" selected=(vehicle && vehicle.category === "van-luton")) Luton Van
             option(value="car-economy" selected=(vehicle && vehicle.category === "car-economy")) Economy Car
             option(value="car-saloon" selected=(vehicle && vehicle.category === "car-saloon")) Saloon Car
+            option(value="car-performance" selected=(vehicle && vehicle.category === "car-performance")) Performance Car
             option(value="car-suv" selected=(vehicle && vehicle.category === "car-suv")) SUV
             option(value="car-truck" selected=(vehicle && vehicle.category === "car-truck")) Truck 
+            option(value="car-minibus" selected=(vehicle && vehicle.category === "car-minibus")) Minibus 
           .space-between
             label Storage dimensions (mm)
             p Vans Only
@@ -52,10 +58,10 @@ block articleContent
               p Height
               input(type="number" name="storageHeight" value=(vehicle && vehicle.details.storage ? vehicle.details.storage.height : ""))
             div
-              p Depth
-              input(type="number" name="storageDepth" value=(vehicle && vehicle.details.storage ? vehicle.details.storage.depth : ""))
+              p Length
+              input(type="number" name="storageLength" value=(vehicle && vehicle.details.storage ? vehicle.details.storage['length'] : ""))
           .space-between
-            label Max cargo (kg)
+            label Payload (kg)
             p Vans Only
           input(type="number" name="cargo" value=(vehicle ? vehicle.details.cargo : ""))
           label Height (mm)
@@ -117,6 +123,7 @@ block articleContent
               input(type="checkbox" name="promotedSales" checked=(vehicle ? vehicle.promoted.sales : false))
               label(for="promotedSales").checkbox-label Promoted
 
+
       button.button(type="submit")= vehicle ? "Update Vehicle" : "Add Vehicle"
       if vehicle
         .confirm-delete.button.button-danger Delete Vehicle      
@@ -132,6 +139,11 @@ block modal
 
 block sidebar
 block services
+block extraHeaderScripts
+  link(rel="stylesheet" type="text/css" href="https://unpkg.com/pell/dist/pell.min.css")
+
 block extraFooterScripts
+  script(src='https://unpkg.com/pell')
   script
     include ../scripts/dist/confirmDelete-min.js
+    include ../scripts/dist/editVehicle-min.js

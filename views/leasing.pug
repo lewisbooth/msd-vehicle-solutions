@@ -22,14 +22,14 @@ block articleContent
       .split
         h3 Cars for lease
         p Browse our current selection of affordable car lease deals.
-        a(href="/vehicles/lease/cars").button See car deals
+        a(href="/vehicles/listing/lease?size=all-cars").button See car deals
     .split-container.vertical-padding
       .split
         img(src="/images/page-content/sales/vans-for-sale.jpg", alt="Lineup of vans for lease")
       .split
         h3 Vans for lease
         p Our wide selection of van lease deals are perfect for any job.
-        a(href="/vehicles/lease/vans").button See van deals
+        a(href="/vehicles/listing/lease?size=all-vans").button See van deals
     h4 Why lease with Moorland Self Drive?
     p As an independent family business, we offer honest and friendly advice to help you pick the best leasing deal for your situation, and our #[a(href="/servicing" target="_blank") service and repair centre] can support your vehicle throughout the lease period and beyond. Need a specific vehicle? Call us and we'll order it directly for you.
     ul.list-ticks
@@ -51,7 +51,7 @@ block promoted-items
             each vehicle in vehicles
               +vehicleCard(vehicle, "lease")
           .row.center-content
-            a(href="/vehicles/lease/cars").button.no-margin See all vehicles  
+            a(href="/vehicles/listing/lease").button.no-margin See all vehicles  
 
 block services-cards
   +serviceCardHire

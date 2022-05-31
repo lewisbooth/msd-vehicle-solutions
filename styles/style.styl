@@ -23,8 +23,9 @@ body
 
   &-main-logo
     height 6.8rem
-    width auto
+    width 14rem
     margin .75rem 0
+
 
   &-menu
     display flex
@@ -178,6 +179,7 @@ body
   align-items center
   justify-content center
   border-bottom 3px solid $mainBlue
+  background $greyBorders
 
   img, picture, source
     min-height 100%
@@ -193,7 +195,6 @@ body.modal-active
 
     .button
       margin-bottom 0
-      
 
 .modal
   z-index 999999999
@@ -507,6 +508,7 @@ body.modal-active
     width 100%
     background-position center
     background-size cover
+    background lightGrey
 
   &-price
     background-color $mainBlue
@@ -526,7 +528,6 @@ body.modal-active
       content 'per day'
       font-family $openSansRegular
       font-size 1.4rem
-      
 
     &-promoted
       background-color $mainGreen
@@ -538,23 +539,36 @@ body.modal-active
       width 100%
       text-align center
 
+    &-sold
+      background-color $error
+      margin 1rem -1rem -2rem -1rem
+      padding 0 1rem
+      font-size 1.4rem
+      text-transform uppercase
+      letter-spacing 0.05rem
+      width 100%
+      text-align center
+
   &-text-container
     padding 2rem 1.25rem
+    font-size 1.6rem
 
   h5
     font-family $exoSemibold
+    margin-bottom 1rem
 
   h6
     font-size 1.8rem
     text-transform uppercase
     font-family $exoLight
+    margin-bottom 1rem
 
   &-availability
     display flex
 
     li
       position relative
-      margin-left 1.5rem
+      margin-left 1rem
       font-size 1.6rem
       line-height 2rem
       color $richBlack
@@ -613,6 +627,7 @@ a.card
 
 .listing
   margin-bottom 6rem
+  padding-top 6rem
 
   &-results
     &-entry
@@ -742,6 +757,10 @@ a.card
       margin-right 0
 
 .vehicle-page
+
+  li
+    list-style unset
+
   &-pricing
     text-align center
     padding 3rem 1rem 0 1rem
@@ -769,6 +788,16 @@ a.card
       padding 1rem 2rem
       margin 0 -1rem
       background-color $mainGreen
+
+      h4
+        color white
+        margin 0
+        font-family $exoLight
+    
+    &-sold
+      padding 1rem 2rem
+      margin 0 -1rem
+      background-color $error
 
       h4
         color white

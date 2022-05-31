@@ -1,8 +1,7 @@
 const passport = require("passport");
-const crypto = require("crypto");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
-const promisify = require("es6-promisify");
+const {promisify} = require("es6-promisify");
 
 exports.login = passport.authenticate("local", {
   failureRedirect: "/login",
@@ -28,10 +27,9 @@ exports.isLoggedIn = (req, res, next) => {
 
 exports.registerUser = async (req, res, next) => {
   const user = new User({
-    name: req.body.name,
+    name:'',
     email: req.body.email
   });
-  const register = promisify(User.register, User);
-  await register(user, req.body.password);
+  User.register(user, req.body.password);
   next();
 };

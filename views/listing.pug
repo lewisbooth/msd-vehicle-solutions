@@ -2,32 +2,14 @@ extends layout
 
 block coverImage
 block articleHeader
-block pageContent
-  .full-width.listing-selection
-    .container
-      .listing-selection-text I want to
-      .listing-selection-dropdown.type 
-        span #{params.selectedOptionType}
-        .listing-selection-dropdown-group
-          .listing-selection-dropdown-group-triangle
-          .listing-selection-dropdown-group-option(data-value="Hire") Hire
-          .listing-selection-dropdown-group-option(data-value="Lease") Lease
-          .listing-selection-dropdown-group-option(data-value="Buy") Buy
-      .listing-selection-text a
-      .listing-selection-dropdown.vehicle
-        span #{params.selectedOptionVehicle}
-        .listing-selection-dropdown-group
-          .listing-selection-dropdown-group-triangle
-          .listing-selection-dropdown-group-option(data-value="Van") Van
-          .listing-selection-dropdown-group-option(data-value="Car") Car
-      button.button.button-secondary.button-ghost Update       
+block pageContent  
 
 block listingResults
   - const vehicleCount = Object.keys(vehicles).length
   .container.listing
     block listingFilter
       .space-between
-        h4.no-margin Filter Results
+        h4.no-margin Vehicles for !{selectedOptionType}
         p.no-margin Showing #[strong= vehicleCount] vehicles
       
       form.listing-filter
@@ -38,13 +20,22 @@ block listingResults
               option(value="price-low" selected=(query.sort === "price-low" || !query.sort)) Price (Low-High)
               option(value="price-high" selected=(query.sort === "price-high")) Price (High-Low)
           span
-            label Size:
+            label Category:
             select(name="size")
               option(value="all" selected=(query.size === "all" || !query.size)) All
-              option(value="van-small" selected=(query.size === "van-small")) Small
-              option(value="van-medium" selected=(query.size === "van-medium")) Medium
-              option(value="van-large" selected=(query.size === "van-large")) Large
-              option(value="van-luton" selected=(query.size === "van-luton")) Luton
+              option(value="all-cars" selected=(query.size === "all-cars")) All Cars
+              option(value="all-vans" selected=(query.size === "all-vans")) All Vans
+              option(value="car-economy" selected=(query.size === "car-economy")) Economy Car
+              option(value="car-hatchback" selected=(query.size === "car-hatchback")) Hatchback
+              option(value="car-saloon" selected=(query.size === "car-saloon")) Saloon
+              option(value="car-performance" selected=(query.size === "car-performance")) Performance Car
+              option(value="car-suv" selected=(query.size === "car-suv")) SUV
+              option(value="car-truck" selected=(query.size === "car-truck")) Truck
+              option(value="car-minibus" selected=(query.size === "car-minibus")) Minibus
+              option(value="van-small" selected=(query.size === "van-small")) Small Van
+              option(value="van-medium" selected=(query.size === "van-medium")) Medium Van
+              option(value="van-large" selected=(query.size === "van-large")) Large Van
+              option(value="van-luton" selected=(query.size === "van-luton")) Luton Van
           span
             label Seats:
             select(name="seats")

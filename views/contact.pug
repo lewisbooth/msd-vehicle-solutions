@@ -9,10 +9,12 @@ block articleContent
   article
     p To find out about the latest vehicles and offers or for more detailed information on our services, please call us or fill in the form below.
     form.contact-form(name="contact-form")
+      label Name
+      input(type="text" name="name" maxlength="50" required)
       .split-container
         .split
-          label Name
-          input(type="text" name="name" maxlength="50" required)
+          label Phone Number
+          input(type="phone" name="phone" maxlength="20" required)
         .split
           label Email
           input(type="email" name="email" maxlength="100" required)

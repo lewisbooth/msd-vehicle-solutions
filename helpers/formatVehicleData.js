@@ -16,11 +16,17 @@ exports.formatVehicleData = data => {
     case "car-saloon":
       vehicle.category = "Saloon Car";
       break;
+    case "car-performance":
+      vehicle.category = "Performance Car";
+      break;
     case "car-suv":
       vehicle.category = "SUV";
       break;
     case "car-truck":
       vehicle.category = "Truck";
+      break;
+    case "car-minibus":
+      vehicle.category = "Minibus";
       break;
     case "van-small":
       vehicle.category = "Small Van";

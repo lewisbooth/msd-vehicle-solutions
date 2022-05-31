@@ -48,12 +48,11 @@ exports.addVehiclePage = async (req, res) => {
 };
 
 exports.editVehiclePage = async (req, res) => {
-  const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId }, err => {
-    if (err) {
-      req.flash("error", "Vehicle not found");
-      res.redirect("back");
-    }
-  });
+  const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId });
+  if (!vehicle) {
+    req.flash("error", "Vehicle not found");
+    res.redirect("back");
+  }
   const cleanVehicle = JSON.parse(JSON.stringify(vehicle));
   cleanObject(cleanVehicle);
   res.render("admin/addVehicle", {
@@ -98,12 +97,13 @@ exports.addVehicle = async (req, res) => {
 };
 
 exports.editVehicle = async (req, res) => {
+  console.log(req.body);
   const vehicle = inputVehicleData(req);
   if (req.body.photos) {
     vehicle.photos = req.body.photos;
   }
   let redirect = "back";
-  const vehicleSave = await Vehicle.findOneAndUpdate(
+  Vehicle.findOneAndUpdate(
     { slug: req.params.vehicleId },
     { $set: vehicle },
     { new: true },
@@ -159,6 +159,7 @@ exports.uploadVehiclePhoto = async (req, res, next) => {
   }
 
   const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId })
+  if (!vehicle) return next()
 
   const photo = req.file.buffer;
   const photoFolder = `${process.env.ROOT}/public/images/vehicles/${vehicle ? vehicle._id : "temp"}`;
@@ -171,16 +172,18 @@ exports.uploadVehiclePhoto = async (req, res, next) => {
   sharp(photo)
     .rotate()
     // Resize to 1000px on longest side
-    .resize(1000, 1000)
-    .max()
+    .resize(1000, 1000, {
+      fit: 'inside',
+    })
     .toFormat("jpg")
     .toFile(`${photoFolder}/${timestamp}-1000.jpg`)
     .then(() => {
       sharp(photo)
         .rotate()
         // Resize to 400px on longest side
-        .resize(400, 400)
-        .max()
+        .resize(400, 400, {
+          fit: 'inside',
+        })
         .toFormat("jpg")
         .toFile(
           `${photoFolder}/${timestamp}-400.jpg`

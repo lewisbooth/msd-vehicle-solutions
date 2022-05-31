@@ -7,43 +7,27 @@ const { formatVehicleData } = require("../helpers/formatVehicleData");
 exports.listingPage = async (req, res) => {
   // Because this is a dynamic route (/vehicles/:type/:vehicle) we can use the request parameters :type and :vehicle to generate the filters on the page, whilst rendering the same template. /vehicles/leasing/cars will filter cars for lease etc.
 
-  const { type, vehicle } = req.params;
+  const { type } = req.params;
   const { sort, size, seats, fuel } = req.query;
 
-  // Format the parameters for use in title/description
-  const vehicleFormatted = titleString(vehicle);
-
-  // Format the parameters for use in dropdown options on the page
-  let selectedOptionVehicle, selectedOptionType;
-  if (vehicle === "vans") selectedOptionVehicle = "Van";
-  if (vehicle === "cars") selectedOptionVehicle = "Car";
+  let selectedOptionType;
   if (type === "hire") selectedOptionType = "Hire";
   if (type === "lease") selectedOptionType = "Lease";
-  if (type === "sales") selectedOptionType = "Buy";
+  if (type === "sales") selectedOptionType = "Sale";
 
-  // If parameters aren't matched above, redirect to /hire/vans
-  if (selectedOptionVehicle === undefined || selectedOptionType === undefined) {
-    req.flash("error", "That category doesn't exist");
-    res.redirect("/vehicles/hire/vans");
-    next();
-  }
+  const filter = {};
 
-  const filter = {
-    // Match categories starting with 'van' or 'car'
-    category: new RegExp(`^${selectedOptionVehicle.toLowerCase()}`)
-  };
-
-  // Vehicle must be available for the search type (hire/lease/sales)
-  // ---NOTE---
-  // Mongoose requires nested filters to be flattened to one level, e.g. 
-  // { "availability.cars": true } 
-  // instead of 
-  // { availability: { cars: true } }
   filter[`availability.${type}`] = true;
 
   // Add extra filters from the query strings
   if (size && size !== "all") {
     filter.category = size
+  }
+  if (size == 'all-cars') {
+    filter.category = { $regex: '^car-' }
+  }
+  if (size == 'all-vans') {
+    filter.category = { $regex: '^van-' }
   }
   if (seats && seats === "4+") {
     // Filter for > 3 seats
@@ -72,25 +56,18 @@ exports.listingPage = async (req, res) => {
   res.render("listing", {
     vehicles,
     type,
-    params: { selectedOptionVehicle, selectedOptionType },
-    title: `${vehicleFormatted} for ${
-      selectedOptionType !== "Buy" ? selectedOptionType : "Sale"
-      } in Stoke-on-Trent`,
-    description: `Explore Our Range of ${vehicleFormatted} for ${selectedOptionType} at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week | Call Us On 01782 517782 Today`
+    selectedOptionType,
+    title: `Vehicles for ${ selectedOptionType } in Stoke-on-Trent`,
+    description: `Explore Our Range of Vehicles for ${selectedOptionType} at Competitive Rates in Stoke-on-Trent. Suitable for Personal & Business Use. Open 7 Days Per Week | Call Us On 01782 517782 Today`
   });
 };
 
 exports.vehiclePage = async (req, res) => {
-  // Find a vehicle that matches the vehicleId parameter
-  const vehicle = await Vehicle.findOne(
-    { slug: req.params.vehicleId },
-    (err, item) => {
-      if (err || !item) {
-        req.flash("error", "Vehicle not found");
-        res.redirect("back");
-      }
-    }
-  );
+  const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId });
+  if (!vehicle) {
+    req.flash("error", "Vehicle not found");
+    res.redirect("back");
+  }
 
   // Find other vehicles in the same category
   const filter = {

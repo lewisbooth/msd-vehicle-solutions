@@ -13,6 +13,8 @@ mixin vehicleCard(vehicle = {}, type = "hire")
           .card-price-text per month
       else
         = "POA"
+      if vehicleClean.sold == true
+        .card-price-sold SOLD
       if vehicleClean.promoted[type]
         .card-price-promoted Promoted
     .card-text-container

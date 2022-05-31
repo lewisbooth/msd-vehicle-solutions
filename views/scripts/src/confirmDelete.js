@@ -1,9 +1,7 @@
-document
-  .querySelector(".confirm-delete")
+document.querySelector(".confirm-delete")
   .addEventListener("click", confirmDelete);
 
-document
-  .querySelector(".modal-box .cancel")
+document.querySelector(".modal-box .cancel")
   .addEventListener("click", confirmDelete);
 
 const body = document.querySelector("body");

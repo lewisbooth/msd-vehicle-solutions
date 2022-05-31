@@ -1,25 +1,17 @@
-// Prices per day
 const prices = {
-  van: {
-    "van-small": 50,
-    "van-medium": 70,
-    "van-large": 90,
-    "van-luton": 105
+  van: {         // Daily  Weekly
+    "van-small":    [75,   300],
+    "van-medium":   [100,  400],
+    "van-large":    [125,  480],
+    "van-luton":    [150,  500]
   },
   car: {
-    "car-economy": 35,
-    "car-saloon": 45,
-    "car-suv": 55,
-    "car-truck": 65
+    "car-economy":  [55,   220],
+    "car-saloon":   [75,   260],
+    "car-suv":      [90,   360],
+    "car-truck":    [120,  500]
   }
-};
-
-// Discounts for each hire duration in percent
-const discounts = {
-  "3-7": 10,
-  "8-14": 15,
-  "15+": 20
-};
+}
 
 // Global element selectors
 const form = document.forms["instant-quote"];
@@ -30,6 +22,7 @@ const aside = document.querySelector("aside");
 const mobileLocation = document.querySelector("article");
 const callToBook = aside.querySelector(".call-to-book");
 const quoteForm = document.querySelector(".instant-quote");
+const durationText = document.querySelector(".per-day");
 const topSection = document.querySelector("article").parentNode;
 
 const vanBlock = form.querySelector("[name=van-size]").parentElement;
@@ -73,6 +66,8 @@ function getState() {
 
 // Check boxes based on state, and update the quote result
 function renderForm() {
+  const query = JSON.parse(JSON.stringify(formState))
+
   priceOutput.innerHTML = getPrice();
 
   for (var i = 0; i < fieldsets.length; i++) {
@@ -95,6 +90,13 @@ function renderForm() {
     vanBlock.classList.remove("hidden");
     carBlock.classList.add("hidden");
   }
+
+  if (query.duration.daily.checked) {
+    durationText.innerText = '/day'
+  } else {
+    durationText.innerText = '/week'
+  }
+
 }
 
 // Checks the clicked input, and unchecks other inputs in the same fieldset
@@ -113,7 +115,7 @@ function getPrice() {
   // Copy state without reference
   const query = JSON.parse(JSON.stringify(formState));
 
-  // Format form state into a 1-layer query for easy processing, e.g. { "vehicle-type": "van", "vehicle-size": "small", "days": "3-7" }
+  // Flatten form state into one layer for easy processing
   for (const fieldset in query) {
     for (const input in query[fieldset]) {
       if (query[fieldset][input].checked === false)
@@ -125,16 +127,10 @@ function getPrice() {
   // Calculate the price from query
   const vehicleType = query["vehicle-type"];
   const vehicleSize = query[`${vehicleType}-size`];
-  const days = query["days"];
-  let price = prices[vehicleType][vehicleSize];
-  if (typeof discounts[days] !== "undefined") {
-    const modifier = 1 - discounts[days] / 100;
-    price = Math.floor(price * modifier);
-  }
+  const duration = query["duration"] === 'weekly' ? 1 : 0;
+  let price = prices[vehicleType][vehicleSize][duration];
   return `£${price}`;
 }
-
-////////////////////////////////////
 
 // Move form to top of page on mobile screens
 function moveForm() {

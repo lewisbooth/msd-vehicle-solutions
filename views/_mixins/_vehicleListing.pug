@@ -3,10 +3,10 @@ mixin vehicleListing(vehicle = {})
     if vehicle.photos.length === 0
       img(src="/images/vehicles/vehicle-photo-default.png", alt=vehicle.name).no-margin
     else 
-      img(src=(`/images/vehicles/${vehicle._id}/${vehicle.photos[0]}-400.jpg`), alt=vehicle.name).no-margin
+      img(src=(`/images/vehicles/${vehicle._id}/${vehicle.photos[0]}-400.jpg`) alt=vehicle.name).no-margin
     .listing-results-entry-text-container
       .space-between
-        h5= vehicle.name
+        h5= `${vehicle.name} ${vehicle.sold ? '(Sold)' : ''}`
         h6= vehicle.details.year
       .space-between
         .card-link Edit Vehicle

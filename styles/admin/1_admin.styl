@@ -51,9 +51,8 @@ form.add-vehicle
 
   p
     margin 0 0 1rem 0
-    font-size 1.4rem
 
-  label, input, textarea, select
+  label, input, select
     display block
 
   label
@@ -106,3 +105,95 @@ form.add-vehicle
 
       & span 
         margin-right 2rem
+
+.pell
+  width 100%
+  line-height 1.4
+  color $richBlack
+  font-size 1.6rem
+  border none
+  margin-bottom 4rem
+
+  textarea
+    display none
+
+  &__editor
+    border 1px solid $greyBorders
+
+  &-content
+    height 200px
+    color $richBlack
+    background white
+    font-size 1.6rem
+
+    h1, h2, h3, p
+      color $richBlack
+
+    a
+      color $mainBlue
+      text-decoration underline
+
+  button
+    margin 0 !important
+    color $richBlack
+    border-radius 0
+    padding 2rem
+    box-sizing border-box
+    line-height 0
+
+    &:hover
+      background-color $mainBlue
+      color white
+    
+  p
+    margin 1rem 0
+    font-size 1.6rem
+
+  ol
+    margin 1rem 0 1rem 4rem
+
+    li
+      list-style decimal      
+
+  ul
+    margin 1rem 0 1rem 4rem
+
+    li
+      list-style initial
+
+  &-button
+    position relative
+
+    &:hover > div
+      color white
+
+  &-colour
+    width 20px !important
+    height 20px
+    position absolute
+    top 5px
+    left 5px
+
+    &-icon
+      color hsl(6,77,35)
+      padding 0 .5rem
+      position relative
+      
+      &:hover
+        color white
+
+        > div
+          display flex
+
+    &-menu
+      position absolute
+      top 100%
+      left 10px
+      transform translateX(-50%)
+      background white
+      padding .5rem
+      border 1px solid lightGreyBorder
+      display none
+
+      .pell-button:hover
+        background lightGreyBorder

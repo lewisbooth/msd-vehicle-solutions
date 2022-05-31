@@ -19,7 +19,7 @@ block articleContent
       img.vehicle-page-image(src=`/images/vehicles/${vehicle._id}/${vehicle.photos.length > 0 ? vehicle.photos[0] + "-1000.jpg" : "vehicle-photo-default.png"}`)
       if vehicle.details.description
         h4 Description
-        p.vehicle-page-description= vehicle.details.description
+        p.vehicle-page-description!= vehicle.details.description
     .split
       .content-block.vehicle-page-pricing      
         .vehicle-page-pricing-prices
@@ -46,10 +46,15 @@ block articleContent
             else
               h4.grey BUY
               p.grey Unavailable
-        .vehicle-page-pricing-contact
-          h4 Contact us today to order this vehicle
-        .vehicle-page-pricing-phone
-          h3 01782 517782
+
+        if vehicle.sold        
+          .vehicle-page-pricing-sold
+            h4 This vehicle has been sold
+        else
+          .vehicle-page-pricing-contact
+            h4 Contact us today to order this vehicle
+          .vehicle-page-pricing-phone
+            h3 01782 517782
 
       .content-block
         h4 Details
@@ -84,11 +89,21 @@ block articleContent
 
           if vehicle.category.includes("Van")
             li.split-container
-              .split Height
+              .split Vehicle Height
               .split= vehicle.details.height ? vehicle.details.height + "mm" : "-"
+            if vehicle.details.storage
+              li.split-container
+                .split Storage Width (max)
+                .split= vehicle.details.storage.width ? vehicle.details.storage.width + "mm" : "-"
+              li.split-container
+                .split Storage Height (max)
+                .split= vehicle.details.storage.height ? vehicle.details.storage.height + "mm" : "-"
+              li.split-container
+                .split Storage Length (max)
+                .split= vehicle.details.storage['length'] ? vehicle.details.storage['length'] + "mm" : "-"
             li.split-container
-              .split Max cargo
-              .split= vehicle.details.cargo ? vehicle.details.cargo + "kg" : "-"
+              .split Payload (kg)
+              .split= vehicle.details.storage.cargo ? vehicle.details.storage.cargo + "kg" : "-"
               
 block promoted-items
   if relatedVehicles.length > 0

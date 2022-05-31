@@ -20,8 +20,10 @@ const vehicleSchema = new Schema(
         "car-economy",
         "car-hatchback",
         "car-saloon",
+        "car-performance",
         "car-suv",
         "car-truck",
+        "car-minibus",
         "van-small",
         "van-medium",
         "van-large",
@@ -33,6 +35,9 @@ const vehicleSchema = new Schema(
       type: String,
       enum: ["new", "used"],
       default: "used"
+    },
+    sold: {
+      type: Boolean
     },
     slug: {
       type: String,
@@ -61,7 +66,7 @@ const vehicleSchema = new Schema(
       storage: {
         width: { type: Number },
         height: { type: Number },
-        depth: { type: Number }
+        length: { type: Number }
       },
       cargo: { type: Number },
       seats: { type: Number },
@@ -79,10 +84,9 @@ const vehicleSchema = new Schema(
 );
 
 vehicleSchema.index({
-  slug: 1
-});
-vehicleSchema.index({
-  name: "text"
+  slug: 1,
+  name: "text",
+  category: "text"
 });
 
 vehicleSchema.pre("save", async function(next) {

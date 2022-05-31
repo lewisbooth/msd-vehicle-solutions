@@ -1,6 +1,6 @@
 mixin head
   head
-    title= `${currentPath.startsWith("/customs") ? "MSD Custom Commercials" : "Moorland Self Drive"} | ${title || "Car & Van Hire in Stoke on Trent"}`
+    title= `${title || "Car & Van Hire in Stoke on Trent"} | ${currentPath.startsWith("/customs") ? "MSD Custom Commercials" : "Moorland Self Drive"}`
     meta(name="description" content=`${description || "Flexible Car & Van Hire, Sales & Leasing for Personal & Commercial Use in Stoke on Trent Since 1986. Open 7 Days Per Week. Call Us on 01782 517782 Today."}`)
     meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -14,6 +14,8 @@ mixin head
     meta(name="msapplication-TileImage" content="/ms-icon-144x144.png")
     meta(name="format-detection" content="telephone=no")
 
+    block extraHeaderScripts
+    
     //- Inline CSS for rapid production mode, otherwise use <link> to allow BrowserSync to inject changes during development
     if production
       style
@@ -28,5 +30,3 @@ mixin head
     link(rel='preload' href='/fonts/OpenSans-Semibold.woff2' as='font' type="font/woff2" crossorigin)
     link(rel='preload' href='/images/icons/tick.png' as='image' type="image/png")
     link(rel='preload' href='/images/icons/arrow-right.svg' as='image' type="image/svg+xml")
-
-    block extraHeaderScripts

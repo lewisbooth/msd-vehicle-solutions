@@ -7,12 +7,14 @@ form.addEventListener("submit", e => {
 function submitForm(e) {
   e.preventDefault();
   const name = form.querySelector("input[name='name']").value;
+  const phone = form.querySelector("input[name='phone']").value;
   const email = form.querySelector("input[name='email']").value;
   const message = form.querySelector("textarea[name='message']").value;
   const botTrap = form.querySelector("input[name='telephone']").value;
   const formData = {
     name,
     email,
+    phone,
     message,
     botTrap
   };

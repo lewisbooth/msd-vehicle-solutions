@@ -25,15 +25,27 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://moorlandselfdrive.co.uk/vehicles/hire/vans</loc>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://moorlandselfdrive.co.uk/van-sizes</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://moorlandselfdrive.co.uk/vehicles/hire/cars</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/hire/vans</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/mercedes-sprinter-luton-with-tail-lift-2019</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/mercedes-sprinter-panel-van-2020</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/volkswagen-transporter-2020</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -57,11 +69,59 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2020-%2870%29-ford-transit-custom-panel-van-300-leader-swb-105ps-fwd-euro-6-vat-qualifying-2020</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2017-%2817%29-volkswagen-transporter-panel-van-t28-highline-swb-102-ps-euro-6-vat-qualifying-2017</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-transit-custom-panel-van-300-limited-l1h1-2.0-ecoblue-130ps-euro-6-vat-qualifying-2021</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://moorlandselfdrive.co.uk/vehicles/lease/cars</loc>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://moorlandselfdrive.co.uk/vehicles/lease/vans</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/mercedes-sprinter-dropsideflatbed-2021</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-ranger-wildtrak-2018</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/volkswagen-caddy-highline-2020</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/ford-tourneo-9-seater-minibus-2021</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2015-%2815%29-mercedes-benz-sprinter-313-cdi-rwd-5m-dropside-body-%2816.4ft%29-58k-miles%21-2015</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2018-%2868%29-mercedes-benz-sprinter-panel-van-2.1-cdi-314-lwb-143ps-rwd-euro-6-vat-qualifying-2018</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/volkswagen-transporter-2020-%2870%29-t6.1-t32-swb-2.0tdi-150ps-auto-dsg-highline-%2Asold%2A-2020</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2019-%2869%29-ford-focus-1.0-ecoboost-st-line-5dr-125ps-fwd-euro-6-2019</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://moorlandselfdrive.co.uk/vehicles/2016-%2866%29-bmw-1-series-m140i-hatchback-8-speed-auto-340ps-2016</loc>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

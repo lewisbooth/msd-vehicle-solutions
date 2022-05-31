@@ -93,9 +93,9 @@ exports.terms = async (req, res) => {
 
 exports.contactSubmit = async (req, res) => {
   const timestamp = new Date().toString();
-  const { name, email, message, botTrap, telephone } = req.body;
+  const { name, email, message, botTrap, phone } = req.body;
 
-  if ((botTrap && botTrap.length > 0) || (telephone && telephone.length > 0)) {
+  if ((botTrap && botTrap.length > 0)) {
     console.log(`🤖  Stopped bot attempt`);
     return res.status(200).send();
   }
@@ -108,6 +108,7 @@ exports.contactSubmit = async (req, res) => {
     {
       name,
       email,
+      phone,
       message
     }
   );

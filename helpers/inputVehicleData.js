@@ -4,6 +4,7 @@ exports.inputVehicleData = req => {
     name: String(req.body.name) || "New Vehicle",
     category: String(req.body.category) || "van-small",
     condition: String(req.body.condition) || "used",
+    sold: Boolean(req.body.sold),
     availability: {
       hire: Boolean(req.body.availabilityHire),
       sales: Boolean(req.body.availabilitySales),
@@ -24,7 +25,7 @@ exports.inputVehicleData = req => {
       storage: {
         height: Number(req.body.storageHeight),
         width: Number(req.body.storageWidth),
-        depth: Number(req.body.storageDepth)
+        length: Number(req.body.storageLength)
       },
       cargo: Number(req.body.cargo),
       seats: Number(req.body.seats),
