@@ -1,5 +1,6 @@
 mongodb/
 backups/
+public/sitemap.xml
 
 # Logs
 logs

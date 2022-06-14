@@ -11,16 +11,16 @@ block articleContent
     form.contact-form(name="contact-form")
       label Name
       input(type="text" name="name" maxlength="50" required)
+      input(name="telephone" type="tel" maxlength="50").bot-trap
       .split-container
         .split
           label Phone Number
-          input(type="phone" name="phone" maxlength="20" required)
+          input(type="tel" name="phone" maxlength="20" required)
         .split
           label Email
           input(type="email" name="email" maxlength="100" required)
       label Message
       textarea(name="message" rows="10" required)
-      input(name="telephone" type="tel" maxlength="50").bot-trap
       .flash-message
       button(type="submit").button Send Message
     .contact-info.split-container
