@@ -95,7 +95,7 @@ exports.contactSubmit = async (req, res) => {
   const timestamp = new Date().toString();
   const { name, email, message, phone, telephone } = req.body;
 
-  if ((telephone && telephone.length > 0) || res.locals?.device == bot) {
+  if ((telephone && telephone.length > 0) || res.locals?.device == 'bot') {
     console.log(`🤖  Stopped bot attempt`);
     return res.status(200).send();
   }
