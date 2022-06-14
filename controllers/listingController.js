@@ -66,7 +66,7 @@ exports.vehiclePage = async (req, res) => {
   const vehicle = await Vehicle.findOne({ slug: req.params.vehicleId });
   if (!vehicle) {
     req.flash("error", "Vehicle not found");
-    res.redirect("back");
+    return res.redirect("back");
   }
 
   // Find other vehicles in the same category
