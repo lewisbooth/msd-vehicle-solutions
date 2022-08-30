@@ -95,6 +95,14 @@ exports.contactSubmit = async (req, res) => {
   const timestamp = new Date().toString();
   const { name, email, message, phone, telephone } = req.body;
 
+  // Check all required fields are present
+  if (!name || !email || !message || !phone )
+    return res
+      .status(400)
+      .send("Please fill in all fields.")
+
+  // Catch bot attempts
+  // 'telephone' is a hidden field seen only by bots
   if ((telephone && telephone.length > 0) || res.locals?.device == 'bot') {
     console.log(`🤖  Stopped bot attempt`);
     return res.status(200).send();
