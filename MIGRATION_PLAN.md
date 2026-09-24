@@ -61,11 +61,12 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Configure Static Assets routing, hashed cache headers and local migration; pass `wrangler deploy --dry-run`.
 - [x] Remove the old Express/Pug/Mongo CMS and unused tracked assets; preserve current graphics and legal copy.
 - [x] Replace the discarded backup-derived snapshot with records from current live pages only; rebuild and verify generated routes.
-- [ ] Add a repeatable live-content-to-D1/R2 process using verified current pages and photos with an inclusion report.
+- [x] Add a repeatable live-content-to-D1/R2 process using verified current pages and photos with an inclusion report; remote writes remain gated.
 
 ### 2. Preview and data
 
-- [ ] Publish `feat/cloudflare-migration` and confirm its automatic Cloudflare preview build.
+- [x] Publish `feat/cloudflare-migration`; Cloudflare created an automatic preview build from the branch push.
+- [ ] Verify the automatic preview build succeeds and inspect its public URL, routes and API behaviour.
 - [ ] Provision separate preview D1/R2 and configure preview bindings/migration config.
 - [ ] Apply preview schema and transfer only current live records/photos; compare against live pages.
 - [ ] Configure preview Access and email; test admin/contact, static/API routes and headers.
@@ -86,6 +87,8 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - **2026-09-24:** User excluded the supplied backup and all archived data. Removed the offline archive importer and its generated local SQL/media/snapshot; collecting a replacement snapshot directly from the live site.
 - **2026-09-24:** Direct inspection shows six hire, eight sales (two sold), one lease: 15 distinct vehicle links and corresponding live detail/photo pages. Exact IDs/slugs/photo tokens are recorded above. The old backup is excluded; only the live site determines what to keep.
 - **2026-09-24:** Replaced the public snapshot and legal text from current live pages. Rebuilt 28 public HTML pages (15 live detail routes), 6/8/1 listing cards, a 27-URL sitemap and the separate admin bundle. The two currently displayed sold sales cards retain sold badges. `src/content/README.md` documents inferred defaults for fields the public site does not expose.
+- **2026-09-24:** Independently downloaded and decoded 30 currently displayed 400/1000 JPEGs (2,309,370 bytes); verified source URLs, dimensions and SHA-256. Live-only scripts generated/replayed D1 SQL for 15 records, staged 30 content-hashed R2 objects and an update SQL. The uploader's dry run matched the independent photo audit. No Cloudflare data was written.
+- **2026-09-24:** Published the implementation commit to GitHub branch `feat/cloudflare-migration`. Cloudflare automatically created a queued preview build for commit `48bdfd87`; deployment verification remains pending.
 - **2026-09-24:** Connected Cloudflare can read empty production D1/R2 but creation of preview resources returns authentication error `10000`. Wrangler CLI is unauthenticated; no remote data changed.
 
 ## Open gates
