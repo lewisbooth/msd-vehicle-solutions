@@ -81,38 +81,6 @@ export type ImageRow = Record<string, string | number | null> & {
   alt: string | null;
 };
 
-const decodedEntities: Record<string, string> = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-};
-
-export function plainDescription(description: string | null): string {
-  if (!description) return "";
-  // Legacy descriptions are HTML. Text-only output avoids ever trusting CMS markup.
-  return description
-    .replace(/<\s*br\b[^>]*>/gi, "\n")
-    .replace(/<\s*\/\s*(?:p|div|li)\s*>/gi, "\n\n")
-    .replace(/<[^>]*>/g, "")
-    .replace(/&(#(?:x[0-9a-f]+|\d+)|[a-z]+);/gi, (all, entity: string) => {
-      if (entity.startsWith("#")) {
-        const hexadecimal = /^#x/i.test(entity);
-        const value = Number.parseInt(entity.slice(hexadecimal ? 2 : 1), hexadecimal ? 16 : 10);
-        if (value >= 32 && value <= 0x10ffff && !(value >= 0xd800 && value <= 0xdfff)) {
-          return String.fromCodePoint(value);
-        }
-        return "";
-      }
-      return decodedEntities[entity.toLowerCase()] ?? all;
-    })
-    .replace(/[\t ]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 function imageUrl(base: string | undefined, key: string): string {
   if (/^https?:\/\//i.test(key)) {
     let url: URL;
@@ -165,7 +133,8 @@ export function vehicleDto(row: VehicleRow, images: ImageRow[], mediaBase?: stri
     },
     promoted: { hire: !!row.promoted_hire, sales: !!row.promoted_sales, lease: !!row.promoted_lease },
     details: {
-      description: plainDescription(row.description),
+      // New catalogue and admin descriptions are plain text; React escapes display content.
+      description: row.description || "",
       storage: { width: row.storage_width, height: row.storage_height, length: row.storage_length },
       cargo: row.cargo,
       seats: row.seats,

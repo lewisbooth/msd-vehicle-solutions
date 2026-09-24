@@ -66,9 +66,13 @@ function price(vehicle, type) { return Number(vehicle?.pricing?.[type]) > 0 ? Nu
 function available(vehicles, type) { return vehicles.filter(vehicle => vehicle.availability?.[type] && (type === 'sales' || !vehicle.sold)).sort((a,b) => price(a,type) - price(b,type)); }
 function featured(vehicles, type) {
   const current = vehicles.filter(vehicle => vehicle.availability?.[type] && !vehicle.sold);
-  const pinned = (featuredOrder[type] || []).map(slug => current.find(vehicle => vehicle.slug === slug));
-  if (pinned.some(vehicle => !vehicle)) throw new Error(`Featured ${type} slug is missing from current live stock.`);
-  const rest = current.filter(vehicle => !featuredOrder[type]?.includes(vehicle.slug))
+  // Historical landing-page order is a preference, not a publishing constraint:
+  // an admin can sell, unlist or remove any of these vehicles at any time.
+  const pinned = [...new Set(featuredOrder[type] || [])]
+    .map(slug => current.find(vehicle => vehicle.slug === slug))
+    .filter(Boolean);
+  const pinnedSlugs = new Set(pinned.map(vehicle => vehicle.slug));
+  const rest = current.filter(vehicle => !pinnedSlugs.has(vehicle.slug))
     .sort((a,b) => Number(Boolean(b.promoted?.[type])) - Number(Boolean(a.promoted?.[type])) || String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
   return [...pinned, ...rest].slice(0,3);
 }
@@ -86,7 +90,8 @@ const contentFor = (path, vehicles) => {
     const slug = path.slice('/vehicles/'.length);
     const vehicle = vehicles.find(entry => entry.slug === slug);
     if (!vehicle) throw new Error(`No vehicle found for ${path}`);
-    return { path, vehicle, relatedVehicles: vehicles.filter(entry => entry.id !== vehicle.id && entry.category === vehicle.category && !entry.sold).slice(0,3), ref:'hire' };
+    const ref = ['hire', 'sales', 'lease'].find(type => vehicle.availability?.[type]) || 'hire';
+    return { path, vehicle, relatedVehicles: vehicles.filter(entry => entry.id !== vehicle.id && entry.category === vehicle.category && !entry.sold && entry.availability?.[ref]).slice(0,3), ref };
   }
   return { path };
 };

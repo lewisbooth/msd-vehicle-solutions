@@ -178,16 +178,22 @@ function VehicleDetail({ initial }) {
   const [vehicle, setVehicle] = useState(initial.vehicle);
   const [related, setRelated] = useState(initial.relatedVehicles || []);
   const [selected, setSelected] = useState(0);
-  const ref = ['hire','sales','lease'].includes(initial.ref) ? initial.ref : 'hire';
+  const listingTypes = ['hire','sales','lease'];
+  const fallbackRef = listingTypes.find(type => initial.vehicle?.availability?.[type]) || 'hire';
+  const [ref, setRef] = useState(listingTypes.includes(initial.ref) && initial.vehicle?.availability?.[initial.ref] ? initial.ref : fallbackRef);
   useEffect(() => {
     if (!initial.vehicle?.slug) return;
+    const available = listingTypes.filter(type => vehicle?.availability?.[type]);
+    const requested = new URLSearchParams(window.location.search).get('ref');
+    const targetRef = requested && available.includes(requested) ? requested : available.includes(ref) ? ref : available[0] || fallbackRef;
+    if (targetRef !== ref) { setRef(targetRef); return; }
     const controller = new AbortController();
     fetch(`/api/vehicles/${encodeURIComponent(initial.vehicle.slug)}?ref=${ref}`, { signal: controller.signal })
       .then(response => response.ok ? response.json() : null).then(data => {
         if (data?.vehicle) { setVehicle(data.vehicle); setRelated(data.relatedVehicles || []); }
       }).catch(()=>{});
     return () => controller.abort();
-  }, [initial.vehicle?.slug, ref]);
+  }, [initial.vehicle?.slug, ref, vehicle?.availability?.hire, vehicle?.availability?.sales, vehicle?.availability?.lease]);
   if (!vehicle) return <NotFound/>;
   const details = vehicle.details || {};
   const fields = [['Year', details.year], ['Category', categoryName(vehicle.category)], ['Mileage', details.mileage != null ? `${Number(details.mileage).toLocaleString('en-GB')} miles` : null], ['Engine size', details.engineSize ? `${details.engineSize}L` : null], ['Transmission', details.transmission], ['Fuel economy', details.fuelEconomy ? `${details.fuelEconomy} mpg` : null], ['Fuel type', details.fuelType], ['Seats', details.seats], ['Doors', details.doors]];

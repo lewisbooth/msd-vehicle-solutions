@@ -41,3 +41,5 @@ Cloudflare.
 The production branch and preview branches are connected to Cloudflare Workers
 Builds. Keep preview D1/R2 separate from production before enabling admin
 writes; apply D1 schema migrations before deploying API code that needs them.
+After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
+to review an export, refresh the tracked static snapshot and rebuild pages.

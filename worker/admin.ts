@@ -147,14 +147,44 @@ async function saveVehicle(request: Request, env: RuntimeEnv, id?: string): Prom
   return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
 }
 
+export async function readImageUploadForm(request: Request): Promise<FormData> {
+  const maximum = 9_000_000;
+  const contentType = request.headers.get("Content-Type");
+  if (!contentType?.toLowerCase().startsWith("multipart/form-data;")) {
+    throw new HttpError(415, "Expected a multipart image upload");
+  }
+  const declared = request.headers.get("Content-Length");
+  if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > maximum)) {
+    throw new HttpError(413, "Upload must be under 9 MB");
+  }
+  // Content-Length is optional on HTTP requests. Bound the actual body before
+  // letting the multipart parser buffer it, including for chunked uploads.
+  const reader = request.body?.getReader();
+  if (!reader) throw new HttpError(400, "Upload body required");
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maximum) {
+      throw new HttpError(413, "Upload must be under 9 MB");
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new Response(bytes, { headers: { "Content-Type": contentType } }).formData();
+}
+
 async function uploadImages(request: Request, env: RuntimeEnv, id: string): Promise<Response> {
   const row = await adminVehicle(env, id);
   // Two client-resized JPEGs keep uploads bounded and avoid server-side image processing.
-  const declaredLength = Number(request.headers.get("Content-Length"));
-  if (!Number.isInteger(declaredLength) || declaredLength < 1 || declaredLength > 9_000_000) {
-    throw new HttpError(413, "Upload must declare a size under 9 MB");
-  }
-  const form = await request.formData();
+  const form = await readImageUploadForm(request);
   const large = form.get("large");
   const small = form.get("small");
   if (!(large instanceof File) || !(small instanceof File) || large.type !== "image/jpeg" || small.type !== "image/jpeg" ||
@@ -168,7 +198,7 @@ async function uploadImages(request: Request, env: RuntimeEnv, id: string): Prom
   const smallBytes = new Uint8Array(await small.arrayBuffer());
   const isJpeg = (data: Uint8Array) => data[0] === 0xff && data[1] === 0xd8 && data[data.length - 2] === 0xff && data[data.length - 1] === 0xd9;
   if (!isJpeg(largeBytes) || !isJpeg(smallBytes)) throw new HttpError(400, "Invalid JPEG image");
-  const hash = async (data: Uint8Array) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)))
+  const hash = async (data: Uint8Array<ArrayBuffer>) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)))
     .map((byte) => byte.toString(16).padStart(2, "0")).join("").slice(0, 16);
   const token = crypto.randomUUID();
   const base = `vehicles/${row.id}/${token}`;

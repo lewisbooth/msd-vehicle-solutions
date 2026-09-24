@@ -25,6 +25,7 @@ export async function contactApi(request: Request, env: RuntimeEnv): Promise<Res
   const phone = clean("phone", 80, false);
   const subject = clean("subject", 160, false);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, "Invalid email");
+  if (/[\u0000-\u001f\u007f]/.test(subject)) throw new HttpError(400, "Invalid subject");
   await env.EMAIL.send({
     to: env.CONTACT_TO,
     from: env.CONTACT_FROM,

@@ -6,11 +6,11 @@ This is the tracked implementation record for moving Moorland Self Drive from Ex
 
 ## Requirements and acceptance criteria
 
-- [ ] Retain current public brochure/legal pages, three listing types and only vehicle detail URLs visibly linked by the live site. Include the two sold cards currently visible in the sales listing, with sold badges.
-- [ ] Generate crawlable HTML for each retained route with route titles, descriptions, canonical links, sitemap, robots and a real static 404. Drop old pages and media no longer live.
-- [ ] Build static React/Tailwind public pages with a committed snapshot of current visible catalogue data. Refresh changing content via `/api` with minimal layout shifts; quote widget stays client side.
-- [ ] Supply a separate static React/Tailwind admin bundle at `/admin/` for vehicle CRUD, ordered photos, availability, prices and sold status, without the old CMS, Passport, Mongo or session dependency.
-- [ ] Serve HTML, JS, CSS and fixed graphics as Cloudflare Static Assets. Hash bundles and cache them immutably; revalidate HTML. Only `/api` and `/api/*` enter Worker code during normal matched/static navigation.
+- [x] Retain current public brochure/legal pages, three listing types and only vehicle detail URLs visibly linked by the live site. Include the two sold cards currently visible in the sales listing, with sold badges.
+- [x] Generate crawlable HTML for each retained route with route titles, descriptions, canonical links, sitemap, robots and a real static 404. Drop old pages and media no longer live.
+- [x] Build static React/Tailwind public pages with a committed snapshot of current visible catalogue data. Refresh changing content via `/api` with minimal layout shifts; quote widget stays client side.
+- [x] Supply a separate static React/Tailwind admin bundle at `/admin/` for vehicle CRUD, ordered photos, availability, prices and sold status, without the old CMS, Passport, Mongo or session dependency.
+- [x] Serve HTML, JS, CSS and fixed graphics as Cloudflare Static Assets. Hash bundles and cache them immutably; revalidate HTML. Only `/api` and `/api/*` enter Worker code during normal matched/static navigation.
 - [ ] Use D1 for **current live** vehicle records and R2 for **currently displayed** vehicle photos under immutable keys. Serve public images directly from an R2 public host when available.
 - [ ] Protect admin APIs using Cloudflare Access JWT, and configure verified contact email delivery. Integrations fail closed until configured.
 - [ ] Automatically build branch previews, apply schema migrations before deploying dependent API code, isolate preview D1/R2, and provide a publishing rebuild that refreshes static HTML from D1 after admin changes.
@@ -66,11 +66,11 @@ Observed directly from the three public listing pages and each vehicle detail pa
 ### 2. Preview and data
 
 - [x] Publish `feat/cloudflare-migration`; Cloudflare created an automatic preview build from the branch push.
-- [ ] Verify the automatic preview build succeeds and inspect its public URL, routes and API behaviour.
+- [x] Verify the automatic preview build succeeds and inspect its public URL, routes and API behaviour.
 - [ ] Provision separate preview D1/R2 and configure preview bindings/migration config.
 - [ ] Apply preview schema and transfer only current live records/photos; compare against live pages.
 - [ ] Configure preview Access and email; test admin/contact, static/API routes and headers.
-- [ ] Add an admin publishing rebuild that exports current D1 to a reviewed snapshot before rebuilding static pages.
+- [x] Add an admin publishing rebuild that exports current D1 to a reviewed snapshot before rebuilding static pages; remote rehearsal awaits preview D1 access.
 
 ### 3. Production readiness and cutover
 
@@ -90,6 +90,9 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - **2026-09-24:** Independently downloaded and decoded 30 currently displayed 400/1000 JPEGs (2,309,370 bytes); verified source URLs, dimensions and SHA-256. Live-only scripts generated/replayed D1 SQL for 15 records, staged 30 content-hashed R2 objects and an update SQL. The uploader's dry run matched the independent photo audit. No Cloudflare data was written.
 - **2026-09-24:** Published the implementation commit to GitHub branch `feat/cloudflare-migration`. Cloudflare automatically created a queued preview build for commit `48bdfd87`; deployment verification remains pending.
 - **2026-09-24:** Connected Cloudflare can read empty production D1/R2 but creation of preview resources returns authentication error `10000`. Wrangler CLI is unauthenticated; no remote data changed.
+- **2026-09-24:** Automatic branch preview build `bc4df393-f1e6-4ed0-b14c-04e8f35e22e7` succeeded for commit `fa573bd`; preview URL: `https://feat-cloudflare-migration-msd-vehicle-solutions.lewisbooth.workers.dev/`. Inspected the rendered hire/sales/lease listings (6/8/1 cards, including two sold), a direct vehicle detail, and the separate admin UI. HTTP checks confirmed normal HTML and sitemap `200`, missing page `404`, hashed JS/CSS `max-age=31536000, immutable`, HTML revalidation, `/api/home` and `/api/admin/me` `503` with `no-store` while preview D1 is absent, and preview `X-Robots-Tag: noindex`. Photos currently resolve from the live Lightsail origin until R2 upload. Found and fixed sale-only vehicle detail defaulting to the Hire breadcrumb; awaiting redeploy.
+- **2026-09-24:** Full route audit: all 27 sitemap URLs returned `200`, 15 vehicle slugs and 6/8/1 listing cards matched the live site, and every referenced live photo matched the verified 30-image manifest. First-party static assets/fonts loaded; unknown routes returned `404`. Legacy `/vehicles` uses an HTML meta refresh with a canonical link instead of the former `302` redirect. Fixed sale/lease detail breadcrumbs and related stock, plus three API/admin defects found in review.
+- **2026-09-24:** Added `scripts/publish-d1.py` and [review procedure](scripts/publish-d1.md): export a scoped, live public D1 candidate and diff, approve its digest, re-query to detect changes, and rebuild tracked static pages. Production publishing rejects remaining Lightsail photos and requires a matching public R2 origin. Synthetic export/apply/auth and UUID-image cases passed. Remote rehearsal is blocked by preview D1 permissions. Sold/removed featured pins now fall back to current stock, so normal admin changes can rebuild.
 
 ## Open gates
 
@@ -98,3 +101,4 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - Live photo URLs can be used temporarily on the preview; production needs only currently displayed photos in R2 and a public media origin.
 - New D1 vehicles lack static `/vehicles/:slug` HTML until a publishing rebuild; edits can leave SEO HTML stale. Add the publish workflow before production use.
 - Filtered listing deep links first render the canonical static listing; hydration applies filters later. Card image sizes are reserved, but card positions may change.
+- The legacy `/vehicles` bookmark uses a static meta refresh rather than the former HTTP `302`, to keep non-API navigation on Static Assets.
