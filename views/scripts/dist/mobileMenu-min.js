@@ -1,1 +1,0 @@
-"use strict";var menuButton=$(".main-nav-dropdown-toggle"),menu=$(".main-nav");menuButton.addEventListener("click",function(e){e.preventDefault(),menu.classList.contains("mobile-active")?menu.classList.remove("mobile-active"):menu.classList.add("mobile-active")});

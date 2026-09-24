@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "msd-vehicle-solutions",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-09-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api", "/api/*"]
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "msd-vehicle-solutions",
+    "database_id": "b96f63ee-7a31-45e8-8a7e-bdd4ee9372e0",
+    "migrations_dir": "./migrations"
+  }],
+  "r2_buckets": [{
+    "binding": "MEDIA",
+    "bucket_name": "msd-vehicle-solutions"
+  }],
+  "vars": {
+    "MEDIA_BASE_URL": ""
+  },
+  "previews": {
+    "vars": {
+      "MEDIA_BASE_URL": ""
+    }
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

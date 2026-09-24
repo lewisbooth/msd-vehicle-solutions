@@ -1,0 +1,13 @@
+// Copy to wrangler.preview-migrations.jsonc after creating an isolated preview D1.
+// Use the same preview database ID in wrangler.jsonc previews.d1_databases.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "msd-vehicle-solutions-preview-migrations",
+  "compatibility_date": "2026-09-24",
+  "d1_databases": [{
+    "binding": "PREVIEW_DB",
+    "database_name": "msd-vehicle-solutions-preview",
+    "database_id": "REPLACE_WITH_PREVIEW_D1_ID",
+    "migrations_dir": "./migrations"
+  }]
+}
