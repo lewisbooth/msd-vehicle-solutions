@@ -49,10 +49,11 @@ For branch builds, set the Workers Builds build command to `npm run build` and
 the Preview command to `npm run deploy:preview`. That command checks the tracked
 `wrangler.preview-migrations.jsonc` against both Worker D1 bindings, refuses a
 production D1 target, applies pending preview migrations, and only then invokes
-`wrangler preview`. The build token needs D1 edit access. The remote Preview
-command currently remains `npx wrangler preview`; update it in the Cloudflare
-Workers Builds settings before relying on CI migrations. Validate the local
-target without remote writes using `node scripts/migrate-preview.mjs --check`.
+`wrangler preview`. The build token needs D1 edit access. The Preview defaults
+and the `feat/cloudflare-migration` branch are configured with these commands;
+check the build logs and remote D1 migration ledger after changing schema.
+Validate the local target without remote writes using
+`node scripts/migrate-preview.mjs --check`.
 Keep the production deploy command under separate cutover control.
 
 After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
