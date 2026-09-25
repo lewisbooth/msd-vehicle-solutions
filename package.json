@@ -10,7 +10,7 @@
     "build:public": "node scripts/prepare-static.mjs && vite build --config vite.public.config.mjs && node scripts/copy-static.mjs && node scripts/build-public.mjs",
     "build:admin": "vite build --config vite.admin.config.mjs",
     "migrate:preview": "node scripts/migrate-preview.mjs",
-    "migrate:production": "wrangler d1 migrations apply DB --remote",
+    "migrate:production": "node scripts/migrate-production.mjs",
     "deploy:preview": "npm run migrate:preview && wrangler preview",
     "deploy:production": "npm run migrate:production && wrangler deploy"
   },
