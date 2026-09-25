@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Export a reviewed public D1 snapshot and rebuild static pages after approval.
 
-Usage: export --scope preview|production, inspect data/publish-<scope>*, then
-apply --scope ... --approve-sha256 <candidate SHA-256>. No remote writes. Both
-steps require authenticated Wrangler access to the explicitly selected D1.
+Usage: export --scope production, inspect data/publish-production*, then
+apply --scope production --approve-sha256 <candidate SHA-256>. No remote writes.
+Both steps require authenticated Wrangler access to the production D1.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ import math
 from pathlib import Path
 import re
 import subprocess
+import tempfile
 from urllib.parse import urlsplit
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 import uuid
@@ -24,8 +25,11 @@ import uuid
 ROOT = Path(__file__).resolve().parent.parent
 TRACKED = ROOT / "src/content/vehicles.json"
 PRODUCTION_CONFIG = ROOT / "wrangler.jsonc"
-PREVIEW_CONFIG = ROOT / "wrangler.preview-migrations.jsonc"
 OUTPUT_DIR = ROOT / "data"
+LIVE_MEDIA_MANIFEST = OUTPUT_DIR / "live-r2-manifest.json"
+PRODUCTION_BUCKET = "msd-vehicle-solutions"
+PRODUCTION_DB_ID = "b96f63ee-7a31-45e8-8a7e-bdd4ee9372e0"
+IMMUTABLE_MEDIA_CACHE = "public, max-age=31536000, immutable"
 IDENTIFIER = r"(?:[a-f0-9]{24}|[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})"
 ID = re.compile(IDENTIFIER + r"\Z")
 LIVE = re.compile(r"https://moorlandselfdrive\.co\.uk/images/vehicles/([a-f0-9]{24})/([a-zA-Z0-9_-]+)-(400|1000)\.jpg\Z")
@@ -118,21 +122,15 @@ def binding_id(config, binding):
     return uuid_id(found[0].get("database_id"), f"{binding} binding")
 
 
-def database_scope(scope, preview_config, worker_config):
+def production_database(worker_config):
     worker = read_jsonc(worker_config)
+    if worker.get("name") != PRODUCTION_BUCKET:
+        raise ValueError("Worker name does not identify the production project")
     prod_id = binding_id(worker, "DB")
-    if scope == "production":
-        return "DB", prod_id, worker_config, worker
-    preview = read_jsonc(preview_config)
-    preview_id = binding_id(preview, "PREVIEW_DB")
-    if preview_id == prod_id:
-        raise ValueError("preview D1 ID equals production D1 ID; refusing to query")
-    configured_previews = worker.get("previews", {}).get("d1_databases", [])
-    worker_preview_ids = [item.get("database_id")
-                          for item in configured_previews if item.get("binding") == "DB"]
-    if len(worker_preview_ids) != 1 or uuid_id(worker_preview_ids[0], "Worker preview DB") != preview_id:
-        raise ValueError("Worker preview D1 binding is absent or differs from isolated export database")
-    return "PREVIEW_DB", preview_id, preview_config, worker
+    matches = [item for item in worker.get("d1_databases", []) if item.get("binding") == "DB"]
+    if prod_id != PRODUCTION_DB_ID or matches[0].get("database_name") != PRODUCTION_BUCKET:
+        raise ValueError("production D1 binding differs from the provisioned Western Europe database")
+    return "DB", prod_id, worker_config, worker
 
 
 def origin(value):
@@ -200,17 +198,11 @@ def date(value, label):
     return value
 
 
-def image_url(key, vid, rendition, base, scope):
+def image_url(key, vid, rendition, base):
     if not isinstance(key, str):
         raise ValueError(f"vehicle {vid} image key missing")
     if key.startswith("https://"):
-        if scope == "production":
-            raise ValueError(f"production vehicle {vid} still uses Lightsail image URL; copy to R2 first")
-        parts = urlsplit(key)
-        match = LIVE.fullmatch(key)
-        if not match or match.group(1) != vid or match.group(3) != rendition or parts.query or parts.fragment:
-            raise ValueError(f"vehicle {vid} image URL is not allowlisted live content")
-        return key, match.group(2)
+        raise ValueError(f"production vehicle {vid} still uses an external image URL; copy to R2 first")
     match = R2.fullmatch(key)
     if not match or match.group(1) != vid or match.group(3) != rendition:
         raise ValueError(f"vehicle {vid} image key is not immutable R2 media")
@@ -219,7 +211,7 @@ def image_url(key, vid, rendition, base, scope):
     return f"{base}/{key}", match.group(2)
 
 
-def to_catalogue(rows, images, media_base, scope="preview"):
+def to_catalogue(rows, images, media_base):
     if not rows or len(rows) > 500 or not isinstance(rows, list) or not isinstance(images, list):
         raise ValueError("D1 public catalogue missing or beyond reviewed export size")
     ids = set()
@@ -257,8 +249,8 @@ def to_catalogue(rows, images, media_base, scope="preview"):
             raise ValueError(f"vehicle {vid} missing ordered public photos")
         photos = []
         for pos, p in enumerate(sorted(photo_rows, key=lambda image: image["position"])):
-            small, token1 = image_url(p.get("small_key"), vid, "400", media_base, scope)
-            large, token2 = image_url(p.get("large_key"), vid, "1000", media_base, scope)
+            small, token1 = image_url(p.get("small_key"), vid, "400", media_base)
+            large, token2 = image_url(p.get("large_key"), vid, "1000", media_base)
             if token1 != token2:
                 raise ValueError(f"vehicle {vid} photo {pos} rendition tokens differ")
             width, height = numeric(p.get("width"), "width", integer=True), numeric(p.get("height"), "height", integer=True)
@@ -312,33 +304,91 @@ def verify_public_media(catalogue):
             raise ValueError(f"public R2 JPEG cannot be reached: {url}") from exc
 
 
+def verify_remote_r2_media(catalogue, worker, config, wrangler, media_base):
+    """Verify exactly the audited 30 live JPEGs in production R2, read-only.
+
+    This alternative is for environments whose HTTP proxy blocks public HEAD.
+    Wrangler's object-get command returns bytes but no HTTP object metadata;
+    public Content-Type and Cache-Control still need an independent HTTP check.
+    """
+    bindings = [item for item in worker.get("r2_buckets", []) if item.get("binding") == "MEDIA"]
+    if len(bindings) != 1 or bindings[0].get("bucket_name") != PRODUCTION_BUCKET:
+        raise ValueError("production MEDIA binding does not identify its bucket")
+    manifest = json.loads(LIVE_MEDIA_MANIFEST.read_text(encoding="utf-8"))
+    if not isinstance(manifest, list) or len(manifest) != 30:
+        raise ValueError("expected the audited manifest of exactly 30 current live JPEGs")
+    expected = {photo[key].removeprefix(f"{media_base}/")
+                for vehicle in catalogue for photo in vehicle["photos"] for key in ("url400", "url1000")}
+    if (len(catalogue) != 15 or len(expected) != 30
+        or any(not R2.fullmatch(key) or key.startswith("https://") for key in expected)):
+        raise ValueError("D1 public image keys differ from the audited 15-vehicle migration")
+    entries = {}
+    for entry in manifest:
+        key = entry["key"]
+        match = R2.fullmatch(key)
+        digest, size = entry["sha256"], entry["bytes"]
+        source = entry["sourceUrl"]
+        if (not match or key in entries or entry["file"] != f"live-r2/{key}"
+            or not isinstance(digest, str) or not re.fullmatch(r"[a-f0-9]{64}", digest)
+            or match.group(4) != digest[:len(match.group(4))]
+            or type(size) is not int or not 32 <= size <= 12 * 1024 * 1024
+            or entry.get("contentType") != "image/jpeg"
+            or entry.get("cacheControl") != IMMUTABLE_MEDIA_CACHE
+            or not isinstance(source, str) or not LIVE.fullmatch(source)
+            or LIVE.fullmatch(source).groups() != match.groups()[:3]):
+            raise ValueError(f"invalid audited live JPEG manifest entry: {key}")
+        entries[key] = (digest, size)
+    if set(entries) != expected:
+        raise ValueError("R2 manifest has missing or extra keys compared with production D1")
+
+    with tempfile.TemporaryDirectory(prefix="msd-r2-verify-") as temporary:
+        for index, (key, (digest, size)) in enumerate(sorted(entries.items()), 1):
+            target = Path(temporary) / f"image-{index}.jpg"
+            command = [wrangler, "r2", "object", "get", f"{PRODUCTION_BUCKET}/{key}",
+                       "--config", str(config), "--remote", "--file", str(target)]
+            try:
+                result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True,
+                                        check=False, timeout=90)
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                raise ValueError(f"remote production R2 object read unavailable: {key}") from exc
+            if result.returncode or not target.is_file():
+                raise ValueError(f"remote production R2 object read failed: {key}")
+            contents = target.read_bytes()
+            if len(contents) != size or hashlib.sha256(contents).hexdigest() != digest:
+                raise ValueError(f"remote production R2 object differs from audited live JPEG: {key}")
+            target.unlink()
+            if index % 5 == 0:
+                print(f"Verified {index}/30 production R2 JPEGs against live SHA-256 manifest", flush=True)
+
+
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
 def read_remote(args):
-    binding, db_id, config, worker = database_scope(args.scope, args.preview_config, args.worker_config)
+    binding, db_id, config, worker = production_database(args.worker_config)
     base = origin(args.media_base_url)
-    if args.scope == "production" and not base:
+    if not base:
         raise ValueError("production publication requires a public R2 --media-base-url")
-    runtime_vars = worker.get("previews", {}).get("vars", {}) if args.scope == "preview" else worker.get("vars", {})
-    runtime_base = origin(runtime_vars.get("MEDIA_BASE_URL", ""))
-    if base and runtime_base != base:
-        raise ValueError(f"{args.scope} Worker MEDIA_BASE_URL differs from selected publication host")
+    runtime_base = origin(worker.get("vars", {}).get("MEDIA_BASE_URL", ""))
+    if runtime_base != base:
+        raise ValueError("production Worker MEDIA_BASE_URL differs from selected publication host")
     first = wrangler_rows(args.wrangler, binding, config, VEHICLE_SQL)
     media = wrangler_rows(args.wrangler, binding, config, IMAGE_SQL)
     again = wrangler_rows(args.wrangler, binding, config, VEHICLE_SQL)
     media_again = wrangler_rows(args.wrangler, binding, config, IMAGE_SQL)
     if first != again or media != media_again:
         raise ValueError("D1 vehicle or photo rows changed while exporting; retry with stable data")
-    catalogue = to_catalogue(first, media, base, args.scope)
-    if args.scope == "production":
+    catalogue = to_catalogue(first, media, base)
+    if args.verify_r2_remote:
+        verify_remote_r2_media(catalogue, worker, config, args.wrangler, base)
+    else:
         verify_public_media(catalogue)
     return catalogue, db_id
 
 
-def paths(scope):
-    return OUTPUT_DIR / f"publish-{scope}.json", OUTPUT_DIR / f"publish-{scope}-report.json"
+def paths():
+    return OUTPUT_DIR / "publish-production.json", OUTPUT_DIR / "publish-production-report.json"
 
 
 def differences(previous, current):
@@ -356,13 +406,14 @@ def export(args):
     if not isinstance(previous, list):
         raise ValueError("tracked public snapshot is invalid")
     candidate = candidate_bytes(catalogue)
-    candidate_path, report_path = paths(args.scope)
+    candidate_path, report_path = paths()
     diff = differences(previous, catalogue)
-    report = {"scope": args.scope, "databaseId": db_id,
+    report = {"scope": "production", "databaseId": db_id,
               "mediaBaseUrl": origin(args.media_base_url),
               "sourceSnapshotSha256": sha(previous_raw), "candidateSha256": sha(candidate),
               "exportedAtUtc": dt.datetime.now(dt.timezone.utc).isoformat(),
               "previousCount": len(previous), "candidateCount": len(catalogue), **diff}
+    report["mediaVerification"] = "wrangler-r2" if args.verify_r2_remote else "http-head"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     candidate_path.write_bytes(candidate)
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
@@ -371,11 +422,13 @@ def export(args):
 
 
 def apply(args):
-    candidate_path, report_path = paths(args.scope)
+    candidate_path, report_path = paths()
     report = json.loads(report_path.read_text(encoding="utf-8"))
     candidate = candidate_path.read_bytes()
-    if report.get("scope") != args.scope or sha(candidate) != report.get("candidateSha256"):
+    if report.get("scope") != "production" or sha(candidate) != report.get("candidateSha256"):
         raise ValueError("candidate report and reviewed snapshot mismatch")
+    if report.get("mediaVerification") != ("wrangler-r2" if args.verify_r2_remote else "http-head"):
+        raise ValueError("production media verification mode differs from the reviewed export")
     if not re.fullmatch(r"[a-f0-9]{64}", args.approve_sha256 or "") or args.approve_sha256 != sha(candidate):
         raise ValueError("--approve-sha256 must equal the reviewed candidate digest")
     previous_raw = TRACKED.read_bytes()
@@ -390,7 +443,7 @@ def apply(args):
     for key in ("addedSlugs", "removedSlugs", "changedSlugs"):
         if diff[key] != report.get(key):
             raise ValueError("candidate diff changed since review")
-    print(f"Approved {args.scope} catalogue: +{len(diff['addedSlugs'])}, -{len(diff['removedSlugs'])}, "
+    print(f"Approved production catalogue: +{len(diff['addedSlugs'])}, -{len(diff['removedSlugs'])}, "
           f"~{len(diff['changedSlugs'])}; building static HTML", flush=True)
     # Replace the tracked snapshot only after the explicit hash approval and a
     # fresh authenticated read of exactly the same D1 database.
@@ -408,10 +461,11 @@ def apply(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("export", "apply"))
-    parser.add_argument("--scope", choices=("preview", "production"), required=True)
+    parser.add_argument("--scope", choices=("production",), required=True)
     parser.add_argument("--media-base-url", default="", help="Must match selected Worker runtime MEDIA_BASE_URL for R2 keys")
+    parser.add_argument("--verify-r2-remote", action="store_true",
+                        help="production only: read and SHA-256-verify all 30 R2 objects via Wrangler if HTTP HEAD is blocked")
     parser.add_argument("--approve-sha256", help="Required to apply reviewed candidate")
-    parser.add_argument("--preview-config", type=Path, default=PREVIEW_CONFIG)
     parser.add_argument("--worker-config", type=Path, default=PRODUCTION_CONFIG)
     parser.add_argument("--wrangler", default=str(ROOT / "node_modules/.bin/wrangler"))
     parser.add_argument("--npm", default="npm")

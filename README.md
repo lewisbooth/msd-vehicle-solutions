@@ -32,34 +32,32 @@ HTML and assets are served by Cloudflare Static Assets without executing it.
 Hashed build assets, including site images, fonts and favicon, are served with a
 one-year `immutable` browser cache; their URL changes when their bytes change.
 HTML revalidates, while robots and verification files keep their stable URLs.
-The 30 current public vehicle photos already use content-hashed R2 keys and
-immutable cache headers in isolated preview R2; production requires its own
-public media hostname and a separate import before cutover.
+The 30 current public vehicle photos use content-hashed R2 keys and immutable
+cache headers. The production bucket has its own `r2.dev` hostname during this
+Workers deployment. That hostname supports browser caching but not Cloudflare
+edge caching; change `MEDIA_BASE_URL` and republish the reviewed static snapshot
+to use a custom R2 domain after the Cloudflare DNS zone is ready.
 
 ## Migration and deployment
 
 See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for the live-only inclusion list,
 requirements, phased tasks, acceptance checks and progress log. That file
-records completed preview transfers and the remaining Cloudflare checks.
+records the Western Europe production import and remaining DNS/integration checks.
 Historical backup data and generated import output must stay out of Git and
 Cloudflare.
 
-The production branch and preview branches are connected to Cloudflare Workers
-Builds. `wrangler.jsonc` binds Worker Previews to a separate D1 database and R2
-bucket. Its `previews.vars.MEDIA_BASE_URL` points at the preview bucket's public
-`r2.dev` testing URL; production still needs its own R2 custom domain. Public
-vehicle photos at that origin bypass the site Worker.
+The production `main` branch uses the Western Europe D1 database and R2 bucket.
+Workers Builds uses Build `npm run build` and Deploy `npm run deploy:production`.
+The deploy script verifies the production binding and media origin, applies
+pending remote D1 migrations, then publishes the Worker and Static Assets. The
+build token needs permission to apply D1 migrations. Validate the configured
+target without a Cloudflare request using `npm run migrate:production -- --check`.
+Public photos from R2 bypass the site Worker.
 
-For branch builds, set the Workers Builds build command to `npm run build` and
-the Preview command to `npm run deploy:preview`. That command checks the tracked
-`wrangler.preview-migrations.jsonc` against both Worker D1 bindings, refuses a
-production D1 target, applies pending preview migrations, and only then invokes
-`wrangler preview`. The build token needs D1 edit access. The Preview defaults
-and the `feat/cloudflare-migration` branch are configured with these commands;
-check the build logs and remote D1 migration ledger after changing schema.
-Validate the local target without remote writes using
-`node scripts/migrate-preview.mjs --check`.
-Keep the production deploy command under separate cutover control.
+This repository now has only production D1/R2 bindings. Preview builds must stay
+disabled in Cloudflare Branch control. `npm run deploy:production` checks its
+fixed D1 ID and R2 bucket before applying migrations. The public domain still
+points to the old host; the Worker can be tested on its `workers.dev` hostname.
 
 After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
 to review an export, refresh the tracked static snapshot and rebuild pages.

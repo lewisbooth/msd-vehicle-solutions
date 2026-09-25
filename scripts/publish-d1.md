@@ -6,70 +6,66 @@ undeleted vehicles with at least one public availability flag, including sold
 sales cards. It requires ordered photos for every exported vehicle. It never
 reads a legacy data source or writes to D1.
 
-## Preview branch
+## Production publishing
 
-`wrangler.preview-migrations.jsonc` is tracked for the isolated preview D1.
-Its `PREVIEW_DB.database_id` must match the `previews.d1_databases` `DB` binding
-in `wrangler.jsonc`, and both must differ from the production `DB` ID. The
-Preview command uses `scripts/migrate-preview.mjs` to check those targets
-before applying migrations. Authenticate Wrangler with read access to that
-database for publishing. The publisher also refuses to proceed if the preview
-ID equals production or either actual Preview binding is absent.
+Use `--scope production` deliberately; it checks the fixed Western Europe D1
+ID and selects only the production `DB` binding in `wrangler.jsonc`:
 
 ```sh
-python3 scripts/publish-d1.py export --scope preview \
-  --media-base-url https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev
-```
-
-This writes ignored `data/publish-preview.json` and
-`data/publish-preview-report.json`. Read the candidate and its **added,
-removed and changed slugs**. Verify newly added vehicle details, sale/hire
-flags, prices, sold labels, photos and public URLs. A removal deletes a static
-detail page on the next build; resolve accidental removals before approving.
-Copy the report's exact `candidateSha256` into the next command:
-
-```sh
-python3 scripts/publish-d1.py apply --scope preview \
-  --media-base-url https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev \
-  --approve-sha256 THE_REVIEWED_SHA256
-git diff -- src/content/vehicles.json
-```
-
-`apply` re-reads the same remote D1 and refuses stale or modified candidates,
-then replaces the tracked `src/content/vehicles.json` and runs `npm run build`.
-It restores the previous tracked snapshot if the build fails. Review the Git
-diff and generated routes before committing on the preview branch; the Git
-connected Cloudflare build will then deploy that branch.
-
-## Production
-
-Use `--scope production` deliberately; it selects only the production `DB`
-binding in `wrangler.jsonc`. It never falls back to preview or a local DB:
-
-```sh
-python3 scripts/publish-d1.py export --scope production --media-base-url https://YOUR-PUBLIC-R2-ORIGIN
+python3 scripts/publish-d1.py export --scope production \
+  --media-base-url https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev
 python3 scripts/publish-d1.py apply --scope production \
-  --media-base-url https://YOUR-PUBLIC-R2-ORIGIN --approve-sha256 THE_REVIEWED_SHA256
+  --media-base-url https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev \
+  --approve-sha256 THE_REVIEWED_SHA256
 ```
 
-Review the production candidate separately before applying, and publish its
-commit through the controlled production Git branch. Do not replace production
-content with a preview candidate. Both scopes independently check the tracked
-snapshot's baseline hash, database identity, image row mapping and new D1 state.
-Production publication **rejects every remaining Lightsail image URL** and
+Review `data/publish-production.json` and its report for **added, removed and
+changed slugs**, pricing, sold state and photo URLs. A removed slug removes
+its static detail page on the next build. Copy the report's exact
+`candidateSha256` into `apply`; it re-reads production D1 and rejects changed
+data or a changed tracked baseline before replacing `src/content/vehicles.json`
+and running `npm run build`. It restores the old snapshot if the build fails.
+Review the Git diff, then commit on `main` for an automatic production build.
+Production publication **rejects every external image URL** and
 requires immutable R2 keys plus a matching public media origin before the
-old server can be retired. It also HEAD-checks every public 400px and 1000px
+old server can be retired. By default it HEAD-checks every public 400px and 1000px
 URL for HTTP 200 and `image/jpeg`, refusing redirects, missing images and empty
-responses. Preview now uses separate R2 keys and an `r2.dev` testing hostname.
+responses.
+
+If a restricted shell proxy returns HTTP 403 for public `r2.dev` HEAD requests,
+the initial live-only production import can use `--verify-r2-remote` on **both**
+`export` and `apply`. This flag reads each production R2 object through Wrangler
+and compares its exact byte length and SHA-256 with the independent, ignored
+`data/live-r2-manifest.json`; it refuses any missing or extra manifest keys
+relative to the 15 vehicles/30 photos in production D1. It checks the manifest's
+source URL and expected immutable JPEG cache metadata. Wrangler object-get
+does **not** return the stored `Content-Type` or `Cache-Control`, and this flag
+cannot establish public HTTP reachability or a Cloudflare edge cache hit.
+Confirm those separately in a browser or another network. The default remains
+the direct public HTTP HEAD check.
+
+```sh
+python3 scripts/publish-d1.py export --scope production \
+  --media-base-url https://YOUR-PRODUCTION-R2-HOST --verify-r2-remote
+python3 scripts/publish-d1.py apply --scope production \
+  --media-base-url https://YOUR-PRODUCTION-R2-HOST --verify-r2-remote \
+  --approve-sha256 THE_REVIEWED_SHA256
+```
+
+The review report records the verification mode and `apply` refuses a different
+mode. This fallback is scoped to the initial 30 audited live photos; after
+future admin additions or media changes, use direct public HTTP verification
+or update and independently audit the media manifest first.
 
 When D1 images use immutable R2 keys, supply the **public HTTPS media origin**
 to both commands, and set the matching runtime `MEDIA_BASE_URL` in the selected
 Worker config. The script refuses to emit `/api/media` images in static HTML or
-publish a media host different from the Worker runtime:
+publish a media host different from the Worker runtime. The current production
+`r2.dev` host bypasses the site Worker but does not provide Cloudflare edge
+caching. Replace this host in `wrangler.jsonc` and publish a new static snapshot
+when the Cloudflare zone and custom R2 domain are available. Browser caching
+remains immutable while the content-hashed image keys stay the same.
 
-The preview D1 binding and public R2 testing origin are configured. Wait until
-the isolated D1 contains the live records and R2 contains the verified current
-photos before exporting an R2-backed snapshot. If Cloudflare read access is
-unavailable, export fails before producing a candidate. No remote mutation
-occurs during export or apply; publishing happens via a reviewed Git commit and
-its CI build.
+If Cloudflare read access is unavailable, export fails before producing a
+candidate. Neither export nor apply writes remote D1/R2; publishing happens
+through the reviewed `main` commit and its CI build.

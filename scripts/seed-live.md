@@ -1,85 +1,57 @@
-# Curated live inventory seed
+# Initial live-only production import
 
-`src/content/vehicles.json` contains the 15 vehicles linked from the current
-public hire, sales and lease listings. To validate it and prepare a reviewable
-local D1 seed, run from the repository root:
+The original import used the **15 vehicles then visible** on the public hire,
+sales and lease listings (including two sold sales cards) and their 30 displayed
+JPEGs. The backup archive, archived vehicles and other CMS data were excluded.
+The independent photo audit recorded source URLs, byte lengths, dimensions and
+SHA-256 hashes. `src/content/vehicles.json` now contains production R2 URLs,
+so do **not** rerun `scripts/seed-live.py` or `scripts/upload-live-media.py` with
+that current snapshot: those preparation scripts expect the original live-site
+image URLs and will reject R2 URLs.
 
-```sh
-python3 scripts/seed-live.py
-```
+The initial import produced ignored `data/live-vehicles.sql` (current vehicle
+rows with temporary live-site image URLs), `data/live-r2-update.sql` (the same
+15 image pairs replaced with immutable R2 keys), and
+`data/live-r2-manifest.json` (the 30 audited JPEGs). Generated SQL and image
+files are local migration inputs, never checked into Git. These SQL files were
+intended for **a newly migrated empty database only**. Replaying them after
+admin edits would overwrite vehicle records and photos.
 
-This writes ignored `data/live-vehicles.sql`, `data/live-photo-manifest.json`
-and `data/live-seed-report.json`. Python 3.10+ and the standard library suffice.
-The seed preserves all 15 IDs and slugs, current visible prices and sold flags,
-and the two currently sold sales cards. The three listings without a displayed
-price are recorded in the report. `createdAt` and `updatedAt` in the curated
-snapshot are observation dates; the original CMS timestamps are unknown.
+## Production resources
 
-The two image key columns initially hold strictly validated **live-site HTTPS
-URLs**. The API returns those URLs unchanged. The manifest records all 30
-current 400/1000 source URLs for an eventual R2 copy. No file is downloaded or
-claimed as migrated by this script; image widths/heights are unknown until
-the live files can be read. Keep direct live URL reads on preview until R2 is
-ready.
-
-## Preview D1 schema and records
-
-Remote preview writes require a **separate preview D1 ID** in a local config
-copied from `wrangler.preview-migrations.example.jsonc`. That file is ignored by
-Git. Confirm the ID and name identify the isolated preview before applying the
-schema, then seed the 15 live records:
+`wrangler.jsonc` binds `DB` and `MEDIA` to the Western Europe production D1
+database and R2 bucket. The production migration command validates the binding
+before changing the remote database:
 
 ```sh
-npx wrangler d1 migrations apply PREVIEW_DB --config wrangler.preview-migrations.jsonc --remote
-npx wrangler d1 execute PREVIEW_DB --config wrangler.preview-migrations.jsonc --remote --file data/live-vehicles.sql
-npx wrangler d1 execute PREVIEW_DB --config wrangler.preview-migrations.jsonc --remote --command 'SELECT COUNT(*) AS n FROM vehicles;'
+npm run migrate:production -- --check
+npm run migrate:production
 ```
 
-Replay the seed only before admin edits: it upserts the 15 reviewed rows and
-replaces their photo rows. A replay after admin edits would overwrite them.
-Connected Cloudflare resource creation and writes currently fail with
-authentication error `10000`; these are preparatory commands.
-
-## Live images to R2
-
-Use a cache populated from the 30 currently displayed URLs, mirrored as
-`<cache>/vehicles/<id>/<token>-{400,1000}.jpg`. The independent live download
-audit `../live-media/manifest.json` is detected automatically when using that
-cache. Pillow is required for a full JPEG pixel decode. The command defaults
-to dry run with **no Cloudflare writes**:
+`scripts/promote-live-media.py` validates the 30 staged JPEGs against the
+audited manifest, checks that every key belongs to the tracked public snapshot,
+and targets only the production bucket. Its default command is a local dry run;
+`--execute` uploads those same immutable keys only for this original 15-vehicle
+snapshot or its exact 30-photo restore:
 
 ```sh
-python3 scripts/upload-live-media.py --cache-dir ../live-media --offline
+python3 scripts/promote-live-media.py
+python3 scripts/promote-live-media.py --execute
 ```
 
-If downloading afresh, omit `--cache-dir --offline`: the script permits only
-`https://moorlandselfdrive.co.uk/images/vehicles/<id>/<token>-{400,1000}.jpg`
-and rejects redirects. Use `--cache-dir` without `--offline` to fill a partially
-populated live-image cache. It checks each file's JPEG markers and fully decodes
-its pixels, verifies SHA-256, dimensions and byte counts against an audit
-manifest when supplied, then stages immutable keys such as
-`vehicles/<id>/<token>-400.<sha12>.jpg` in ignored `data/live-r2/`.
-
-The dry run writes ignored `data/live-r2-manifest.json`,
-`data/live-r2-update.sql`, `data/live-vehicles-r2.json` and a report. The
-replacement snapshot uses `/api/media/` unless `--media-base-url` points to a
-working public R2 **HTTPS origin**; use that flag for the final build so image
-requests bypass the Worker.
-
-Only after a separate preview bucket and access are provisioned, use the same
-verified input to upload 30 objects with Wrangler. It records a per-bucket
-local checkpoint, safely replaying uploads of the same content-hashed keys:
+For the **initial import into an empty D1 only**, apply the reviewed vehicle
+SQL, then the R2 image-key update after the 30 files are present. Check the
+target and counts before running either SQL file; never replay this seed as an
+ordinary deployment:
 
 ```sh
-python3 scripts/upload-live-media.py --cache-dir ../live-media --offline \
-  --media-base-url https://YOUR-PREVIEW-R2-PUBLIC-ORIGIN \
-  --bucket YOUR_PREVIEW_R2_BUCKET --execute
-npx wrangler d1 execute PREVIEW_DB --config wrangler.preview-migrations.jsonc --remote --file data/live-r2-update.sql
+npx wrangler d1 execute DB --config wrangler.jsonc --remote --command 'SELECT COUNT(*) AS n FROM vehicles'
+npx wrangler d1 execute DB --config wrangler.jsonc --remote --file data/live-vehicles.sql
+npx wrangler d1 execute DB --config wrangler.jsonc --remote --file data/live-r2-update.sql
 ```
 
-Compare remote photo rows and serve sample media URLs before replacing the
-tracked `src/content/vehicles.json` with the reviewed generated
-`data/live-vehicles-r2.json`. This final tracked snapshot change triggers
-static page regeneration. The SQL changes only those 15 image pairs, and the
-script locally applies the original live seed and media update twice to check
-its mapping. Never apply the media update before uploading the images.
+Once the imported records and public image URLs are verified, follow the
+[production D1 publishing procedure](publish-d1.md) to review a D1 export and
+refresh the tracked static HTML. For future content changes, edit D1 through
+the admin API and publish from a reviewed D1 export; the one-time seed is no
+longer a source of truth.

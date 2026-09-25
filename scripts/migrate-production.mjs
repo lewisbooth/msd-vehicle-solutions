@@ -37,14 +37,6 @@ function validate() {
   if (media.bucket_name !== expectedBucket) {
     throw new Error('production R2 binding does not identify the Western Europe bucket');
   }
-  const preview = worker.previews?.d1_databases ?? [];
-  if (preview.some((item) => item.database_id === expectedDbId)) {
-    throw new Error('Worker Preview D1 must not point at production D1');
-  }
-  const previewMedia = worker.previews?.r2_buckets ?? [];
-  if (previewMedia.some((item) => item.bucket_name === expectedBucket)) {
-    throw new Error('Worker Preview R2 must not point at production R2');
-  }
   const base = worker.vars?.MEDIA_BASE_URL;
   let origin;
   try {
@@ -54,7 +46,6 @@ function validate() {
   }
   if (origin.protocol !== 'https:' || origin.origin !== base ||
       origin.username || origin.password ||
-      origin.origin === worker.previews?.vars?.MEDIA_BASE_URL ||
       (origin.hostname.endsWith('.r2.dev') && origin.hostname !== temporaryR2Host)) {
     throw new Error('production MEDIA_BASE_URL must use its own public HTTPS media origin');
   }
