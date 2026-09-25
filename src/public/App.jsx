@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { categories, coverImages, pages, serviceCards } from './data.jsx';
+import staticAssets from '../../.generated/static-manifest.json';
+
+const staticAsset = path => {
+  const url = staticAssets[path];
+  if (!url) throw new Error(`Missing build-time static asset: ${path}`);
+  return url;
+};
 
 const phone = '01782 517782';
 const phoneLink = 'tel:+441782517782';
@@ -17,7 +24,7 @@ const firstPhoto = vehicle => safeArray(vehicle?.photos)[0];
 const photoUrl = (vehicle, size = '400') => {
   const photo = firstPhoto(vehicle);
   if (typeof photo === 'string') return `/images/vehicles/${vehicle.id || vehicle._id}/${photo}-${size}.jpg`;
-  return (size === '1000' ? photo?.url1000 : photo?.url400) || photo?.url || '/images/vehicles/vehicle-photo-default.png';
+  return (size === '1000' ? photo?.url1000 : photo?.url400) || photo?.url || staticAsset('/images/vehicles/vehicle-photo-default.png');
 };
 const getFilters = () => {
   if (typeof window === 'undefined') return { sort: 'price-low', size: 'all', seats: 'all', fuel: 'all' };
@@ -54,7 +61,7 @@ function Header({ path }) {
   return <header className="site-header">
     <div className="shell header-inner">
       <a href="/" aria-label="Moorland Self Drive home" className="brand">
-        <img src={path.startsWith('/customs') ? '/images/logos/msd-custom-commercials-logo-white.svg' : '/images/logos/msd-logo-white.svg'} alt="Moorland Self Drive" width="178" height="89" />
+        <img src={staticAsset(path.startsWith('/customs') ? '/images/logos/msd-custom-commercials-logo-white.svg' : '/images/logos/msd-logo-white.svg')} alt="Moorland Self Drive" width="178" height="89" />
       </a>
       <button className="menu-toggle" type="button" aria-expanded={open} aria-controls="primary-nav" onClick={() => setOpen(!open)}>{open ? 'Close' : 'Menu'} <span aria-hidden="true">{open ? '×' : '☰'}</span></button>
       <nav id="primary-nav" aria-label="Main navigation" className={`primary-nav ${open ? 'is-open' : ''}`}>
@@ -69,7 +76,7 @@ function Hero({ path, heading, eyebrow, lead }) {
   const image = coverImages[path];
   if (!image) return <div className="page-title shell"><span className="eyebrow">{eyebrow || 'Moorland Self Drive'}</span><h1>{heading}</h1>{lead && <p>{lead}</p>}</div>;
   return <section className="hero">
-    <picture className="hero-image"><source media="(max-width: 700px)" srcSet={`/images/cover-images/${image[1]}`} /><img src={`/images/cover-images/${image[0]}`} width="1500" height="800" alt="" fetchPriority="high" /></picture>
+    <picture className="hero-image"><source media="(max-width: 700px)" srcSet={staticAsset(`/images/cover-images/${image[1]}`)} /><img src={staticAsset(`/images/cover-images/${image[0]}`)} width="1500" height="800" alt="" fetchPriority="high" /></picture>
     <div className="hero-shade" /><div className="shell hero-content"><span className="eyebrow">{eyebrow}</span><h1>{heading}</h1><p>{lead}</p><div className="hero-actions"><a className="btn btn-green" href={path === '/' ? '/vehicles/listing/hire' : path === '/sales' ? '/vehicles/listing/sales' : path === '/leasing' ? '/vehicles/listing/lease' : '/contact'}>{path === '/' || path === '/sales' || path === '/leasing' ? 'Explore vehicles' : 'Enquire today'} <span aria-hidden="true">↗</span></a><a className="hero-phone" href={phoneLink}>Or call {phone}</a></div></div>
   </section>;
 }
@@ -128,12 +135,12 @@ function Featured({ type, title, initialVehicles = [] }) {
 }
 
 function Services({ exclude }) {
-  return <section className="shell section-pad"><div className="section-heading"><div><span className="eyebrow">More of what we do</span><h2>Our services</h2></div></div><div className="service-grid">{serviceCards.filter(card => card.path !== exclude).slice(0,4).map(card => <a href={card.path} className="service-card" key={card.path}><img src={`/images/services/${card.image}`} width="400" height="268" alt="" loading="lazy"/><div><h3>{card.title}</h3><p>{card.body}</p><span>Find out more <b aria-hidden="true">↗</b></span></div></a>)}</div></section>;
+  return <section className="shell section-pad"><div className="section-heading"><div><span className="eyebrow">More of what we do</span><h2>Our services</h2></div></div><div className="service-grid">{serviceCards.filter(card => card.path !== exclude).slice(0,4).map(card => <a href={card.path} className="service-card" key={card.path}><img src={staticAsset(`/images/services/${card.image}`)} width="400" height="268" alt="" loading="lazy"/><div><h3>{card.title}</h3><p>{card.body}</p><span>Find out more <b aria-hidden="true">↗</b></span></div></a>)}</div></section>;
 }
 
 function StandardPage({ path, initial }) {
   const page = pages[path];
-  return <><Hero path={path} {...page}/><main><div className="shell content-layout"><div className="article-column"><div className="intro-copy"><span className="eyebrow">Established 1986 · Staffordshire</span><h2>Local people. Practical help.</h2><p>{page.intro}</p></div><div className="feature-stack">{page.features.map(feature => <section className="feature-row" key={feature.title}><img src={`/images/page-content/${feature.image}`} alt={feature.alt} width="800" height="550" loading="lazy"/><div><h2>{feature.title}</h2><p>{feature.text}</p><a className="btn btn-outline" href={feature.href}>{feature.cta} <span aria-hidden="true">↗</span></a></div></section>)}</div><section className="why-section"><span className="eyebrow">Why choose us</span><h2>{page.whyTitle}</h2><ul>{page.why.map(item=><li key={item}>{item}</li>)}</ul></section></div><aside className="sidebar">{path === '/' && <Quote/>}<OpeningHours/></aside></div>{page.featured && <Featured type={page.featured} title={page.featuredHeading} initialVehicles={initial.featured?.[page.featured] || []}/>}<Services exclude={path}/></main></>;
+  return <><Hero path={path} {...page}/><main><div className="shell content-layout"><div className="article-column"><div className="intro-copy"><span className="eyebrow">Established 1986 · Staffordshire</span><h2>Local people. Practical help.</h2><p>{page.intro}</p></div><div className="feature-stack">{page.features.map(feature => <section className="feature-row" key={feature.title}><img src={staticAsset(`/images/page-content/${feature.image}`)} alt={feature.alt} width="800" height="550" loading="lazy"/><div><h2>{feature.title}</h2><p>{feature.text}</p><a className="btn btn-outline" href={feature.href}>{feature.cta} <span aria-hidden="true">↗</span></a></div></section>)}</div><section className="why-section"><span className="eyebrow">Why choose us</span><h2>{page.whyTitle}</h2><ul>{page.why.map(item=><li key={item}>{item}</li>)}</ul></section></div><aside className="sidebar">{path === '/' && <Quote/>}<OpeningHours/></aside></div>{page.featured && <Featured type={page.featured} title={page.featuredHeading} initialVehicles={initial.featured?.[page.featured] || []}/>}<Services exclude={path}/></main></>;
 }
 
 function FilterSelect({ label, name, choices, value, onChange }) {
@@ -225,7 +232,7 @@ function Contact() {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="shell"><div className="footer-main"><div className="footer-intro"><img src="/images/logos/msd-logo-white.svg" width="160" height="79" alt="Moorland Self Drive"/><p>Family-run vehicle hire, sales and servicing in Stoke-on-Trent since 1986.</p></div><div><h2>Services</h2>{serviceCards.map(card=><a key={card.path} href={card.path}>{card.title}</a>)}</div><div><h2>Useful links</h2><a href="/van-sizes">Van size guide</a><a href="/contact">Contact us</a><a href="/terms-and-conditions">Terms & conditions</a><a href="/privacy">Privacy policy</a></div><div><h2>Come and see us</h2><address>{address.map(line=><React.Fragment key={line}>{line}<br/></React.Fragment>)}</address><a href={phoneLink}>{phone}</a><a href="mailto:info@moorlandselfdrive.co.uk">info@moorlandselfdrive.co.uk</a></div></div><div className="footer-legal"><p>Moorland Self Drive and MSD Custom Commercials are trading names of Basesweep Ltd, incorporated in England & Wales (02009551), registered office Unit 1, Childerplay Road, Knypersley, Stoke-on-Trent, ST8 7PZ. Basesweep Limited is a credit broker, not a lender, authorised and regulated by the Financial Conduct Authority (FCA No. 671071). Finance is subject to status. Other offers may be available. We work with selected credit providers who may offer finance for your purchase.</p><span>© {new Date().getUTCFullYear()} Moorland Self Drive</span></div></div></footer>;
+  return <footer className="footer"><div className="shell"><div className="footer-main"><div className="footer-intro"><img src={staticAsset("/images/logos/msd-logo-white.svg")} width="160" height="79" alt="Moorland Self Drive"/><p>Family-run vehicle hire, sales and servicing in Stoke-on-Trent since 1986.</p></div><div><h2>Services</h2>{serviceCards.map(card=><a key={card.path} href={card.path}>{card.title}</a>)}</div><div><h2>Useful links</h2><a href="/van-sizes">Van size guide</a><a href="/contact">Contact us</a><a href="/terms-and-conditions">Terms & conditions</a><a href="/privacy">Privacy policy</a></div><div><h2>Come and see us</h2><address>{address.map(line=><React.Fragment key={line}>{line}<br/></React.Fragment>)}</address><a href={phoneLink}>{phone}</a><a href="mailto:info@moorlandselfdrive.co.uk">info@moorlandselfdrive.co.uk</a></div></div><div className="footer-legal"><p>Moorland Self Drive and MSD Custom Commercials are trading names of Basesweep Ltd, incorporated in England & Wales (02009551), registered office Unit 1, Childerplay Road, Knypersley, Stoke-on-Trent, ST8 7PZ. Basesweep Limited is a credit broker, not a lender, authorised and regulated by the Financial Conduct Authority (FCA No. 671071). Finance is subject to status. Other offers may be available. We work with selected credit providers who may offer finance for your purchase.</p><span>© {new Date().getUTCFullYear()} Moorland Self Drive</span></div></div></footer>;
 }
 
 function Legal({ initial }) { return <main className="shell legal-page"><span className="eyebrow">Moorland Self Drive</span><h1>{initial.path === '/privacy' ? 'Privacy policy' : 'Terms and conditions'}</h1><div className="legal-body" dangerouslySetInnerHTML={{__html:initial.legalHtml || ''}}/></main>; }

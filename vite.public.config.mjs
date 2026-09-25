@@ -3,13 +3,13 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   root: resolve('src/public'),
-  publicDir: false,
+  publicDir: command === 'serve' ? resolve('.generated/static') : false,
   plugins: [react(), tailwindcss()],
   build: {
     outDir: resolve('dist'),
     emptyOutDir: true,
     manifest: true,
   },
-});
+}));

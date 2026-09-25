@@ -16,8 +16,10 @@ npm run build
 ```
 
 The build creates `dist/`: prerendered HTML for brochure pages, listings and
-vehicle details; hashed frontend bundles; a sitemap; and copied, tracked site
-graphics and fonts. It uses `src/content/vehicles.json` as the checked-in
+vehicle details; hashed frontend bundles, graphics and fonts; and a sitemap.
+The build generates a shared image URL map in `.generated/` before bundling, so
+the static HTML and hydrated React app reference the same versioned images.
+It uses `src/content/vehicles.json` as the checked-in
 snapshot of the visible live catalogue. The snapshot is reviewed and updated
 from the current site before a build; admin changes to D1 require a new static
 build before their detail pages and SEO metadata are published. `npm run dev`
@@ -27,8 +29,11 @@ locally with configured D1 and R2 bindings.
 
 `wrangler.jsonc` routes `/api` and `/api/*` to the Worker script. Matched public
 HTML and assets are served by Cloudflare Static Assets without executing it.
-Hashed build assets are immutable; HTML revalidates. The 30 current public
-photos have been copied to isolated preview R2; production requires its own
+Hashed build assets, including site images, fonts and favicon, are served with a
+one-year `immutable` browser cache; their URL changes when their bytes change.
+HTML revalidates, while robots and verification files keep their stable URLs.
+The 30 current public vehicle photos already use content-hashed R2 keys and
+immutable cache headers in isolated preview R2; production requires its own
 public media hostname and a separate import before cutover.
 
 ## Migration and deployment

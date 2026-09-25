@@ -108,6 +108,9 @@ const phone = '01782 517782';
 function pathnameFile(path) { return path === '/' ? join(outDir,'index.html') : join(outDir,`${path.slice(1)}.html`); }
 
 const vehicles = await snapshot();
+const staticAssets = JSON.parse(await readFile(join(root, '.generated/static-manifest.json'), 'utf8'));
+const favicon = staticAssets['/favicon.ico'];
+if (!favicon) throw new Error('No fingerprinted favicon in the static asset manifest.');
 const manifest = JSON.parse(await readFile(join(outDir, '.vite/manifest.json'), 'utf8'));
 const entry = Object.values(manifest).find(item => item.isEntry && item.file?.endsWith('.js'));
 if (!entry) throw new Error('No public JS entry in Vite manifest.');
@@ -131,7 +134,7 @@ for (const path of routes) {
     url: origin, telephone: '+441782517782', address: { '@type':'PostalAddress', streetAddress:'Childerplay Road, Knypersley', addressLocality:'Stoke-on-Trent', postalCode:'ST8 7PZ', addressCountry:'GB' }
   } : null;
   const markup = renderToString(React.createElement(App, {initial}));
-  const html = `<!doctype html><html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16467b"><meta name="description" content="${encodeHtml(description)}"><meta property="og:type" content="website"><meta property="og:title" content="${encodeHtml(titleWithBrand)}"><meta property="og:description" content="${encodeHtml(description)}"><meta property="og:url" content="${encodeHtml(canonical)}">${image ? `<meta property="og:image" content="${encodeHtml(new URL(image, origin).href)}">` : ''}<meta name="twitter:card" content="summary_large_image">${path !== '/404' ? `<link rel="canonical" href="${encodeHtml(canonical)}">` : '<meta name="robots" content="noindex">'}<link rel="icon" href="/favicon.ico">${cssLinks}<title>${encodeHtml(titleWithBrand)}</title>${schema ? `<script type="application/ld+json">${scriptJson(schema)}</script>` : ''}</head><body><div id="root">${markup}</div><script id="msd-page-data" type="application/json">${scriptJson(initial)}</script><script type="module" src="/${encodeHtml(entry.file)}"></script></body></html>`;
+  const html = `<!doctype html><html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16467b"><meta name="description" content="${encodeHtml(description)}"><meta property="og:type" content="website"><meta property="og:title" content="${encodeHtml(titleWithBrand)}"><meta property="og:description" content="${encodeHtml(description)}"><meta property="og:url" content="${encodeHtml(canonical)}">${image ? `<meta property="og:image" content="${encodeHtml(new URL(image, origin).href)}">` : ''}<meta name="twitter:card" content="summary_large_image">${path !== '/404' ? `<link rel="canonical" href="${encodeHtml(canonical)}">` : '<meta name="robots" content="noindex">'}<link rel="icon" href="${encodeHtml(favicon)}">${cssLinks}<title>${encodeHtml(titleWithBrand)}</title>${schema ? `<script type="application/ld+json">${scriptJson(schema)}</script>` : ''}</head><body><div id="root">${markup}</div><script id="msd-page-data" type="application/json">${scriptJson(initial)}</script><script type="module" src="/${encodeHtml(entry.file)}"></script></body></html>`;
   const filename = pathnameFile(path);
   await mkdir(dirname(filename), { recursive:true });
   await writeFile(filename, html);
