@@ -190,7 +190,7 @@ function App() {
       {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">{error}</div>}
       {notice && <div role="status" className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800">{notice}</div>}
       {!user ? <div className="rounded-xl bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold">Admin access unavailable</h2>
-        <p className="mt-2 text-slate-600">Sign in through Cloudflare Access. If this is a preview, Access and the preview database must be configured before edits are enabled.</p></div>
+        <p className="mt-2 text-slate-600">Vehicle editing requires Cloudflare Access. Contact the site owner to enable access before signing in.</p></div>
         : <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
           <aside className="self-start rounded-xl bg-white p-4 shadow-sm lg:sticky lg:top-6">
             <div className="flex items-center justify-between gap-3"><h2 className="font-bold">Vehicles ({vehicles.length})</h2>

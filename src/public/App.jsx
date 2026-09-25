@@ -203,7 +203,7 @@ function VehicleDetail({ initial }) {
   }, [initial.vehicle?.slug, ref, vehicle?.availability?.hire, vehicle?.availability?.sales, vehicle?.availability?.lease]);
   if (!vehicle) return <NotFound/>;
   const details = vehicle.details || {};
-  const fields = [['Year', details.year], ['Category', categoryName(vehicle.category)], ['Mileage', details.mileage != null ? `${Number(details.mileage).toLocaleString('en-GB')} miles` : null], ['Engine size', details.engineSize ? `${details.engineSize}L` : null], ['Transmission', details.transmission], ['Fuel economy', details.fuelEconomy ? `${details.fuelEconomy} mpg` : null], ['Fuel type', details.fuelType], ['Seats', details.seats], ['Doors', details.doors]];
+  const fields = [['Year', details.year], ['Category', categoryName(vehicle.category)], ['Mileage', details.mileage > 0 ? `${Number(details.mileage).toLocaleString('en-GB')} miles` : null], ['Engine size', details.engineSize ? `${details.engineSize}L` : null], ['Transmission', details.transmission], ['Fuel economy', details.fuelEconomy ? `${details.fuelEconomy} mpg` : null], ['Fuel type', details.fuelType], ['Seats', details.seats], ['Doors', details.doors]];
   if (vehicle.category?.startsWith('van-')) fields.push(['Vehicle height', details.height ? `${details.height} mm` : null], ['Storage width', details.storage?.width ? `${details.storage.width} mm` : null], ['Storage height', details.storage?.height ? `${details.storage.height} mm` : null], ['Storage length', details.storage?.length ? `${details.storage.length} mm` : null], ['Payload', details.cargo ? `${details.cargo} kg` : null]);
   const shots = safeArray(vehicle.photos);
   const shot = shots[selected] || shots[0];
