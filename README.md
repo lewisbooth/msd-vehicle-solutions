@@ -54,9 +54,11 @@ build token needs permission to apply D1 migrations. Validate the configured
 target without a Cloudflare request using `npm run migrate:production -- --check`.
 Public photos from R2 bypass the site Worker.
 
-This repository now has only production D1/R2 bindings. Preview builds must stay
-disabled in Cloudflare Branch control. `npm run deploy:production` checks its
-fixed D1 ID and R2 bucket before applying migrations. The public domain still
+This repository now has only production D1/R2 bindings. Disable Preview Builds
+in Cloudflare Branch control and delete the old `main` Worker Preview; the
+data-only token used for the import lacks permission to perform those actions.
+`npm run deploy:production` checks its fixed D1 ID and R2 bucket before applying
+migrations. The public domain still
 points to the old host; the Worker can be tested on its `workers.dev` hostname.
 
 After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
