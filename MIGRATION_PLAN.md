@@ -11,7 +11,7 @@ This is the tracked implementation record for moving Moorland Self Drive from Ex
 - [x] Build static React/Tailwind public pages with a committed snapshot of current visible catalogue data. Refresh changing content via `/api` with minimal layout shifts; quote widget stays client side.
 - [x] Supply a separate static React/Tailwind admin bundle at `/admin/` for vehicle CRUD, ordered photos, availability, prices and sold status, without the old CMS, Passport, Mongo or session dependency.
 - [x] Serve HTML, JS, CSS and fixed graphics as Cloudflare Static Assets. Hash bundles and cache them immutably; revalidate HTML. Only `/api` and `/api/*` enter Worker code during normal matched/static navigation.
-- [ ] Use D1 for **current live** vehicle records and R2 for **currently displayed** vehicle photos under immutable keys. Serve public images directly from an R2 public host when available.
+- [x] Use D1 for **current live** vehicle records and R2 for **currently displayed** vehicle photos under immutable keys in isolated preview resources. Serve public preview images directly from R2; production resources and its permanent media hostname remain to be populated.
 - [ ] Protect admin APIs using Cloudflare Access JWT, and configure verified contact email delivery. Integrations fail closed until configured.
 - [ ] Automatically build branch previews, apply schema migrations before deploying dependent API code, isolate preview D1/R2, and provide a publishing rebuild that refreshes static HTML from D1 after admin changes.
 - [ ] Verify preview routes, current inventory and photos, sold state, direct navigation, admin auth, contact delivery, cache headers, Worker routing and rollback before production cutover.
@@ -22,7 +22,7 @@ One Worker project deploys `dist` Static Assets and a small `worker/index.ts`. `
 
 Public APIs: `GET /api/home`, `GET /api/vehicles?type=...`, `GET /api/vehicles/:slug`, `POST /api/contact`; admin APIs: `/api/admin/*`. The public snapshot and D1 must come from **current live content only**. Admin edits update D1 immediately but need a reviewed snapshot export/build to update SEO HTML or publish a new detail URL.
 
-Workers Builds currently targets `master` for production and supports branch previews. The implementation branch is `feat/cloudflare-migration`. Rename `master` to `main` after preview validation and after updating Cloudflare's production branch. Existing production D1/R2 are empty; separate preview D1/R2 and a public R2 media host are still needed.
+Workers Builds currently targets `master` for production and supports branch previews. The implementation branch is `feat/cloudflare-migration`. Rename `master` to `main` after preview validation and after updating Cloudflare's production branch. Production D1/R2 remain empty. Preview D1 `msd-vehicle-solutions-preview` and preview R2 `msd-vehicle-solutions-preview` are isolated from production; public preview photos use `https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev`. This R2 development hostname is temporary and must not become the production media origin.
 
 ## Current live vehicle inclusion list
 
@@ -67,8 +67,8 @@ Observed directly from the three public listing pages and each vehicle detail pa
 
 - [x] Publish `feat/cloudflare-migration`; Cloudflare created an automatic preview build from the branch push.
 - [x] Verify the automatic preview build succeeds and inspect its public URL, routes and API behaviour.
-- [ ] Provision separate preview D1/R2 and configure preview bindings/migration config.
-- [ ] Apply preview schema and transfer only current live records/photos; compare against live pages.
+- [x] Provision separate preview D1/R2 and configure preview bindings/migration config.
+- [x] Apply preview schema and transfer only current live records/photos; compare imported 15 vehicles and 30 JPEGs to the live-site inventory.
 - [ ] Configure preview Access and email; test admin/contact, static/API routes and headers.
 - [x] Add an admin publishing rebuild that exports current D1 to a reviewed snapshot before rebuilding static pages; remote rehearsal awaits preview D1 access.
 
@@ -94,12 +94,15 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - **2026-09-24:** Full route audit: all 27 sitemap URLs returned `200`, 15 vehicle slugs and 6/8/1 listing cards matched the live site, and every referenced live photo matched the verified 30-image manifest. First-party static assets/fonts loaded; unknown routes returned `404`. Legacy `/vehicles` uses an HTML meta refresh with a canonical link instead of the former `302` redirect. Fixed sale/lease detail breadcrumbs and related stock, plus three API/admin defects found in review.
 - **2026-09-24:** Added `scripts/publish-d1.py` and [review procedure](scripts/publish-d1.md): export a scoped, live public D1 candidate and diff, approve its digest, re-query to detect changes, and rebuild tracked static pages. Production publishing rejects remaining Lightsail photos and requires a matching public R2 origin. Synthetic export/apply/auth and UUID-image cases passed. Remote rehearsal is blocked by preview D1 permissions. Sold/removed featured pins now fall back to current stock, so normal admin changes can rebuild.
 - **2026-09-24:** Automatic preview build `4741ea01-6bfe-4701-87a3-bceab196183d` succeeded for commit `813b865` at 15:47:49 UTC, uploading the changed HTML and hashed JS. Final preview checks: home/admin/sales listing/direct vehicle returned `200`, an unknown route returned `404`, and `/api/home` returned an expected `503` with no preview DB. Browser confirmed the sale-only Ford Transit page now links back to Sales. `npm run build` includes a Worker TypeScript check and passes; Wrangler dry-run passes. Production is unchanged.
+- **2026-09-25:** Provisioned separate preview D1 (`6fbcf901-917e-4b08-bf8e-73085da3e30d`) and preview R2 (`msd-vehicle-solutions-preview`) without touching production resources. Added explicit Worker Preview bindings, a dedicated migration config and a guard that rejects production D1 and mismatched targets before remote migration. Applied `0001_initial.sql` to preview D1, then imported the 15 current public vehicles and 15 photo pairs. Remote counts: 6 hire, 8 sales, 1 lease, 2 sold. No backup/archive data imported.
+- **2026-09-25:** Uploaded the exact 30 previously decoded live-site JPEGs to immutable content-hashed preview R2 keys (2,309,370 bytes). All 30 public preview R2 URLs responded `200 image/jpeg` with exact expected lengths and `immutable` cache policy. Updated all 15 preview D1 photo pairs to those keys; a remote query confirmed 15 key pairs and zero Lightsail URLs. Static snapshot now uses the same verified R2 URLs and measured image dimensions. A full React/Tailwind/Worker build and production-config Wrangler dry-run pass. New branch preview deploy/API checks await the next branch push.
+- **2026-09-25:** Rehearsed the read-only remote D1 publishing export. Its 15 vehicles match the tracked snapshot field-for-field by slug with zero added, changed or removed slugs. The export sorts catalogue records by ID; retained the live listing order in the tracked snapshot for the initial preview build. The publisher's write/build step is still available for later admin changes.
 
 ## Open gates
 
-- Cloudflare edit access is needed to provision isolated preview D1/R2 and transfer live data. Never bind writable previews to production resources.
+- Workers Builds still deploys previews with `npx wrangler preview`. Set its **Preview deploy command** to `npm run deploy:preview` (build stays `npm run build`) and grant its build token D1 edit access so the guarded migration runs before each preview deploy. The available connected Cloudflare account rejected the change with authentication error `10000`; the supplied data token verified in Wrangler for D1/R2 writes but direct Builds configuration API rejected it. The initial migration was applied manually to the isolated preview D1.
 - Cloudflare Access, a verified contact email destination and the site's DNS zone are not configured in the connected account. Admin writes and form delivery fail closed.
-- Live photo URLs can be used temporarily on the preview; production needs only currently displayed photos in R2 and a public media origin.
-- New D1 vehicles lack static `/vehicles/:slug` HTML until a publishing rebuild; edits can leave SEO HTML stale. Add the publish workflow before production use.
+- Production needs the same 30 currently displayed photos in its separate R2 bucket, a permanent public media hostname, D1 migration/import and a reviewed production snapshot export before cutover. Never publish preview `r2.dev` image URLs as production canonicals.
+- New D1 vehicles lack static `/vehicles/:slug` HTML until the reviewed publishing export/build commits updated HTML. Automate or explicitly run this process on each admin publication before production use.
 - Filtered listing deep links first render the canonical static listing; hydration applies filters later. Card image sizes are reserved, but card positions may change.
 - The legacy `/vehicles` bookmark uses a static meta refresh rather than the former HTTP `302`, to keep non-API navigation on Static Assets.

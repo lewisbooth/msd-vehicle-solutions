@@ -25,8 +25,18 @@
   },
   "previews": {
     "vars": {
-      "MEDIA_BASE_URL": ""
-    }
+      "MEDIA_BASE_URL": "https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev"
+    },
+    "d1_databases": [{
+      "binding": "DB",
+      "database_name": "msd-vehicle-solutions-preview",
+      "database_id": "6fbcf901-917e-4b08-bf8e-73085da3e30d",
+      "migrations_dir": "./migrations"
+    }],
+    "r2_buckets": [{
+      "binding": "MEDIA",
+      "bucket_name": "msd-vehicle-solutions-preview"
+    }]
   },
   "observability": {
     "enabled": true,

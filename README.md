@@ -27,19 +27,33 @@ locally with configured D1 and R2 bindings.
 
 `wrangler.jsonc` routes `/api` and `/api/*` to the Worker script. Matched public
 HTML and assets are served by Cloudflare Static Assets without executing it.
-Hashed build assets are immutable; HTML revalidates. Current public photos are
-being transferred to R2, which will use its own public hostname once configured.
+Hashed build assets are immutable; HTML revalidates. The 30 current public
+photos have been copied to isolated preview R2; production requires its own
+public media hostname and a separate import before cutover.
 
 ## Migration and deployment
 
 See [MIGRATION_PLAN.md](MIGRATION_PLAN.md) for the live-only inclusion list,
 requirements, phased tasks, acceptance checks and progress log. That file
-records which D1/R2 transfers and Cloudflare preview checks are still pending.
+records completed preview transfers and the remaining Cloudflare checks.
 Historical backup data and generated import output must stay out of Git and
 Cloudflare.
 
 The production branch and preview branches are connected to Cloudflare Workers
-Builds. Keep preview D1/R2 separate from production before enabling admin
-writes; apply D1 schema migrations before deploying API code that needs them.
+Builds. `wrangler.jsonc` binds Worker Previews to a separate D1 database and R2
+bucket. Its `previews.vars.MEDIA_BASE_URL` points at the preview bucket's public
+`r2.dev` testing URL; production still needs its own R2 custom domain. Public
+vehicle photos at that origin bypass the site Worker.
+
+For branch builds, set the Workers Builds build command to `npm run build` and
+the Preview command to `npm run deploy:preview`. That command checks the tracked
+`wrangler.preview-migrations.jsonc` against both Worker D1 bindings, refuses a
+production D1 target, applies pending preview migrations, and only then invokes
+`wrangler preview`. The build token needs D1 edit access. The remote Preview
+command currently remains `npx wrangler preview`; update it in the Cloudflare
+Workers Builds settings before relying on CI migrations. Validate the local
+target without remote writes using `node scripts/migrate-preview.mjs --check`.
+Keep the production deploy command under separate cutover control.
+
 After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
 to review an export, refresh the tracked static snapshot and rebuild pages.

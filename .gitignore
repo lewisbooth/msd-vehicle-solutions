@@ -12,7 +12,6 @@ coverage/
 .env.*
 !.env.example
 .dev.vars*
-wrangler.preview-migrations.jsonc
 
 # Temporary and historical data; never publish backup records or media
 data/

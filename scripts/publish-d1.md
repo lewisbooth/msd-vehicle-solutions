@@ -8,15 +8,17 @@ reads a legacy data source or writes to D1.
 
 ## Preview branch
 
-Provision an isolated preview D1, copy
-`wrangler.preview-migrations.example.jsonc` to ignored
-`wrangler.preview-migrations.jsonc`, and set its `PREVIEW_DB.database_id`.
-Configure the **same ID** as the Worker preview `DB` binding in `wrangler.jsonc`.
-Authenticate Wrangler with read access to that database. The publisher refuses
-to proceed if the preview ID equals production or either binding is absent.
+`wrangler.preview-migrations.jsonc` is tracked for the isolated preview D1.
+Its `PREVIEW_DB.database_id` must match the `previews.d1_databases` `DB` binding
+in `wrangler.jsonc`, and both must differ from the production `DB` ID. The
+Preview command uses `scripts/migrate-preview.mjs` to check those targets
+before applying migrations. Authenticate Wrangler with read access to that
+database for publishing. The publisher also refuses to proceed if the preview
+ID equals production or either actual Preview binding is absent.
 
 ```sh
-python3 scripts/publish-d1.py export --scope preview
+python3 scripts/publish-d1.py export --scope preview \
+  --media-base-url https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev
 ```
 
 This writes ignored `data/publish-preview.json` and
@@ -27,7 +29,9 @@ detail page on the next build; resolve accidental removals before approving.
 Copy the report's exact `candidateSha256` into the next command:
 
 ```sh
-python3 scripts/publish-d1.py apply --scope preview --approve-sha256 THE_REVIEWED_SHA256
+python3 scripts/publish-d1.py apply --scope preview \
+  --media-base-url https://pub-9a04ee128a9f4bf8b3411d21c9d77959.r2.dev \
+  --approve-sha256 THE_REVIEWED_SHA256
 git diff -- src/content/vehicles.json
 ```
 
@@ -56,20 +60,16 @@ Production publication **rejects every remaining Lightsail image URL** and
 requires immutable R2 keys plus a matching public media origin before the
 old server can be retired. It also HEAD-checks every public 400px and 1000px
 URL for HTTP 200 and `image/jpeg`, refusing redirects, missing images and empty
-responses. Preview may temporarily retain live-site image URLs.
+responses. Preview now uses separate R2 keys and an `r2.dev` testing hostname.
 
 When D1 images use immutable R2 keys, supply the **public HTTPS media origin**
 to both commands, and set the matching runtime `MEDIA_BASE_URL` in the selected
 Worker config. The script refuses to emit `/api/media` images in static HTML or
 publish a media host different from the Worker runtime:
 
-```sh
-python3 scripts/publish-d1.py export --scope preview --media-base-url https://PREVIEW-MEDIA-ORIGIN
-python3 scripts/publish-d1.py apply --scope preview \
-  --media-base-url https://PREVIEW-MEDIA-ORIGIN --approve-sha256 THE_REVIEWED_SHA256
-```
-
-The current preview D1 binding and Cloudflare write access are unconfigured;
-these commands correctly fail before producing a candidate until provisioned.
-No remote mutation occurs during export or apply; publishing happens via a
-reviewed Git commit and its CI build.
+The preview D1 binding and public R2 testing origin are configured. Wait until
+the isolated D1 contains the live records and R2 contains the verified current
+photos before exporting an R2-backed snapshot. If Cloudflare read access is
+unavailable, export fails before producing a candidate. No remote mutation
+occurs during export or apply; publishing happens via a reviewed Git commit and
+its CI build.

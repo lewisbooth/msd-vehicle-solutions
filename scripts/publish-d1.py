@@ -128,7 +128,7 @@ def database_scope(scope, preview_config, worker_config):
     if preview_id == prod_id:
         raise ValueError("preview D1 ID equals production D1 ID; refusing to query")
     configured_previews = worker.get("previews", {}).get("d1_databases", [])
-    worker_preview_ids = [item.get("database_id") or item.get("preview_database_id")
+    worker_preview_ids = [item.get("database_id")
                           for item in configured_previews if item.get("binding") == "DB"]
     if len(worker_preview_ids) != 1 or uuid_id(worker_preview_ids[0], "Worker preview DB") != preview_id:
         raise ValueError("Worker preview D1 binding is absent or differs from isolated export database")

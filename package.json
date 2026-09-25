@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.worker.json",
     "build:public": "vite build --config vite.public.config.mjs && node scripts/copy-static.mjs && node scripts/build-public.mjs",
     "build:admin": "vite build --config vite.admin.config.mjs",
-    "migrate:preview": "wrangler d1 migrations apply PREVIEW_DB --remote --config wrangler.preview-migrations.jsonc",
+    "migrate:preview": "node scripts/migrate-preview.mjs",
     "migrate:production": "wrangler d1 migrations apply DB --remote",
     "deploy:preview": "npm run migrate:preview && wrangler preview",
     "deploy:production": "npm run migrate:production && wrangler deploy"
