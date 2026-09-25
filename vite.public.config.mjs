@@ -1,15 +1,18 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   root: resolve('src/public'),
-  publicDir: command === 'serve' ? resolve('.generated/static') : false,
-  plugins: [react(), tailwindcss()],
+  publicDir: false,
+  plugins: [tailwindcss()],
   build: {
     outDir: resolve('dist'),
     emptyOutDir: true,
     manifest: true,
+    rollupOptions: { input: {
+      styles: resolve('src/public/styles.css'),
+      interactions: resolve('src/public/interactions.js'),
+    } },
   },
-}));
+});

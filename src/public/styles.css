@@ -129,19 +129,14 @@ img { max-width: 100%; }
 .listing-intro { max-width: 680px; }
 .listing-intro h1 { margin: .4rem 0 .6rem; font-size: clamp(2.6rem,4.3vw,4.3rem); }
 .listing-intro p { margin-bottom: 2rem; color: var(--muted); }
-.listing-skeleton { display: none; }
-html.filtered-list-pending .listing-results { display: none; }
-html.filtered-list-pending .listing-skeleton { display: block; }
-.listing-skeleton > p { margin: 0 0 1rem; color: var(--muted); font-size: .84rem; }
-.skeleton-card { border: 1px solid var(--line); border-bottom: 3px solid var(--line); }
-.skeleton-photo { aspect-ratio: 3 / 2; background: var(--light); }
-.skeleton-copy { height: 7rem; margin: 1.2rem; background: var(--light); }
 .listing-toolbar { display: flex; justify-content: space-between; font-size: .84rem; border-bottom: 1px solid var(--line); padding: 0 0 .8rem; }
 .listing-toolbar span { color: var(--muted); }
 .filters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .8rem; background: var(--light); padding: 1.1rem; margin: 1.1rem 0 1.5rem; }
 .filter-field { display: block; font-size: .76rem; font-weight: 700; }
 .filter-field span { display: block; margin-bottom: .4rem; }
 .filter-field select { width: 100%; background: #fff; border: 1px solid #cbd9e3; border-radius: 2px; padding: .6rem .7rem; font-size: .83rem; color: #253e52; min-height: 44px; }
+.filters-submit { grid-column: 1 / -1; justify-self: end; }
+.option-grid[hidden], [data-quote-size-guide][hidden] { display: none; }
 .listing-grid { row-gap: 1.5rem; }
 .listing-end { display: flex; justify-content: space-between; gap: 1rem; align-items: center; border-top: 1px solid var(--line); margin-top: 2.3rem; }
 .empty-state { padding: 5rem 1rem; text-align: center; background: var(--light); }
@@ -154,8 +149,8 @@ html.filtered-list-pending .listing-skeleton { display: block; }
 .main-photo { position: relative; width: 100%; background: var(--light); aspect-ratio: 3 / 2; }
 .main-photo img { width: 100%; height: 100%; object-fit: cover; }
 .thumbnail-row { display: flex; gap: .5rem; margin-top: .65rem; overflow-x: auto; }
-.thumbnail-row button { flex: 0 0 86px; height: 62px; border: 2px solid transparent; padding: 0; background: var(--light); }
-.thumbnail-row button[aria-pressed=true] { border-color: var(--green); }
+.thumbnail-row a { display: block; flex: 0 0 86px; height: 62px; border: 2px solid transparent; padding: 0; background: var(--light); }
+.thumbnail-row a[aria-current=true] { border-color: var(--green); }
 .thumbnail-row img { width: 100%; height: 100%; object-fit: cover; }
 .description { padding-top: 2rem; }
 .description h2 { font-size: 1.85rem; }
@@ -260,6 +255,7 @@ html.filtered-list-pending .listing-skeleton { display: block; }
   .service-card h3 { font-size: 1.1rem; }
   .service-card p { font-size: .74rem; }
   .filters { gap: .65rem; padding: .75rem; }
+  .filters-submit { justify-self: stretch; }
   .listing-page { padding-block: 2.8rem; }
   .detail-grid > aside { grid-template-columns: 1fr; }
   .form-pair { grid-template-columns: 1fr; }

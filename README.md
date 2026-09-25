@@ -1,10 +1,12 @@
 # Moorland Self Drive
 
-Static React and Tailwind public site and separate admin bundle, backed by a
-Cloudflare Worker for `/api`, D1 for vehicle records, and R2 for vehicle images.
+Worker-rendered public pages with Tailwind CSS and small browser interactions,
+plus a separate React/Tailwind admin bundle. The Worker reads D1 for current
+vehicle data and serves `/api`; vehicle photos load directly from R2.
 The legacy Express/Pug/Mongo CMS and its session data are not part of this app.
-Only pages and vehicles **currently visible on moorlandselfdrive.co.uk** are in
-scope. The old backup and historical vehicles are excluded.
+The initial import includes only pages and vehicles visible on
+**moorlandselfdrive.co.uk** during the migration. The old backup and historical
+vehicles are excluded.
 
 ## Local build
 
@@ -15,32 +17,36 @@ npm ci
 npm run build
 ```
 
-The build creates `dist/`: prerendered HTML for brochure pages, listings and
-vehicle details; hashed frontend bundles, graphics and fonts; and a sitemap.
-The build generates a shared image URL map in `.generated/` before bundling, so
-the static HTML and hydrated React app reference the same versioned images.
-It uses `src/content/vehicles.json` as the checked-in catalogue snapshot.
-Every public page contains its vehicle markup and initial React data, so
-hydration does not fetch the catalogue again. Listing filters run against that
-embedded snapshot in the browser. For a bookmarked link with a non-default
-filter, a skeleton covers the unfiltered HTML until React applies the URL
-filter locally. Admin changes to D1 become public only after the reviewed
-[D1 publishing procedure](scripts/publish-d1.md) commits a new snapshot and
-the production build deploys its HTML and assets. `npm run dev`
-starts the public Vite development server.
-Run `npx wrangler dev` after building to exercise the Cloudflare assets and API
-locally with configured D1 and R2 bindings.
+The build creates `dist/` with fingerprinted public CSS and focused browser
+JavaScript, the separate admin React bundle, graphics and fonts. The Worker
+uses React JSX as a server-only template to render public HTML from current D1
+rows; the sitemap is generated from D1 too. No vehicle pages are built ahead
+of time, and no public React or serialized catalogue reaches the browser.
+Listing filters use GET query parameters and arrive already applied in the
+initial HTML. Small JavaScript handles menu, gallery,
+quote and contact interactions. Brochure and legal copy is tracked in the
+repository. `src/content/featured.json` retains the original preferred card
+order among equally promoted D1 records, subject to current visibility; `src/content/vehicles.json` is an
+unused migration reference, not live public data.
 
-`wrangler.jsonc` routes `/api` and `/api/*` to the Worker script. Matched public
-HTML and assets are served by Cloudflare Static Assets without executing it.
-Hashed build assets, including site images, fonts and favicon, are served with a
-one-year `immutable` browser cache; their URL changes when their bytes change.
-HTML revalidates, while robots and verification files keep their stable URLs.
+Use `npm run dev` to build the assets and start Wrangler locally, or run
+`npx wrangler dev` after an existing build. Both exercise the Worker, Cloudflare
+assets and local D1/R2 bindings. Local D1 must contain the records you intend
+to view.
+
+`wrangler.jsonc` routes public HTML, `/sitemap.xml`, and `/api` to the Worker;
+matched CSS, JavaScript, graphics, fonts and admin assets are served directly
+as Cloudflare Static Assets. Dynamic public HTML uses `Cache-Control: no-store`
+so a successful admin edit appears on the next page request without a build.
+Fingerprint-based assets, including site images, fonts and favicon, use a
+one-year `immutable` browser cache; their URLs change when their bytes change.
+The admin HTML, robots file and verification files keep their stable URLs.
 The 30 current public vehicle photos use content-hashed R2 keys and immutable
 cache headers. The production bucket has its own `r2.dev` hostname during this
 Workers deployment. That hostname supports browser caching but not Cloudflare
-edge caching; change `MEDIA_BASE_URL` and republish the reviewed static snapshot
-to use a custom R2 domain after the Cloudflare DNS zone is ready.
+edge caching. Change `MEDIA_BASE_URL` and redeploy the Worker to use a custom
+R2 domain after the Cloudflare DNS zone is ready; the D1 photo keys remain the
+same.
 
 ## Migration and deployment
 
@@ -65,5 +71,9 @@ data resources have been deleted.
 migrations. The public domain still
 points to the old host; the Worker can be tested on its `workers.dev` hostname.
 
-After admin edits, use the scoped [D1 publishing procedure](scripts/publish-d1.md)
-to review an export, refresh the tracked static snapshot and rebuild pages.
+Admin edits write D1 immediately, and the next public HTML request reads the
+new rows. The retired [snapshot export procedure](scripts/publish-d1.md) remains
+available for optional inventory audits; it is not needed to publish edits.
+Cloudflare Access is not yet configured, so admin editing currently fails
+closed. Contact delivery likewise requires a verified email binding before
+submissions can succeed.

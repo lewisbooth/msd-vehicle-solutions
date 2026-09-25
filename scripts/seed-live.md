@@ -4,10 +4,10 @@ The original import used the **15 vehicles then visible** on the public hire,
 sales and lease listings (including two sold sales cards) and their 30 displayed
 JPEGs. The backup archive, archived vehicles and other CMS data were excluded.
 The independent photo audit recorded source URLs, byte lengths, dimensions and
-SHA-256 hashes. `src/content/vehicles.json` now contains production R2 URLs,
-so do **not** rerun `scripts/seed-live.py` or `scripts/upload-live-media.py` with
-that current snapshot: those preparation scripts expect the original live-site
-image URLs and will reject R2 URLs.
+SHA-256 hashes. The historical `src/content/vehicles.json` baseline contains
+production R2 URLs, so do **not** rerun `scripts/seed-live.py` or
+`scripts/upload-live-media.py` with that baseline: those preparation scripts
+expect the original live-site image URLs and will reject R2 URLs.
 
 The initial import produced ignored `data/live-vehicles.sql` (current vehicle
 rows with temporary live-site image URLs), `data/live-r2-update.sql` (the same
@@ -50,8 +50,8 @@ npx wrangler d1 execute DB --config wrangler.jsonc --remote --file data/live-veh
 npx wrangler d1 execute DB --config wrangler.jsonc --remote --file data/live-r2-update.sql
 ```
 
-Once the imported records and public image URLs are verified, follow the
-[production D1 publishing procedure](publish-d1.md) to review a D1 export and
-refresh the tracked static HTML. For future content changes, edit D1 through
-the admin API and publish from a reviewed D1 export; the one-time seed is no
-longer a source of truth.
+Public HTML now reads current D1 data from the Worker on every request. For
+future content changes, edit D1 through the protected admin API; no seed replay,
+snapshot export or rebuild is needed for a vehicle edit to appear publicly.
+The retired [snapshot export procedure](publish-d1.md) remains available for
+optional historical inventory audits.

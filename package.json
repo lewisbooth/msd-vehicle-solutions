@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/prepare-static.mjs && vite --config vite.public.config.mjs",
-    "build": "npm run typecheck && npm run build:public && npm run build:admin",
+    "dev": "npm run build && wrangler dev",
+    "build": "npm run build:public && npm run typecheck && npm run build:admin",
     "typecheck": "tsc --noEmit -p tsconfig.worker.json",
     "build:public": "node scripts/prepare-static.mjs && vite build --config vite.public.config.mjs && node scripts/copy-static.mjs && node scripts/build-public.mjs",
     "build:admin": "vite build --config vite.admin.config.mjs",

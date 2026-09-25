@@ -9,6 +9,11 @@ const output = resolve('.generated/static-manifest.json');
 const staticDir = resolve('.generated/static');
 const assets = [];
 
+// Vite's CSS-only build does not remove HTML files from an older public build.
+// Clear generated output explicitly so stale prerendered vehicle pages cannot
+// win Static Assets routing ahead of D1 rendering.
+await rm(resolve('dist'), { recursive: true, force: true });
+
 async function collect(relative) {
   for (const entry of await readdir(join(root, relative), { withFileTypes: true })) {
     if (entry.name.startsWith('.')) continue;

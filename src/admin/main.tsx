@@ -117,7 +117,7 @@ function App() {
       );
       setSelected(result.vehicle); setIsNew(false);
       await refresh();
-      setNotice("Saved to D1. Public pages update after the reviewed catalogue is published and the static build deploys.");
+      setNotice("Saved to D1. Public pages reflect this change on their next request.");
     });
   };
 
@@ -133,7 +133,7 @@ function App() {
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images`, { method: "POST", body });
       setSelected(result.vehicle);
       await refresh();
-      setNotice("Photo uploaded to R2. Publish the catalogue to update public pages.");
+      setNotice("Photo uploaded to R2. Public pages reflect this change on their next request.");
     });
   };
 
@@ -143,7 +143,7 @@ function App() {
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images/${position}`, { method: "DELETE" });
       setSelected(result.vehicle);
       await refresh();
-      setNotice("Photo removed in D1. Publish the catalogue to update public pages.");
+      setNotice("Photo removed in D1. Public pages reflect this change on their next request.");
     });
   };
 
@@ -157,7 +157,7 @@ function App() {
       });
       setSelected(result.vehicle);
       await refresh();
-      setNotice("Photo order saved in D1. Publish the catalogue to update public pages.");
+      setNotice("Photo order saved in D1. Public pages reflect this change on their next request.");
     });
   };
 
@@ -165,7 +165,7 @@ function App() {
     if (!selected || !window.confirm(`Remove ${selected.name} from the public catalogue?`)) return;
     await run(async () => {
       await api(`/api/admin/vehicles/${selected.id}`, { method: "DELETE" });
-      setSelected(null); await refresh(); setNotice("Vehicle removed from D1. Publish the catalogue to remove its public page.");
+      setSelected(null); await refresh(); setNotice("Vehicle removed from D1. Its public page and listings update on their next request.");
     });
   };
 
@@ -186,7 +186,7 @@ function App() {
     <header className="bg-slate-950 text-white"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5">
       <div><a href="/" className="text-xs uppercase tracking-[.2em] text-blue-200">Moorland Self Drive</a>
         <h1 className="text-2xl font-bold">Vehicle administration</h1></div>
-      <span className="text-xs text-slate-300">{user || "Protected by Cloudflare Access"}</span>
+      <span className="text-xs text-slate-300">{user ? `Signed in: ${user}` : "Admin access required"}</span>
     </div></header>
     <main className="mx-auto max-w-7xl px-5 py-8">
       {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">{error}</div>}
@@ -252,7 +252,7 @@ function App() {
                   <label className="check mt-4"><input type="checkbox" checked={selected.availability[type]} onChange={(event) => update(["availability", type], event.target.checked)} />Available</label>
                   <label className="check mt-2"><input type="checkbox" checked={selected.promoted[type]} onChange={(event) => update(["promoted", type], event.target.checked)} />Promoted</label>
                 </div>)}</div>
-                <p className="mt-3 text-xs text-slate-500">A sold vehicle is hidden from listings even if an old availability flag remains on. A sales price of −1 means price on application.</p>
+                <p className="mt-3 text-xs text-slate-500">Sold vehicles remain in Sales when Sales availability is on, but are hidden from Hire and Leasing. Promoted vehicles rank first for featured cards; original card order breaks ties. A sales price of −1 means price on application.</p>
               </fieldset>
               <fieldset><legend className="mb-3 text-lg font-semibold">Photos</legend>
                 <div className="flex flex-wrap gap-3">{selected.photos.map((photo, index) => <div key={photo.url} className="rounded-xl border border-slate-200 p-2">
