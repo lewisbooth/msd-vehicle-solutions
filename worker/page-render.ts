@@ -91,8 +91,16 @@ export async function publicPage(request: Request, env: RuntimeEnv, url: URL): P
     return Response.redirect(new URL("/vehicles/listing/hire?size=all", url), 302);
   }
   if (path === "/sitemap.xml") return sitemap(env);
+  const dataStart = performance.now();
   const initial = await loadPageData(env, path, url);
-  if (initial) return document(path, initial);
+  const dataDuration = performance.now() - dataStart;
+  if (initial) {
+    const response = document(path, initial);
+    // This measures the awaited D1/data path. Workers' clocks do not reliably
+    // advance during synchronous JSX rendering, so do not report render CPU here.
+    response.headers.set("Server-Timing", `catalogue;dur=${dataDuration.toFixed(1)}`);
+    return response;
+  }
   if (path === "/privacy" || path === "/terms-and-conditions") {
     return document(path, { path, legalHtml: build.legal[path.slice(1) as keyof typeof build.legal] } as PageData);
   }

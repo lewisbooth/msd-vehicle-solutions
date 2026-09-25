@@ -10,7 +10,7 @@
     "build:public": "node scripts/prepare-static.mjs && vite build --config vite.public.config.mjs && node scripts/copy-static.mjs && node scripts/build-public.mjs",
     "build:admin": "vite build --config vite.admin.config.mjs",
     "migrate:production": "node scripts/migrate-production.mjs",
-    "deploy:production": "npm run migrate:production && wrangler deploy"
+    "deploy:production": "npm run migrate:production && wrangler deploy --minify"
   },
   "dependencies": {
     "jose": "^6.0.0",
