@@ -118,8 +118,9 @@ export async function publicApi(request: Request, env: RuntimeEnv, url: URL): Pr
     const current = currentVehicles(rows, images, env.MEDIA_BASE_URL);
     const pick = (type: ListingType) => current
       .filter((v) => !v.sold && v.availability[type])
-      .sort((a, b) => Number(b.promoted[type]) - Number(a.promoted[type]) || b.updatedAt.localeCompare(a.updatedAt))
-      .slice(0, 4);
+      // Include the published home cards even when they fall below the first
+      // four by recency. The client retains their order and fills vacant slots.
+      .sort((a, b) => Number(b.promoted[type]) - Number(a.promoted[type]) || b.updatedAt.localeCompare(a.updatedAt));
     return json({ featured: { hire: pick("hire"), sales: pick("sales"), lease: pick("lease") } }, 200,
       "public, max-age=30, stale-while-revalidate=60");
   }

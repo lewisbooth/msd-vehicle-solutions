@@ -39,9 +39,9 @@ export function filterVehicles(list, type, filters) {
     return true;
   }).sort((a, b) => {
     const aPrice = sortablePrice(a, type), bPrice = sortablePrice(b, type);
-    if (aPrice === null) return bPrice === null ? 0 : 1;
+    if (aPrice === null) return bPrice === null ? a.name.localeCompare(b.name) : 1;
     if (bPrice === null) return -1;
-    return filters.sort === 'price-high' ? bPrice - aPrice : aPrice - bPrice;
+    return (filters.sort === 'price-high' ? bPrice - aPrice : aPrice - bPrice) || a.name.localeCompare(b.name);
   });
 }
 
@@ -113,11 +113,11 @@ function Featured({ type, title, initialVehicles = [] }) {
         if (!Array.isArray(data?.featured?.[type])) return;
         setVehicles(previous => {
           const fresh = data.featured[type];
-          const pinned = previous.slice(0,3).map(item => fresh.find(vehicle => vehicle.slug === item.slug));
-          // Keep the current published feature order while replacing its live
-          // prices and status. A newly published catalogue can change the order.
-          if (pinned.length && pinned.every(Boolean)) return pinned;
-          return fresh;
+          const published = previous.slice(0,3).map(item => fresh.find(vehicle => vehicle.slug === item.slug)).filter(Boolean);
+          const publishedSlugs = new Set(published.map(vehicle => vehicle.slug));
+          // Refresh published cards in place; replace only vehicles that are
+          // no longer available. A new static build can change the order.
+          return [...published, ...fresh.filter(vehicle => !publishedSlugs.has(vehicle.slug))].slice(0,3);
         });
       }).catch(() => {});
     return () => controller.abort();

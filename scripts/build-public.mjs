@@ -63,7 +63,7 @@ function legalContent(which) {
 }
 function typeOf(path) { return path.split('/')[3]; }
 function price(vehicle, type) { return Number(vehicle?.pricing?.[type]) > 0 ? Number(vehicle.pricing[type]) : Number.MAX_SAFE_INTEGER; }
-function available(vehicles, type) { return vehicles.filter(vehicle => vehicle.availability?.[type] && (type === 'sales' || !vehicle.sold)).sort((a,b) => price(a,type) - price(b,type)); }
+function available(vehicles, type) { return vehicles.filter(vehicle => vehicle.availability?.[type] && (type === 'sales' || !vehicle.sold)).sort((a,b) => price(a,type) - price(b,type) || a.name.localeCompare(b.name)); }
 function featured(vehicles, type) {
   const current = vehicles.filter(vehicle => vehicle.availability?.[type] && !vehicle.sold);
   // Historical landing-page order is a preference, not a publishing constraint:
