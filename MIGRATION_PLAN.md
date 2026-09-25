@@ -64,6 +64,14 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Update admin publishing copy and retire mandatory snapshot export from the normal update workflow.
 - [x] Validate local build and direct/filtered/deleted/sold/SEO routes, deploy `main` and verify production HTML and cache behavior. Local D1 mutation proved live visibility; production admin writes await Cloudflare Access.
 
+### 5. Rendering and D1 latency review (2026-09-25)
+
+- [x] Confirm the browser screenshot measures the correct deployment. `moorlandselfdrive.co.uk` still returns the old Express/Caddy site with `instantPage.js`; benchmark the new `workers.dev` deployment directly until DNS cutover.
+- [x] Profile warm JSX markup rendering locally and keep React as a Worker-only template engine. No public React/hydration is shipped; warm render CPU is below a millisecond in the local benchmark.
+- [x] Add a `Server-Timing` header for the awaited catalogue data path and minify the production Worker bundle. The Cloudflare production build succeeded; the timing header was observed on current routes.
+- [x] Collapse vehicle and image reads into one D1 query for homepage/listing, and two for detail. Validate listing order, sold vehicles, photo order and missing photos locally, including a non-contiguous second photo.
+- [ ] Compare the production `Server-Timing` values and rendered routes before/after the query change; capture UK browser timing separately after DNS cutover. Avoid claiming local proxy or Chicago edge timings represent a UK visitor.
+
 ### 0. Audit current public site
 
 - [x] Inspect repository, live brochure routes and current listings.

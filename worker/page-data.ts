@@ -31,23 +31,27 @@ const categories = new Set([
 // removed from every listing must not remain accessible at a guessed detail URL.
 const publicVehicle = "deleted_at IS NULL AND (availability_sales = 1 OR (sold = 0 AND (availability_hire = 1 OR availability_lease = 1)))";
 
-async function photosFor(env: RuntimeEnv, rows: VehicleRow[]): Promise<ImageRow[]> {
-  if (!rows.length) return [];
-  const photos: ImageRow[] = [];
-  // Bound parameter counts if the catalogue grows beyond the original import.
-  for (let index = 0; index < rows.length; index += 100) {
-    const ids = rows.slice(index, index + 100).map((row) => row.id);
-    const batch = await env.DB.prepare(
-      `SELECT * FROM vehicle_images WHERE vehicle_id IN (${ids.map(() => "?").join(",")}) ORDER BY vehicle_id, position`
-    ).bind(...ids).all<ImageRow>();
-    photos.push(...batch.results);
-  }
-  return photos;
-}
+type VehicleWithPhotos = VehicleRow & { photos_json: string };
 
-async function toVehicles(env: RuntimeEnv, rows: VehicleRow[]): Promise<Vehicle[]> {
-  const photos = await photosFor(env, rows);
-  return rows.map((row) => vehicleDto(row, photos, env.MEDIA_BASE_URL));
+// Keep each vehicle and its photos in one D1 result. The image primary key
+// (vehicle_id, position) makes each correlated lookup cheap, without repeating
+// the vehicle's description once per photo in a join result.
+const vehicleSelect = `SELECT vehicles.*, (
+  SELECT json_group_array(json_object(
+    'vehicle_id', image.vehicle_id, 'position', image.position,
+    'small_key', image.small_key, 'large_key', image.large_key,
+    'width', image.width, 'height', image.height, 'alt', image.alt
+  )) FROM vehicle_images AS image WHERE image.vehicle_id = vehicles.id
+) AS photos_json FROM vehicles`;
+
+function toVehicles(env: RuntimeEnv, rows: VehicleWithPhotos[]): Vehicle[] {
+  return rows.map((row) => {
+    // Aggregate order is not guaranteed by SQL; restore the previous image
+    // query's position order before building URLs and rendering thumbnails.
+    const photos = JSON.parse(row.photos_json) as ImageRow[];
+    photos.sort((a, b) => a.position - b.position);
+    return vehicleDto(row, photos, env.MEDIA_BASE_URL);
+  });
 }
 
 function readFilters(url: URL): ListingFilters {
@@ -94,16 +98,16 @@ async function listing(env: RuntimeEnv, path: string, type: ListingType, url: UR
     ? "updated_at DESC, id"
     : `CASE WHEN ${price} IS NULL OR ${price} <= 0 THEN 1 ELSE 0 END, ` +
       `CASE WHEN ${price} > 0 THEN ${price} END ${filters.sort === "price-high" ? "DESC" : "ASC"}, name COLLATE NOCASE, id`;
-  const result = await env.DB.prepare(`SELECT * FROM vehicles WHERE ${where.join(" AND ")} ORDER BY ${order}`)
-    .bind(...values).all<VehicleRow>();
-  return { path, filters, vehicles: await toVehicles(env, result.results) };
+  const result = await env.DB.prepare(`${vehicleSelect} WHERE ${where.join(" AND ")} ORDER BY ${order}`)
+    .bind(...values).all<VehicleWithPhotos>();
+  return { path, filters, vehicles: toVehicles(env, result.results) };
 }
 
 async function featured(env: RuntimeEnv, path: string, type: ListingType): Promise<PageData> {
   const result = await env.DB.prepare(
-    `SELECT * FROM vehicles WHERE ${publicVehicle} AND sold = 0 AND availability_${type} = 1 ` +
+    `${vehicleSelect} WHERE ${publicVehicle} AND sold = 0 AND availability_${type} = 1 ` +
     `ORDER BY promoted_${type} DESC, updated_at DESC, id`
-  ).all<VehicleRow>();
+  ).all<VehicleWithPhotos>();
   // Admin promotion has priority; the original published card order breaks
   // ties among equally promoted records and remains stable for the initial D1.
   const originalOrder = new Map([...new Set(featuredOrder[type])].map((slug, index) => [slug, index]));
@@ -112,7 +116,7 @@ async function featured(env: RuntimeEnv, path: string, type: ListingType): Promi
     (originalOrder.get(a.slug) ?? Infinity) - (originalOrder.get(b.slug) ?? Infinity) ||
     b.updated_at.localeCompare(a.updated_at) || a.id.localeCompare(b.id)
   ).slice(0, 3);
-  return { path, featured: { [type]: await toVehicles(env, selected) } };
+  return { path, featured: { [type]: toVehicles(env, selected) } };
 }
 
 async function detail(env: RuntimeEnv, path: string, encodedSlug: string, url: URL): Promise<PageData> {
@@ -125,8 +129,8 @@ async function detail(env: RuntimeEnv, path: string, encodedSlug: string, url: U
   if (slug.length > 180 || !/^[a-z0-9](?:[a-z0-9.()-]*[a-z0-9])?$/.test(slug)) {
     throw new HttpError(400, "Invalid vehicle slug");
   }
-  const row = await env.DB.prepare(`SELECT * FROM vehicles WHERE slug = ? AND ${publicVehicle}`)
-    .bind(slug).first<VehicleRow>();
+  const row = await env.DB.prepare(`${vehicleSelect} WHERE slug = ? AND ${publicVehicle}`)
+    .bind(slug).first<VehicleWithPhotos>();
   if (!row) throw new HttpError(404, "Vehicle not found");
   const fallback = listingTypes.find((type) => row[`availability_${type}`] && (type === "sales" || !row.sold)) || "hire";
   const requested = url.searchParams.get("ref");
@@ -134,10 +138,10 @@ async function detail(env: RuntimeEnv, path: string, encodedSlug: string, url: U
     row[`availability_${requested}`] && (requested === "sales" || !row.sold)
     ? requested as ListingType : fallback;
   const related = await env.DB.prepare(
-    `SELECT * FROM vehicles WHERE ${publicVehicle} AND id <> ? AND category = ? ` +
+    `${vehicleSelect} WHERE ${publicVehicle} AND id <> ? AND category = ? ` +
     `AND sold = 0 AND availability_${ref} = 1 ORDER BY updated_at DESC, id LIMIT 3`
-  ).bind(row.id, row.category).all<VehicleRow>();
-  const vehicles = await toVehicles(env, [row, ...related.results]);
+  ).bind(row.id, row.category).all<VehicleWithPhotos>();
+  const vehicles = toVehicles(env, [row, ...related.results]);
   return { path, vehicle: vehicles[0], relatedVehicles: vehicles.slice(1), ref };
 }
 
