@@ -129,6 +129,13 @@ img { max-width: 100%; }
 .listing-intro { max-width: 680px; }
 .listing-intro h1 { margin: .4rem 0 .6rem; font-size: clamp(2.6rem,4.3vw,4.3rem); }
 .listing-intro p { margin-bottom: 2rem; color: var(--muted); }
+.listing-skeleton { display: none; }
+html.filtered-list-pending .listing-results { display: none; }
+html.filtered-list-pending .listing-skeleton { display: block; }
+.listing-skeleton > p { margin: 0 0 1rem; color: var(--muted); font-size: .84rem; }
+.skeleton-card { border: 1px solid var(--line); border-bottom: 3px solid var(--line); }
+.skeleton-photo { aspect-ratio: 3 / 2; background: var(--light); }
+.skeleton-copy { height: 7rem; margin: 1.2rem; background: var(--light); }
 .listing-toolbar { display: flex; justify-content: space-between; font-size: .84rem; border-bottom: 1px solid var(--line); padding: 0 0 .8rem; }
 .listing-toolbar span { color: var(--muted); }
 .filters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .8rem; background: var(--light); padding: 1.1rem; margin: 1.1rem 0 1.5rem; }

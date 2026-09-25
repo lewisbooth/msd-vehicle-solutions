@@ -112,24 +112,7 @@ function VehicleCard({ vehicle, type = 'hire' }) {
 }
 
 function Featured({ type, title, initialVehicles = [] }) {
-  const [vehicles, setVehicles] = useState(initialVehicles);
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch('/api/home', { signal: controller.signal }).then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!Array.isArray(data?.featured?.[type])) return;
-        setVehicles(previous => {
-          const fresh = data.featured[type];
-          const published = previous.slice(0,3).map(item => fresh.find(vehicle => vehicle.slug === item.slug)).filter(Boolean);
-          const publishedSlugs = new Set(published.map(vehicle => vehicle.slug));
-          // Refresh published cards in place; replace only vehicles that are
-          // no longer available. A new static build can change the order.
-          return [...published, ...fresh.filter(vehicle => !publishedSlugs.has(vehicle.slug))].slice(0,3);
-        });
-      }).catch(() => {});
-    return () => controller.abort();
-  }, [type]);
-  const available = vehicles.filter(vehicle => !vehicle.sold && vehicle.availability?.[type]).slice(0, 3);
+  const available = initialVehicles.filter(vehicle => !vehicle.sold && vehicle.availability?.[type]).slice(0, 3);
   if (!available.length) return null;
   return <section className="section-tint"><div className="shell section-pad"><div className="section-heading"><div><span className="eyebrow">Our current selection</span><h2>{title}</h2></div><a className="text-link" href={`/vehicles/listing/${type}`}>See all vehicles →</a></div><div className="card-grid">{available.map(vehicle => <VehicleCard key={vehicle.id || vehicle.slug} vehicle={vehicle} type={type}/>)}</div></div></section>;
 }
@@ -149,59 +132,45 @@ function FilterSelect({ label, name, choices, value, onChange }) {
 
 function Listing({ initial, type }) {
   const [filters, setFilters] = useState({ sort: 'price-low', size: 'all', seats: 'all', fuel: 'all' });
-  const [vehicles, setVehicles] = useState(initial.vehicles || []);
-  const [loading, setLoading] = useState(false);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => { setFilters(getFilters()); }, []);
+  const [queryReady, setQueryReady] = useState(false);
   useEffect(() => {
-    const controller = new AbortController();
-    const params = new URLSearchParams({ type, ...filters });
-    if (typeof window !== 'undefined' && window.location.search) {
-      for (const [key, value] of new URLSearchParams(window.location.search)) if (['sort','size','seats','fuel'].includes(key)) params.set(key, value);
-    }
-    setLoading(true);
-    fetch(`/api/vehicles?${params}`, { signal: controller.signal }).then(response => response.ok ? response.json() : Promise.reject(new Error('Unavailable')))
-      .then(data => { if (Array.isArray(data.vehicles)) { setVehicles(data.vehicles); setFailed(false); } })
-      .catch(error => { if (error.name !== 'AbortError') setFailed(true); })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
-    return () => controller.abort();
-  }, [type, filters]);
+    const syncFromUrl = () => { setFilters(getFilters()); setQueryReady(true); };
+    if (document.documentElement.classList.contains('filtered-list-pending')) syncFromUrl();
+    window.addEventListener('popstate', syncFromUrl);
+    return () => window.removeEventListener('popstate', syncFromUrl);
+  }, []);
+  useEffect(() => {
+    if (queryReady) document.documentElement.classList.remove('filtered-list-pending');
+  }, [queryReady]);
   const update = (name, value) => {
     const next = { ...filters, [name]: value };
     setFilters(next);
     const params = new URLSearchParams(Object.entries(next).filter(([,val]) => val && val !== 'all' && val !== 'price-low'));
     history.replaceState({}, '', `${location.pathname}${params.size ? `?${params}` : ''}`);
   };
-  const list = filterVehicles(vehicles, type, filters);
-  return <main className="listing-page"><div className="shell"><div className="listing-intro"><span className="eyebrow">Browse the range</span><h1>Vehicles for {typeNames[type]}</h1><p>Find the right car or van in Stoke-on-Trent. Our stock changes regularly; call us if you have something specific in mind.</p></div><div className="listing-toolbar"><strong>{list.length} {list.length === 1 ? 'vehicle' : 'vehicles'}</strong><span aria-live="polite">{loading ? 'Checking current stock…' : failed ? 'Showing the last published catalogue.' : 'Current stock'}</span></div><form className="filters" onSubmit={event => event.preventDefault()}>
+  const list = filterVehicles(initial.vehicles || [], type, filters);
+  return <main className="listing-page"><div className="shell"><div className="listing-intro"><span className="eyebrow">Browse the range</span><h1>Vehicles for {typeNames[type]}</h1><p>Find the right car or van in Stoke-on-Trent. Our stock changes regularly; call us if you have something specific in mind.</p></div><div className="listing-skeleton" role="status"><p>Preparing your selection…</p><div className="card-grid" aria-hidden="true">{[0,1,2].map(index => <div className="skeleton-card" key={index}><div className="skeleton-photo"/><div className="skeleton-copy"/></div>)}</div></div><div className="listing-results"><div className="listing-toolbar"><strong>{list.length} {list.length === 1 ? 'vehicle' : 'vehicles'}</strong><span>Published catalogue</span></div><form className="filters" onSubmit={event => event.preventDefault()}>
     <FilterSelect label="Sort by" name="sort" value={filters.sort} onChange={update} choices={[["price-low","Price: low to high"],["price-high","Price: high to low"]]}/>
     <FilterSelect label="Category" name="size" value={filters.size} onChange={update} choices={categories}/>
     <FilterSelect label="Seats" name="seats" value={filters.seats} onChange={update} choices={[["all","Any"],["2","2 seats"],["3","3 seats"],["4+","4+ seats"]]}/>
     <FilterSelect label="Fuel" name="fuel" value={filters.fuel} onChange={update} choices={[["all","Any"],["petrol","Petrol"],["diesel","Diesel"]]}/>
-  </form>{list.length ? <div className="card-grid listing-grid">{list.map(vehicle=><VehicleCard key={vehicle.id || vehicle.slug} vehicle={vehicle} type={type}/>)}</div> : <div className="empty-state"><h2>No vehicles match these filters</h2><p>Try another selection, or contact us about vehicles that have not yet been listed.</p><a className="btn btn-blue" href="/contact">Contact us</a></div>}<div className="listing-end"><p>Can't find what you're looking for? Our stock is always changing.</p><a className="text-link" href="/contact">Talk to our team →</a></div></div></main>;
+  </form>{list.length ? <div className="card-grid listing-grid">{list.map(vehicle=><VehicleCard key={vehicle.id || vehicle.slug} vehicle={vehicle} type={type}/>)}</div> : <div className="empty-state"><h2>No vehicles match these filters</h2><p>Try another selection, or contact us about vehicles that have not yet been listed.</p><a className="btn btn-blue" href="/contact">Contact us</a></div>}<div className="listing-end"><p>Can't find what you're looking for? Our stock is always changing.</p><a className="text-link" href="/contact">Talk to our team →</a></div></div></div></main>;
 }
 
 function VehicleDetail({ initial }) {
-  const [vehicle, setVehicle] = useState(initial.vehicle);
-  const [related, setRelated] = useState(initial.relatedVehicles || []);
+  const vehicle = initial.vehicle;
   const [selected, setSelected] = useState(0);
   const listingTypes = ['hire','sales','lease'];
   const fallbackRef = listingTypes.find(type => initial.vehicle?.availability?.[type]) || 'hire';
   const [ref, setRef] = useState(listingTypes.includes(initial.ref) && initial.vehicle?.availability?.[initial.ref] ? initial.ref : fallbackRef);
   useEffect(() => {
-    if (!initial.vehicle?.slug) return;
     const available = listingTypes.filter(type => vehicle?.availability?.[type]);
     const requested = new URLSearchParams(window.location.search).get('ref');
     const targetRef = requested && available.includes(requested) ? requested : available.includes(ref) ? ref : available[0] || fallbackRef;
-    if (targetRef !== ref) { setRef(targetRef); return; }
-    const controller = new AbortController();
-    fetch(`/api/vehicles/${encodeURIComponent(initial.vehicle.slug)}?ref=${ref}`, { signal: controller.signal })
-      .then(response => response.ok ? response.json() : null).then(data => {
-        if (data?.vehicle) { setVehicle(data.vehicle); setRelated(data.relatedVehicles || []); }
-      }).catch(()=>{});
-    return () => controller.abort();
-  }, [initial.vehicle?.slug, ref, vehicle?.availability?.hire, vehicle?.availability?.sales, vehicle?.availability?.lease]);
+    if (targetRef !== ref) setRef(targetRef);
+  }, [ref, vehicle]);
   if (!vehicle) return <NotFound/>;
+  const related = initial.relatedByType?.[ref] || initial.relatedVehicles || [];
   const details = vehicle.details || {};
   const fields = [['Year', details.year], ['Category', categoryName(vehicle.category)], ['Mileage', details.mileage > 0 ? `${Number(details.mileage).toLocaleString('en-GB')} miles` : null], ['Engine size', details.engineSize ? `${details.engineSize}L` : null], ['Transmission', details.transmission], ['Fuel economy', details.fuelEconomy ? `${details.fuelEconomy} mpg` : null], ['Fuel type', details.fuelType], ['Seats', details.seats], ['Doors', details.doors]];
   if (vehicle.category?.startsWith('van-')) fields.push(['Vehicle height', details.height ? `${details.height} mm` : null], ['Storage width', details.storage?.width ? `${details.storage.width} mm` : null], ['Storage height', details.storage?.height ? `${details.storage.height} mm` : null], ['Storage length', details.storage?.length ? `${details.storage.length} mm` : null], ['Payload', details.cargo ? `${details.cargo} kg` : null]);

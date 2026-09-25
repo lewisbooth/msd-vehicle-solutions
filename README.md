@@ -19,10 +19,14 @@ The build creates `dist/`: prerendered HTML for brochure pages, listings and
 vehicle details; hashed frontend bundles, graphics and fonts; and a sitemap.
 The build generates a shared image URL map in `.generated/` before bundling, so
 the static HTML and hydrated React app reference the same versioned images.
-It uses `src/content/vehicles.json` as the checked-in
-snapshot of the visible live catalogue. The snapshot is reviewed and updated
-from the current site before a build; admin changes to D1 require a new static
-build before their detail pages and SEO metadata are published. `npm run dev`
+It uses `src/content/vehicles.json` as the checked-in catalogue snapshot.
+Every public page contains its vehicle markup and initial React data, so
+hydration does not fetch the catalogue again. Listing filters run against that
+embedded snapshot in the browser. For a bookmarked link with a non-default
+filter, a skeleton covers the unfiltered HTML until React applies the URL
+filter locally. Admin changes to D1 become public only after the reviewed
+[D1 publishing procedure](scripts/publish-d1.md) commits a new snapshot and
+the production build deploys its HTML and assets. `npm run dev`
 starts the public Vite development server.
 Run `npx wrangler dev` after building to exercise the Cloudflare assets and API
 locally with configured D1 and R2 bindings.

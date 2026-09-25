@@ -1,5 +1,5 @@
-// Generate real, crawlable HTML for each route. The React bundle hydrates the
-// markup and refreshes live stock from /api, but the initial page is complete.
+// Generate real, crawlable HTML for each route. React hydrates the exact
+// catalogue serialized into each page; publishing a new snapshot rebuilds it.
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
@@ -91,7 +91,9 @@ const contentFor = (path, vehicles) => {
     const vehicle = vehicles.find(entry => entry.slug === slug);
     if (!vehicle) throw new Error(`No vehicle found for ${path}`);
     const ref = ['hire', 'sales', 'lease'].find(type => vehicle.availability?.[type]) || 'hire';
-    return { path, vehicle, relatedVehicles: vehicles.filter(entry => entry.id !== vehicle.id && entry.category === vehicle.category && !entry.sold && entry.availability?.[ref]).slice(0,3), ref };
+    const relatedByType = Object.fromEntries(['hire', 'sales', 'lease'].map(type => [type,
+      vehicles.filter(entry => entry.id !== vehicle.id && entry.category === vehicle.category && !entry.sold && entry.availability?.[type]).slice(0,3)]));
+    return { path, vehicle, relatedByType, ref };
   }
   return { path };
 };
@@ -134,7 +136,12 @@ for (const path of routes) {
     url: origin, telephone: '+441782517782', address: { '@type':'PostalAddress', streetAddress:'Childerplay Road, Knypersley', addressLocality:'Stoke-on-Trent', postalCode:'ST8 7PZ', addressCountry:'GB' }
   } : null;
   const markup = renderToString(React.createElement(App, {initial}));
-  const html = `<!doctype html><html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16467b"><meta name="description" content="${encodeHtml(description)}"><meta property="og:type" content="website"><meta property="og:title" content="${encodeHtml(titleWithBrand)}"><meta property="og:description" content="${encodeHtml(description)}"><meta property="og:url" content="${encodeHtml(canonical)}">${image ? `<meta property="og:image" content="${encodeHtml(new URL(image, origin).href)}">` : ''}<meta name="twitter:card" content="summary_large_image">${path !== '/404' ? `<link rel="canonical" href="${encodeHtml(canonical)}">` : '<meta name="robots" content="noindex">'}<link rel="icon" href="${encodeHtml(favicon)}">${cssLinks}<title>${encodeHtml(titleWithBrand)}</title>${schema ? `<script type="application/ld+json">${scriptJson(schema)}</script>` : ''}</head><body><div id="root">${markup}</div><script id="msd-page-data" type="application/json">${scriptJson(initial)}</script><script type="module" src="/${encodeHtml(entry.file)}"></script></body></html>`;
+  // A query-specific listing cannot be prerendered under the same static URL.
+  // Hide the default cards before paint until React applies the local filter.
+  const listingGate = path.startsWith('/vehicles/listing/')
+    ? `<script>(function(){var p=new URLSearchParams(location.search);var d={sort:'price-low',size:'all',seats:'all',fuel:'all'};if(Object.keys(d).some(function(k){return p.has(k)&&p.get(k)!==d[k]})){document.documentElement.classList.add('filtered-list-pending');setTimeout(function(){document.documentElement.classList.remove('filtered-list-pending')},10000)}})()</script>`
+    : '';
+  const html = `<!doctype html><html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16467b"><meta name="description" content="${encodeHtml(description)}"><meta property="og:type" content="website"><meta property="og:title" content="${encodeHtml(titleWithBrand)}"><meta property="og:description" content="${encodeHtml(description)}"><meta property="og:url" content="${encodeHtml(canonical)}">${image ? `<meta property="og:image" content="${encodeHtml(new URL(image, origin).href)}">` : ''}<meta name="twitter:card" content="summary_large_image">${path !== '/404' ? `<link rel="canonical" href="${encodeHtml(canonical)}">` : '<meta name="robots" content="noindex">'}<link rel="icon" href="${encodeHtml(favicon)}">${listingGate}${cssLinks}<title>${encodeHtml(titleWithBrand)}</title>${schema ? `<script type="application/ld+json">${scriptJson(schema)}</script>` : ''}</head><body><div id="root">${markup}</div><script id="msd-page-data" type="application/json">${scriptJson(initial)}</script><script type="module" src="/${encodeHtml(entry.file)}"></script></body></html>`;
   const filename = pathnameFile(path);
   await mkdir(dirname(filename), { recursive:true });
   await writeFile(filename, html);

@@ -117,7 +117,7 @@ function App() {
       );
       setSelected(result.vehicle); setIsNew(false);
       await refresh();
-      setNotice("Saved. Live API data updates now; prerendered search pages update after the next static build.");
+      setNotice("Saved to D1. Public pages update after the reviewed catalogue is published and the static build deploys.");
     });
   };
 
@@ -133,7 +133,7 @@ function App() {
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images`, { method: "POST", body });
       setSelected(result.vehicle);
       await refresh();
-      setNotice("Photo uploaded.");
+      setNotice("Photo uploaded to R2. Publish the catalogue to update public pages.");
     });
   };
 
@@ -143,6 +143,7 @@ function App() {
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images/${position}`, { method: "DELETE" });
       setSelected(result.vehicle);
       await refresh();
+      setNotice("Photo removed in D1. Publish the catalogue to update public pages.");
     });
   };
 
@@ -156,6 +157,7 @@ function App() {
       });
       setSelected(result.vehicle);
       await refresh();
+      setNotice("Photo order saved in D1. Publish the catalogue to update public pages.");
     });
   };
 
@@ -163,7 +165,7 @@ function App() {
     if (!selected || !window.confirm(`Remove ${selected.name} from the public catalogue?`)) return;
     await run(async () => {
       await api(`/api/admin/vehicles/${selected.id}`, { method: "DELETE" });
-      setSelected(null); await refresh(); setNotice("Vehicle removed from the public API.");
+      setSelected(null); await refresh(); setNotice("Vehicle removed from D1. Publish the catalogue to remove its public page.");
     });
   };
 
