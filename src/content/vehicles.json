@@ -1,0 +1,812 @@
+[
+  {
+    "id": "5ad07716052a88af8f2dbd2a",
+    "slug": "volkswagen-caddy-highline-2020",
+    "name": "Volkswagen Caddy Highline",
+    "category": "van-small",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad07716052a88af8f2dbd2a/1523611430188-1000.0d88afef1e5f.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad07716052a88af8f2dbd2a/1523611430188-400.a28d164730ce.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad07716052a88af8f2dbd2a/1523611430188-1000.0d88afef1e5f.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Volkswagen Caddy Highline"
+      }
+    ],
+    "pricing": {
+      "hire": 80,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "The perfect small van in Highline trim. Includes alloy wheels, Navigation, App connect, Bluetooth stereo, DAB radio, cruise-control, rear parking sensors.",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 2,
+      "doors": 4,
+      "engineSize": 2,
+      "fuelType": "Diesel",
+      "fuelEconomy": 45,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 0,
+      "year": 2020
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad083b1052a88af8f2dbd2b",
+    "slug": "volkswagen-transporter-2022",
+    "name": "Volkswagen Transporter",
+    "category": "van-medium",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad083b1052a88af8f2dbd2b/1523623875811-1000.7270292817c2.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad083b1052a88af8f2dbd2b/1523623875811-400.a14b620f526b.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad083b1052a88af8f2dbd2b/1523623875811-1000.7270292817c2.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Volkswagen Transporter"
+      }
+    ],
+    "pricing": {
+      "hire": 120,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 5,
+      "engineSize": 2,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 0,
+      "year": 2022
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad0abc1814627b74cf2285f",
+    "slug": "ford-ranger-wildtrak-2018",
+    "name": "Ford Ranger Wildtrak",
+    "category": "car-truck",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0abc1814627b74cf2285f/1523624897138-1000.96f702b48deb.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0abc1814627b74cf2285f/1523624897138-400.9557f02bb2d2.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0abc1814627b74cf2285f/1523624897138-1000.96f702b48deb.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Ford Ranger Wildtrak"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": false,
+      "lease": true
+    },
+    "promoted": {
+      "hire": false,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 5,
+      "doors": 4,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Automatic",
+      "height": null,
+      "mileage": 0,
+      "year": 2018
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad0b4934efc60b766567e19",
+    "slug": "mercedes-sprinter-luton-with-tail-lift-2019",
+    "name": "Mercedes Sprinter Luton with Tail Lift",
+    "category": "van-luton",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b4934efc60b766567e19/1523627155038-1000.10163cb39feb.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b4934efc60b766567e19/1523627155038-400.64c2c4f4c505.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b4934efc60b766567e19/1523627155038-1000.10163cb39feb.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Mercedes Sprinter Luton with Tail Lift"
+      }
+    ],
+    "pricing": {
+      "hire": 180,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "Perfect for moving house and has a Tail Lift. Custom built so bigger than your average Luton Van!\nAlso ideal for businesses and tradespeople that need to transport large items and furniture. Including; Keyless start,\nMBUX multimedia system with 7-inch touch screen,\nUSB-C and Bluetooth® interface, Apple CarPlay/Android Auto and DAB radio.",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 3,
+      "engineSize": 2.1,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 0,
+      "year": 2019
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad0b6c44efc60b766567e1a",
+    "slug": "ford-tourneo-9-seater-minibus-2021",
+    "name": "Ford Tourneo - 9 Seater Minibus",
+    "category": "car-minibus",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6c44efc60b766567e1a/1523627715821-1000.25315211936e.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6c44efc60b766567e1a/1523627715821-400.8ec54ca2f69b.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6c44efc60b766567e1a/1523627715821-1000.25315211936e.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Ford Tourneo - 9 Seater Minibus"
+      }
+    ],
+    "pricing": {
+      "hire": 150,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 9,
+      "doors": 4,
+      "engineSize": 2,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Automatic",
+      "height": null,
+      "mileage": 0,
+      "year": 2021
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad0b6fb4efc60b766567e1b",
+    "slug": "mercedes-sprinter-panel-van-2021",
+    "name": "Mercedes Sprinter Panel Van",
+    "category": "van-large",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6fb4efc60b766567e1b/1523627770876-1000.403b971f8ab4.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6fb4efc60b766567e1b/1523627770876-400.68b43f7b86a2.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b6fb4efc60b766567e1b/1523627770876-1000.403b971f8ab4.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Mercedes Sprinter Panel Van"
+      }
+    ],
+    "pricing": {
+      "hire": 150,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "Great all-rounder for businesses and tradespeople, transporting large items and furniture. Ply-lined for durability, including; Keyless start,\nMBUX multimedia system with 7-inch touch screen,\nUSB-C and Bluetooth® interface, Apple CarPlay/Android Auto and DAB radio.\nLoad Volume 14m³",
+      "storage": {
+        "width": 1787,
+        "height": 2209,
+        "length": 4410
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 5,
+      "engineSize": 2.1,
+      "fuelType": "Diesel",
+      "fuelEconomy": 30.3,
+      "transmission": "Manual",
+      "height": 2616,
+      "mileage": 0,
+      "year": 2021
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "5ad0b72f4efc60b766567e1c",
+    "slug": "mercedes-sprinter-dropsideflatbed-2021",
+    "name": "Mercedes Sprinter Dropside/Flatbed",
+    "category": "van-large",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b72f4efc60b766567e1c/1523627823291-1000.90361d051928.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b72f4efc60b766567e1c/1523627823291-400.70d69549b14a.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/5ad0b72f4efc60b766567e1c/1523627823291-1000.90361d051928.jpg",
+        "width": 1000,
+        "height": 667,
+        "alt": "Mercedes Sprinter Dropside/Flatbed"
+      }
+    ],
+    "pricing": {
+      "hire": 180,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "promoted": {
+      "hire": true,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "Custom Build, Bigger than most dropside chassis!\n\nLoad Space: 5m Length x 2.15m Width",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 2,
+      "engineSize": 2.1,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 0,
+      "year": 2021
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "674d97505ebb0c36189fea6e",
+    "slug": "2023-(72)-ford-transit-tipper-350-leader-ecoblue-2023",
+    "name": "2023 (72) Ford Transit Tipper 350 Leader EcoBlue",
+    "category": "car-truck",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/674d97505ebb0c36189fea6e/1733138368700-1000.56dd1bdd2b65.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/674d97505ebb0c36189fea6e/1733138368700-400.702b957aeeb3.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/674d97505ebb0c36189fea6e/1733138368700-1000.56dd1bdd2b65.jpg",
+        "width": 1000,
+        "height": 684,
+        "alt": "2023 (72) Ford Transit Tipper 350 Leader EcoBlue"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 25995,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "Brand new (cancelled order) Ford Transit 2.0 EcoBlue 130ps Leader Tipper Finished in Frozen White. This vehicle comes with Towbar, Driver & Passenger Airbags, Daytime Running Lights, Immobiliser, ESC, Emergency Brake Warning, ABS, DAB/FM/AM Radio, USB Connectivity, Bluetooth, Electric Windows, Tipper Body. 2 Keys. Open Monday - Saturday, enquiries call us on 01782 517782. Competitive finance options available. ***£25,995 + Vat***",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 2,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 234,
+      "year": 2023
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "68ff33c79ef522157f9db472",
+    "slug": "share-2023-land-rover-defender-3.0-d250-110-hard-top-commercial-auto-panel-van-2023",
+    "name": "** SOLD ** 2023 Land Rover Defender 3.0 D250 110 Hard Top Commercial Auto PANEL VAN",
+    "category": "van-medium",
+    "condition": "used",
+    "sold": true,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff33c79ef522157f9db472/1761555430022-1000.0ac268f0252c.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff33c79ef522157f9db472/1761555430022-400.c19284787af2.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff33c79ef522157f9db472/1761555430022-1000.0ac268f0252c.jpg",
+        "width": 750,
+        "height": 1000,
+        "alt": "** SOLD ** 2023 Land Rover Defender 3.0 D250 110 Hard Top Commercial Auto PANEL VAN"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": false,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 2,
+      "doors": 5,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Automatic",
+      "height": null,
+      "mileage": 17186,
+      "year": 2023
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "68ff35069ef522157f9db4e0",
+    "slug": "2023-renault-trafic-sl30-blue-dci-130-extra-van-panel-van-diesel-manual-2023",
+    "name": "2023 Renault Trafic SL30 Blue dCi 130 Extra Van PANEL VAN Diesel Manual",
+    "category": "van-medium",
+    "condition": "used",
+    "sold": true,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff35069ef522157f9db4e0/1761555785434-1000.c4020d931396.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff35069ef522157f9db4e0/1761555785434-400.b0b9cdfff68d.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/68ff35069ef522157f9db4e0/1761555785434-1000.c4020d931396.jpg",
+        "width": 750,
+        "height": 1000,
+        "alt": "2023 Renault Trafic SL30 Blue dCi 130 Extra Van PANEL VAN Diesel Manual"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": null,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 5,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 24949,
+      "year": 2023
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "6a21316bfa8b832810db807c",
+    "slug": "2024-vauxhall-movano-2.2-turbo-d-140ps-h2-van-prime-panel-van-diesel-manual-2024",
+    "name": "2024 Vauxhall Movano 2.2 Turbo D 140ps H2 Van Prime PANEL VAN Diesel Manual",
+    "category": "van-large",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a21316bfa8b832810db807c/1780560264300-1000.83a9dedd3680.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a21316bfa8b832810db807c/1780560264300-400.92847e7623b5.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a21316bfa8b832810db807c/1780560264300-1000.83a9dedd3680.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "2024 Vauxhall Movano 2.2 Turbo D 140ps H2 Van Prime PANEL VAN Diesel Manual"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 16995,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 5,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 30245,
+      "year": 2024
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "6a2131f0fa8b832810db80aa",
+    "slug": "2024-vauxhall-vivaro-2.0-turbo-d-145-pro-h1-van-panel-van-diesel-manual-2024",
+    "name": "2024 Vauxhall Vivaro 2.0 Turbo D 145 Pro H1 Van PANEL VAN Diesel Manual",
+    "category": "van-medium",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a2131f0fa8b832810db80aa/1780560444956-1000.221f01aff1ff.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a2131f0fa8b832810db80aa/1780560444956-400.e6ee8de68283.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a2131f0fa8b832810db80aa/1780560444956-1000.221f01aff1ff.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "2024 Vauxhall Vivaro 2.0 Turbo D 145 Pro H1 Van PANEL VAN Diesel Manual"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 18490,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "Stunning Vauxhall Vivaro 2.0 Turbo D 145 Pro F3100 LWB Van Finished in Metallic Black. This vehicle comes loaded with spec - Front & Rear Parking Sensors, Rear Camera, Sat Nav, Air Conditioning, Cruise Control, Heated Wing Mirrors and Loads More! Vehicle will come with a Fresh Service! 2 Keys. Open Monday - Saturday. Competitive finance options available. ***£18,490.00 + VAT***",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 3,
+      "doors": 5,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 18293,
+      "year": 2024
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "6a23dca0fa8b832810db84ca",
+    "slug": "2024-renault-master-lm35-blue-dci-145-start-medium-roof-van-2024",
+    "name": "2024 RENAULT MASTER LM35 Blue dCi 145 Start Medium Roof Van",
+    "category": "van-large",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a23dca0fa8b832810db84ca/1780735166874-1000.c7863d433883.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a23dca0fa8b832810db84ca/1780735166874-400.111f440c9f94.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a23dca0fa8b832810db84ca/1780735166874-1000.c7863d433883.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "2024 RENAULT MASTER LM35 Blue dCi 145 Start Medium Roof Van"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 18995,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 5,
+      "doors": 6,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 6830,
+      "year": 2024
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "6a3b8becfa8b832810dba135",
+    "slug": "2019-ford-fiesta-1.5-tdci-van-2019",
+    "name": "2019 FORD FIESTA 1.5 TDCi Van",
+    "category": "van-small",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a3b8becfa8b832810dba135/1782287388613-1000.dff366f8447f.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a3b8becfa8b832810dba135/1782287388613-400.039ad8c4007e.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a3b8becfa8b832810dba135/1782287388613-1000.dff366f8447f.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "2019 FORD FIESTA 1.5 TDCi Van"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 7490,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "Here is a lovely example of a Ford Fiesta 1.5 TDCi Van Finished in White. Vehicle comes with Full Service History, 2 Keys, Air Conditioning, Bluetooth, DAB Radio. Open Monday - Saturday. Competitive finance options available. ***£7,490.00 + VAT***",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 2,
+      "doors": 3,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 51224,
+      "year": 2019
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "6a4675d8fa8b832810dbafed",
+    "slug": "2021-mercedes-benz-citan-109cdi-pure-van-2021",
+    "name": "2021 MERCEDES-BENZ CITAN 109CDI Pure Van",
+    "category": "van-small",
+    "condition": "used",
+    "sold": false,
+    "photos": [
+      {
+        "position": 0,
+        "url": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a4675d8fa8b832810dbafed/1783002624390-1000.11bb9840682f.jpg",
+        "url400": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a4675d8fa8b832810dbafed/1783002624390-400.611eb3fcd91d.jpg",
+        "url1000": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev/vehicles/6a4675d8fa8b832810dbafed/1783002624390-1000.11bb9840682f.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "2021 MERCEDES-BENZ CITAN 109CDI Pure Van"
+      }
+    ],
+    "pricing": {
+      "hire": null,
+      "sales": 6995,
+      "lease": null
+    },
+    "availability": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "promoted": {
+      "hire": false,
+      "sales": true,
+      "lease": false
+    },
+    "details": {
+      "description": "VEHICLE IN PREP - Fresh Cambelt, Water Pump & Service.Open Monday - Saturday. Competitive finance options available. ***£6,995.00 + VAT***",
+      "storage": {
+        "width": null,
+        "height": null,
+        "length": null
+      },
+      "cargo": null,
+      "seats": 2,
+      "doors": 5,
+      "engineSize": null,
+      "fuelType": "Diesel",
+      "fuelEconomy": null,
+      "transmission": "Manual",
+      "height": null,
+      "mileage": 79000,
+      "year": 2021
+    },
+    "createdAt": "2026-09-24T00:00:00.000Z",
+    "updatedAt": "2026-09-24T00:00:00.000Z"
+  }
+]

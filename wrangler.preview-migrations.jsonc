@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "msd-vehicle-solutions-preview-migrations",
+  "compatibility_date": "2026-09-24",
+  "d1_databases": [{
+    "binding": "PREVIEW_DB",
+    "database_name": "msd-vehicle-solutions-preview",
+    "database_id": "6fbcf901-917e-4b08-bf8e-73085da3e30d",
+    "migrations_dir": "./migrations"
+  }]
+}
