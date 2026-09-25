@@ -21,7 +21,7 @@
     "bucket_name": "msd-vehicle-solutions"
   }],
   "vars": {
-    "MEDIA_BASE_URL": ""
+    "MEDIA_BASE_URL": "https://pub-f23343a6d1d74aca9ae43823407d11da.r2.dev"
   },
   "previews": {
     "vars": {
