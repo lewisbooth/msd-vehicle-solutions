@@ -32,7 +32,9 @@ function metadata(path: string, initial: PageData): [string, string] {
   const vehicle = initial.vehicle;
   if (!vehicle) return pages[path] || ["Page not found", "The page you requested was not found."];
   const suffix = vehicle.sold ? " — Sold" : "";
-  const title = `${vehicle.details.year ? `${vehicle.details.year} ` : ""}${vehicle.name}${suffix} in Stoke-on-Trent`;
+  const year = vehicle.details.year;
+  const prefix = year && !String(vehicle.name).startsWith(String(year)) ? `${year} ` : "";
+  const title = `${prefix}${vehicle.name}${suffix} in Stoke-on-Trent`;
   const description = cleanDescription(vehicle.details.description) ||
     `${vehicle.name}: view details, photos and availability for hire, sale or lease. Call 01782 517782 for more information.`;
   return [title, `${description.slice(0, 215)} | Call 01782 517782`];
