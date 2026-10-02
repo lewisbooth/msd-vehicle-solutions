@@ -106,6 +106,12 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Verify desktop/mobile layouts and focused interactions with isolated API fixtures; pass build and type checks.
 - [x] Deploy to main and verify the automatic production build; record production authentication limits.
 
+### 9. Preserve prices while POA is enabled (2026-10-02)
+
+- [x] Store POA independently for Hire, Sales and Leasing, retaining the numeric amount through toggling, saving and reopening.
+- [x] Prepare the migration of legacy POA sentinels without inventing a previously overwritten amount; mask retained POA prices from public responses and price sorting.
+- [ ] Verify toggle/save/reload/discard behavior, API persistence and public masking, then deploy the migration and application through main.
+
 ### 0. Audit current public site
 
 - [x] Inspect repository, live brochure routes and current listings.
@@ -211,6 +217,8 @@ Public [DNS lookup](https://www.who.is/dns/moorlandselfdrive.co.uk) on 2026-09-2
 - **2026-10-02 Session duration:** Updated only Access application `9b8c13f7-9a2d-461c-abd0-ed9185c86abc` from `8h` to `730h` (Cloudflare's one-month convention); independent readback verified the same audience, provider, exact-email policy and four paths. Global settings are unchanged. The admin Log out button navigates to `/cdn-cgi/access/logout`, which clears the app cookie and revokes that user's Access sessions across applications. Existing tokens keep their earlier expiration; the next login receives the new duration.
 
 - **2026-10-02 Admin deployment:** Published `b699b79` to `main`; Cloudflare build `af080e9a-1edd-43dd-9793-79cafcf241ec` succeeded and deployed Worker version `991c2ab9-5de0-4adc-af83-4b8745fe23b9`. The no-pending D1 migration gate passed, and build logs confirm upload of the new admin HTML plus `index-am4blFCS.css` and `index-mEi-AsHk.js`, matching the locally verified build. Public bundle hashes and production D1/R2/Access bindings remain unchanged. UI writes/logout were tested with isolated browser fixtures, not the user's real authenticated production session; the phase 7 real-sign-in/edit check remains open.
+
+- **2026-10-02 POA price preservation:** Replaced the destructive `-1` toggle with independent Hire/Sales/Leasing POA flags and migration `0002_price_on_application.sql`. Admin retains numeric prices when POA is enabled; public DTOs mask those amounts, and public price sorting ignores them. Old open admin forms receive a reload-required conflict instead of overwriting new price state. Browser tests confirmed £80.50 survives toggle/save/reopen/reload, independent service flags, photo actions and discard. Isolated SQLite tests exercised real create/update/read persistence, optimistic concurrency, legacy sentinel migration, all public API/SSR data paths and 12 service/sort combinations. Build and type checks passed. Read-only production baseline: 15 vehicles, zero legacy `-1` values. Deployment and production migration verification follow.
 
 ## Open gates
 

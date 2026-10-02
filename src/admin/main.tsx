@@ -7,6 +7,7 @@ type Vehicle = {
   id: string; slug: string; name: string; category: string; condition: string; sold: boolean;
   photos: Photo[]; createdAt: string; updatedAt: string;
   pricing: { hire: number | null; sales: number | null; lease: number | null };
+  poa: { hire: boolean; sales: boolean; lease: boolean };
   availability: { hire: boolean; sales: boolean; lease: boolean };
   promoted: { hire: boolean; sales: boolean; lease: boolean };
   details: {
@@ -28,6 +29,7 @@ function blankVehicle(): Vehicle {
     id: "", slug: "", name: "", category: "van-small", condition: "used", sold: false,
     photos: [], createdAt: "", updatedAt: "",
     pricing: { hire: null, sales: null, lease: null },
+    poa: { hire: false, sales: false, lease: false },
     availability: { hire: false, sales: false, lease: false },
     promoted: { hire: false, sales: false, lease: false },
     details: {
@@ -226,7 +228,7 @@ function App() {
     return <label className="field" key={path.join(".")}><span>{label}{options?.required && <span className="required-hint"> required</span>}</span>
       <input name={path.join(".")} type={numberField ? "number" : "text"} inputMode={numberField ? options?.integer ? "numeric" : "decimal" : undefined}
         min={options?.min} max={options?.max} step={numberField ? options?.integer ? "1" : "any" : undefined}
-        required={options?.required} maxLength={options?.maxLength} disabled={options?.disabled} value={options?.disabled && current === -1 ? "" : current ?? ""}
+        required={options?.required} maxLength={options?.maxLength} disabled={options?.disabled} value={current ?? ""}
         onChange={event => update(path, numberField ? event.target.value === "" ? null : Number(event.target.value) : event.target.value)} />
     </label>;
   };
@@ -280,10 +282,10 @@ function App() {
                 </div>
                 <label className="check sold-check"><input type="checkbox" checked={selected.sold} onChange={event => update(["sold"], event.target.checked)} /><span><strong>Mark as sold</strong><small>Shows a Sold badge in Sales and hides this vehicle from Hire and Leasing.</small></span></label>
               </fieldset>
-              <fieldset disabled={busy} className="form-section"><legend>Pricing & visibility</legend><p className="section-help">Choose where this vehicle appears. Leave a price blank to show price on application.</p>
+              <fieldset disabled={busy} className="form-section"><legend>Pricing & visibility</legend><p className="section-help">POA hides the price on your website and keeps the amount saved here. A blank price also shows as POA.</p>
                 <div className="pricing-grid">{services.map(([type, title, label]) => <div className="price-card" key={type}><h3>{title}</h3>
-                  {input(label, ["pricing", type], { min: -1, max: 1_000_000, disabled: selected.pricing[type] === -1 })}
-                  <label className="check"><input type="checkbox" checked={selected.pricing[type] === -1} onChange={event => update(["pricing", type], event.target.checked ? -1 : null)} />Price on application</label>
+                  {input(label, ["pricing", type], { min: 0, max: 1_000_000, disabled: selected.poa[type] })}
+                  <label className="check"><input type="checkbox" checked={selected.poa[type]} onChange={event => update(["poa", type], event.target.checked)} />Price on application</label>
                   <div className="price-toggles"><label className="check"><input type="checkbox" checked={selected.availability[type]} onChange={event => update(["availability", type], event.target.checked)} />Show in {title}</label>
                     <label className="check"><input type="checkbox" checked={selected.promoted[type]} onChange={event => update(["promoted", type], event.target.checked)} />Feature this vehicle</label></div>
                 </div>)}</div><p className="field-hint">Featured vehicles appear before other vehicles in featured sections.</p>

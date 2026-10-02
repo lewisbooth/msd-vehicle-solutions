@@ -16,6 +16,7 @@ export type Vehicle = {
     alt: string;
   }>;
   pricing: { hire: number | null; sales: number | null; lease: number | null };
+  poa: { hire: boolean; sales: boolean; lease: boolean };
   availability: { hire: boolean; sales: boolean; lease: boolean };
   promoted: { hire: boolean; sales: boolean; lease: boolean };
   details: {
@@ -46,6 +47,9 @@ export type VehicleRow = Record<string, string | number | null> & {
   pricing_hire: number | null;
   pricing_sales: number | null;
   pricing_lease: number | null;
+  poa_hire: number;
+  poa_sales: number;
+  poa_lease: number;
   availability_hire: number;
   availability_sales: number;
   availability_lease: number;
@@ -104,7 +108,27 @@ function imageUrl(base: string | undefined, key: string): string {
   return base ? `${base.replace(/\/$/, "")}/${key}` : `/api/media/${key}`;
 }
 
+/** Public DTOs must never expose a retained price while price on application is active. */
 export function vehicleDto(row: VehicleRow, images: ImageRow[], mediaBase?: string): Vehicle {
+  return createVehicleDto(row, images, mediaBase, false);
+}
+
+/** Only authenticated admin responses may include retained POA prices. */
+export function adminVehicleDto(row: VehicleRow, images: ImageRow[], mediaBase?: string): Vehicle {
+  return createVehicleDto(row, images, mediaBase, true);
+}
+
+function createVehicleDto(row: VehicleRow, images: ImageRow[], mediaBase: string | undefined, includePoaPrices: boolean): Vehicle {
+  // The sentinel fallback also keeps imports from the original catalogue safe.
+  const poa = {
+    hire: row.poa_hire === 1 || row.pricing_hire === -1,
+    sales: row.poa_sales === 1 || row.pricing_sales === -1,
+    lease: row.poa_lease === 1 || row.pricing_lease === -1,
+  };
+  const price = (type: keyof typeof poa) => {
+    const amount = row[`pricing_${type}`] as number | null;
+    return amount === -1 || (!includePoaPrices && poa[type]) ? null : amount;
+  };
   return {
     id: row.id,
     slug: row.slug,
@@ -125,7 +149,8 @@ export function vehicleDto(row: VehicleRow, images: ImageRow[], mediaBase?: stri
         alt: image.alt || row.name,
       };
     }),
-    pricing: { hire: row.pricing_hire, sales: row.pricing_sales, lease: row.pricing_lease },
+    pricing: { hire: price("hire"), sales: price("sales"), lease: price("lease") },
+    poa,
     availability: {
       hire: !!row.availability_hire,
       sales: !!row.availability_sales,

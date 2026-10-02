@@ -1,5 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { HttpError, json, readJsonObject, vehicleDto, type ImageRow, type VehicleRow } from "./model";
+import { HttpError, json, readJsonObject, adminVehicleDto, type ImageRow, type VehicleRow } from "./model";
 import type { RuntimeEnv } from "./env";
 
 const categories = new Set([
@@ -35,6 +35,14 @@ function record(value: unknown, field: string): Record<string, unknown> {
 }
 
 function vehicleFields(payload: Record<string, unknown>): Record<string, string | number | null> {
+  // Older open admin tabs represented POA by replacing the price with -1.
+  // Reject their writes rather than losing retained prices or changing POA state.
+  if (payload.poa === undefined) throw new HttpError(409, "Admin form is out of date; reload before saving");
+  const poa = record(payload.poa, "poa");
+  const poaFlag = (type: string) => {
+    if (typeof poa[type] !== "boolean") throw new HttpError(400, `Invalid poa.${type}`);
+    return flag(poa[type]);
+  };
   const pricing = record(payload.pricing, "pricing");
   const availability = record(payload.availability, "availability");
   const promoted = record(payload.promoted, "promoted");
@@ -45,11 +53,12 @@ function vehicleFields(payload: Record<string, unknown>): Record<string, string 
   if (!categories.has(category)) throw new HttpError(400, "Invalid category");
   const condition = string(payload.condition, "condition", 10);
   if (condition !== "new" && condition !== "used") throw new HttpError(400, "Invalid condition");
-  const price = (type: string) => number(pricing[type], `pricing.${type}`, -1, 1_000_000);
+  const price = (type: string) => number(pricing[type], `pricing.${type}`, 0, 1_000_000);
   return {
     name, category, condition,
     sold: flag(payload.sold),
     pricing_hire: price("hire"), pricing_sales: price("sales"), pricing_lease: price("lease"),
+    poa_hire: poaFlag("hire"), poa_sales: poaFlag("sales"), poa_lease: poaFlag("lease"),
     availability_hire: flag(availability.hire), availability_sales: flag(availability.sales),
     availability_lease: flag(availability.lease),
     promoted_hire: flag(promoted.hire), promoted_sales: flag(promoted.sales),
@@ -130,7 +139,7 @@ async function saveVehicle(request: Request, env: RuntimeEnv, id?: string): Prom
       throw error;
     }
     const row = await adminVehicle(env, newId);
-    return json({ vehicle: vehicleDto(row, [], env.MEDIA_BASE_URL) }, 201);
+    return json({ vehicle: adminVehicleDto(row, [], env.MEDIA_BASE_URL) }, 201);
   }
   const before = await adminVehicle(env, id);
   if (payload.slug !== undefined && payload.slug !== before.slug) {
@@ -144,7 +153,7 @@ async function saveVehicle(request: Request, env: RuntimeEnv, id?: string): Prom
   ).bind(...Object.values(updated), before.id, expected).run();
   if (!result.meta.changes) throw new HttpError(409, "Vehicle changed while you were editing; reload and review before saving");
   const row = await adminVehicle(env, before.id);
-  return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
+  return json({ vehicle: adminVehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
 }
 
 export async function readImageUploadForm(request: Request): Promise<FormData> {
@@ -212,7 +221,7 @@ async function uploadImages(request: Request, env: RuntimeEnv, id: string): Prom
     const position = (last?.position ?? -1) + 1;
     await env.DB.prepare("INSERT INTO vehicle_images (vehicle_id, position, small_key, large_key, width, height, alt) VALUES (?, ?, ?, ?, ?, ?, ?)")
       .bind(row.id, position, smallKey, largeKey, width, height, row.name).run();
-    return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) }, 201);
+    return json({ vehicle: adminVehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) }, 201);
   } catch (error) {
     // Only objects from this failed request are removed; previously published URLs remain immutable.
     await Promise.allSettled([env.MEDIA.delete(smallKey), env.MEDIA.delete(largeKey)]);
@@ -234,7 +243,7 @@ export async function adminApi(request: Request, env: RuntimeEnv, url: URL): Pro
         env.DB.prepare("SELECT * FROM vehicles WHERE deleted_at IS NULL ORDER BY updated_at DESC").all<VehicleRow>(),
         photos(env),
       ]);
-      return json({ vehicles: vehicles.results.map((row) => vehicleDto(row, images, env.MEDIA_BASE_URL)) });
+      return json({ vehicles: vehicles.results.map((row) => adminVehicleDto(row, images, env.MEDIA_BASE_URL)) });
     }
   }
   const orderPath = url.pathname.match(/^\/api\/admin\/vehicles\/([a-zA-Z0-9-]+)\/images\/order$/);
@@ -259,7 +268,7 @@ export async function adminApi(request: Request, env: RuntimeEnv, url: URL): Pro
         .bind(index, row.id, -index - 1));
     }
     if (changes.length) await env.DB.batch(changes);
-    return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
+    return json({ vehicle: adminVehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
   }
   const imagePath = url.pathname.match(/^\/api\/admin\/vehicles\/([a-zA-Z0-9-]+)\/images(?:\/(\d+))?$/);
   if (imagePath) {
@@ -271,7 +280,7 @@ export async function adminApi(request: Request, env: RuntimeEnv, url: URL): Pro
         .bind(row.id, Number(position)).run();
       if (!result.meta.changes) throw new HttpError(404, "Image not found");
       // Keep old R2 object: published and cached HTML may still link to this immutable key.
-      return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
+      return json({ vehicle: adminVehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
     }
   }
   const match = url.pathname.match(/^\/api\/admin\/vehicles\/([a-zA-Z0-9-]+)$/);
@@ -279,7 +288,7 @@ export async function adminApi(request: Request, env: RuntimeEnv, url: URL): Pro
     const id = match[1];
     if (request.method === "GET") {
       const row = await adminVehicle(env, id);
-      return json({ vehicle: vehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
+      return json({ vehicle: adminVehicleDto(row, await photos(env, row.id), env.MEDIA_BASE_URL) });
     }
     if (request.method === "PUT") return saveVehicle(request, env, id);
     if (request.method === "DELETE") {

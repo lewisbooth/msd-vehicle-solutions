@@ -94,10 +94,11 @@ async function listing(env: RuntimeEnv, path: string, type: ListingType, url: UR
     values.push(filters.fuel);
   }
   const price = `pricing_${type}`;
+  const poa = `poa_${type}`;
   const order = filters.sort === "newest"
     ? "updated_at DESC, id"
-    : `CASE WHEN ${price} IS NULL OR ${price} <= 0 THEN 1 ELSE 0 END, ` +
-      `CASE WHEN ${price} > 0 THEN ${price} END ${filters.sort === "price-high" ? "DESC" : "ASC"}, name COLLATE NOCASE, id`;
+    : `CASE WHEN ${poa} = 1 OR ${price} IS NULL OR ${price} <= 0 THEN 1 ELSE 0 END, ` +
+      `CASE WHEN ${poa} = 0 AND ${price} > 0 THEN ${price} END ${filters.sort === "price-high" ? "DESC" : "ASC"}, name COLLATE NOCASE, id`;
   const result = await env.DB.prepare(`${vehicleSelect} WHERE ${where.join(" AND ")} ORDER BY ${order}`)
     .bind(...values).all<VehicleWithPhotos>();
   return { path, filters, vehicles: toVehicles(env, result.results) };

@@ -97,3 +97,11 @@ onto the upload area; they are uploaded one at a time, with the first image used
 as the cover. Prices and measurements accept decimals. On mobile, the catalogue
 and editor have separate views with a **Vehicles** back button and a persistent
 save bar.
+
+Price on application is stored independently for Hire, Sales and Leasing. Its
+checkbox hides the advertised amount while retaining the saved price in the
+admin, including after reopening the vehicle. Public HTML/API responses mask
+that amount and public price sorting treats the vehicle as POA. Existing blank
+prices also display as POA. An admin tab opened before this change must reload
+before saving. After POA prices have been saved, any rollback must keep the POA
+masking code; rolling back to an older Worker would expose retained prices.
