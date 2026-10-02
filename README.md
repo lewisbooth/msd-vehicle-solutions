@@ -75,7 +75,7 @@ Admin edits write D1 immediately, and the next public HTML request reads the
 new rows. The retired [snapshot export procedure](scripts/publish-d1.md) remains
 available for optional inventory audits; it is not needed to publish edits.
 Admin login uses Cloudflare Access email codes for `lewis@amp.studio`, with an
-eight-hour session. Open `/admin/` on the production Worker hostname to sign
+one-month (`730h`) session. Open `/admin/` on the production Worker hostname to sign
 in. One Access application protects `/admin`, `/admin/*`, `/api/admin` and
 `/api/admin/*`; the public pages remain anonymous. The matching team URL and
 application audience are tracked in `wrangler.jsonc` so CI preserves them.
@@ -83,3 +83,17 @@ When moving to the public domain, add its equivalent admin paths to this same
 Access application before testing login on that hostname. Manage approved
 emails through the application's Access policy. Contact delivery still requires
 a verified email binding before submissions can succeed.
+
+The admin header's **Log out** button opens `/cdn-cgi/access/logout`. Cloudflare
+clears this application's browser cookie immediately and revokes the user's
+sessions across all Access applications; previously issued tokens can take
+20–30 seconds to stop being accepted. A new login receives the current session
+duration; changing this setting does not extend an already-issued token.
+
+The editor warns before leaving unsaved vehicle details. **Save vehicle**
+publishes those details; photo uploads, removal and ordering save immediately
+without discarding the other edits. Photos can be selected together or dragged
+onto the upload area; they are uploaded one at a time, with the first image used
+as the cover. Prices and measurements accept decimals. On mobile, the catalogue
+and editor have separate views with a **Vehicles** back button and a persistent
+save bar.

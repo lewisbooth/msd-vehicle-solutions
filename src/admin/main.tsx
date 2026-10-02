@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import PhotoManager, { type Photo } from "./PhotoManager";
 import "./styles.css";
 
-type Photo = { position: number; url: string; url400: string; width: number | null; height: number | null; alt: string };
 type Vehicle = {
   id: string; slug: string; name: string; category: string; condition: string; sold: boolean;
   photos: Photo[]; createdAt: string; updatedAt: string;
@@ -16,15 +16,13 @@ type Vehicle = {
     height: number | null; mileage: number | null; year: number | null;
   };
 };
-
 const categories: Array<[string, string]> = [
   ["van-small", "Small van"], ["van-medium", "Medium van"], ["van-large", "Large van"],
   ["van-luton", "Luton van"], ["car-economy", "Economy car"], ["car-hatchback", "Hatchback"],
   ["car-saloon", "Saloon car"], ["car-performance", "Performance car"], ["car-suv", "SUV"],
   ["car-truck", "Truck"], ["car-minibus", "Minibus"],
 ];
-const services = ["hire", "sales", "lease"] as const;
-
+const services = [["hire", "Hire", "Daily price (£)"], ["sales", "Sales", "Sale price (£)"], ["lease", "Leasing", "Monthly price (£)"]] as const;
 function blankVehicle(): Vehicle {
   return {
     id: "", slug: "", name: "", category: "van-small", condition: "used", sold: false,
@@ -39,241 +37,286 @@ function blankVehicle(): Vehicle {
     },
   };
 }
-
+function fieldsSnapshot(vehicle: Vehicle) {
+  const { photos, updatedAt, createdAt, ...fields } = vehicle;
+  return JSON.stringify(fields);
+}
+class SessionError extends Error {}
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...init });
-  const result = await response.json().catch(() => ({ error: `Request failed (${response.status})` }));
+  const headers = new Headers(init?.headers);
+  headers.set("X-Requested-With", "XMLHttpRequest");
+  const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...init, headers });
+  if (response.status === 401 || response.status === 403 || (response.headers.get("content-type") || "").includes("text/html")) {
+    throw new SessionError("Your session has expired. Sign in again in a new tab, then retry here. Your unsaved details are still here.");
+  }
+  const result = await response.json().catch(() => { throw new Error(`Unable to read the response (${response.status}). Please try again.`); });
   if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
   return result as T;
 }
-
-async function resizeJpeg(file: File, longestSide: number): Promise<{ blob: Blob; width: number; height: number }> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const scale = Math.min(1, longestSide / Math.max(bitmap.width, bitmap.height));
-  const width = Math.max(1, Math.round(bitmap.width * scale));
-  const height = Math.max(1, Math.round(bitmap.height * scale));
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const context = canvas.getContext("2d");
-  if (!context) throw new Error("Image processing is unavailable in this browser");
-  context.drawImage(bitmap, 0, 0, width, height);
-  bitmap.close();
-  const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((result) => {
-    if (result) resolve(result); else reject(new Error("Image conversion failed"));
-  }, "image/jpeg", .85));
-  return { blob, width, height };
+async function preparePhoto(file: File): Promise<FormData> {
+  let bitmap: ImageBitmap;
+  try { bitmap = await createImageBitmap(file, { imageOrientation: "from-image" }); }
+  catch { throw new Error("This image could not be opened. Choose a JPEG, PNG or WebP photo."); }
+  try {
+    const resize = async (longestSide: number) => {
+      const scale = Math.min(1, longestSide / Math.max(bitmap.width, bitmap.height));
+      const width = Math.max(1, Math.round(bitmap.width * scale));
+      const height = Math.max(1, Math.round(bitmap.height * scale));
+      if (longestSide === 1000 && (width < 100 || height < 100)) throw new Error("Choose a larger photo with both sides at least 100 pixels after resizing.");
+      const canvas = document.createElement("canvas");
+      canvas.width = width; canvas.height = height;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Image processing is unavailable in this browser.");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, width, height);
+      context.drawImage(bitmap, 0, 0, width, height);
+      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(result => {
+        if (result) resolve(result); else reject(new Error("This photo could not be converted. Try another image."));
+      }, "image/jpeg", .85));
+      return { blob, width, height };
+    };
+    const [large, small] = await Promise.all([resize(1000), resize(400)]);
+    const body = new FormData();
+    body.append("large", large.blob, "large.jpg"); body.append("small", small.blob, "small.jpg");
+    body.append("width", String(large.width)); body.append("height", String(large.height));
+    return body;
+  } finally { bitmap.close(); }
 }
-
+function ArrowLeft() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m12 5-7 7 7 7M5 12h14" /></svg>;
+}
 function App() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selected, setSelected] = useState<Vehicle | null>(null);
-  const [isNew, setIsNew] = useState(false);
+  const [baseline, setBaseline] = useState<Vehicle | null>(null);
   const [search, setSearch] = useState("");
   const [user, setUser] = useState("");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [notice, setNotice] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const refresh = useCallback(async () => {
-    const result = await api<{ vehicles: Vehicle[] }>("/api/admin/vehicles");
-    setVehicles(result.vehicles);
-  }, []);
+  const [operation, setOperation] = useState("");
+  const [uploadProgress, setUploadProgress] = useState("");
+  const lock = useRef(false);
+  const editorHeading = useRef<HTMLHeadingElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const busy = Boolean(operation);
+  const isNew = selected !== null && !selected.id;
+  const dirty = Boolean(selected && baseline && fieldsSnapshot(selected) !== fieldsSnapshot(baseline));
 
   useEffect(() => {
+    let active = true;
     (async () => {
       try {
         const me = await api<{ email: string }>("/api/admin/me");
-        setUser(me.email);
-        await refresh();
-      } catch (failure) { setError(String(failure instanceof Error ? failure.message : failure)); }
+        const result = await api<{ vehicles: Vehicle[] }>("/api/admin/vehicles");
+        if (active) { setUser(me.email); setVehicles(result.vehicles); }
+      } catch (failure) {
+        if (active) { setError(failure instanceof Error ? failure.message : String(failure)); setSessionExpired(failure instanceof SessionError); }
+      } finally { if (active) setLoading(false); }
     })();
-  }, [refresh]);
+    return () => { active = false; };
+  }, []);
+  useEffect(() => {
+    if (!dirty && !busy) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty, busy]);
 
-  const edit = (vehicle: Vehicle) => { setSelected(structuredClone(vehicle)); setIsNew(false); setError(""); setNotice(""); };
+  const choose = (vehicle: Vehicle | null) => {
+    if (lock.current || (dirty && !window.confirm("Discard your unsaved vehicle details? Photo changes are already saved."))) return;
+    setSelected(vehicle ? structuredClone(vehicle) : null);
+    setBaseline(vehicle ? structuredClone(vehicle) : null);
+    setError(""); setNotice(""); setSessionExpired(false);
+    requestAnimationFrame(() => {
+      if (vehicle) editorHeading.current?.focus(); else searchInput.current?.focus();
+    });
+  };
   const update = (path: string[], value: string | number | boolean | null) => {
-    setSelected((before) => {
-      if (!before) return before;
+    setNotice("");
+    setSelected(before => {
+      if (!before || lock.current) return before;
       const next = structuredClone(before);
-      let parent: Record<string, unknown> = next as unknown as Record<string, unknown>;
+      let parent = next as unknown as Record<string, unknown>;
       for (const key of path.slice(0, -1)) parent = parent[key] as Record<string, unknown>;
       parent[path[path.length - 1]] = value;
       return next;
     });
   };
-  const numeric = (path: string[], value: string) => update(path, value === "" ? null : Number(value));
-  const run = async (action: () => Promise<void>) => {
-    setBusy(true); setError(""); setNotice("");
-    try { await action(); } catch (failure) { setError(String(failure instanceof Error ? failure.message : failure)); }
-    finally { setBusy(false); }
+  const run = async (name: string, action: () => Promise<void>) => {
+    if (lock.current) return;
+    lock.current = true;
+    setOperation(name); setError(""); setNotice(""); setSessionExpired(false);
+    try { await action(); }
+    catch (failure) { setError(failure instanceof Error ? failure.message : String(failure)); setSessionExpired(failure instanceof SessionError); }
+    finally { lock.current = false; setOperation(""); setUploadProgress(""); }
   };
-
+  const updateCatalogue = (vehicle: Vehicle) => setVehicles(before => before.some(item => item.id === vehicle.id)
+    ? before.map(item => item.id === vehicle.id ? vehicle : item) : [vehicle, ...before]);
+  const applyPhotos = (vehicle: Vehicle) => {
+    // Photo writes are immediate; never replace unsaved details or their concurrency token.
+    setSelected(before => before?.id === vehicle.id ? { ...before, photos: vehicle.photos } : before);
+    setBaseline(before => before?.id === vehicle.id ? { ...before, photos: vehicle.photos } : before);
+    updateCatalogue(vehicle);
+  };
   const save = async () => {
     if (!selected) return;
-    await run(async () => {
-      const result = await api<{ vehicle: Vehicle }>(
-        isNew ? "/api/admin/vehicles" : `/api/admin/vehicles/${selected.id}`,
-        { method: isNew ? "POST" : "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(selected) }
-      );
-      setSelected(result.vehicle); setIsNew(false);
-      await refresh();
-      setNotice("Saved to D1. Public pages reflect this change on their next request.");
+    await run("save", async () => {
+      const payload = isNew ? { ...selected, slug: undefined } : selected;
+      const result = await api<{ vehicle: Vehicle }>(isNew ? "/api/admin/vehicles" : `/api/admin/vehicles/${selected.id}`, {
+        method: isNew ? "POST" : "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      });
+      setSelected(result.vehicle); setBaseline(structuredClone(result.vehicle)); updateCatalogue(result.vehicle);
+      setNotice(isNew ? "Vehicle created. You can now add photos." : "Vehicle saved. Your website is up to date.");
     });
   };
-
-  const upload = async (file?: File) => {
-    if (!selected?.id || !file) return;
-    await run(async () => {
-      const [large, small] = await Promise.all([resizeJpeg(file, 1000), resizeJpeg(file, 400)]);
-      const body = new FormData();
-      body.append("large", large.blob, "large.jpg");
-      body.append("small", small.blob, "small.jpg");
-      body.append("width", String(large.width));
-      body.append("height", String(large.height));
-      const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images`, { method: "POST", body });
-      setSelected(result.vehicle);
-      await refresh();
-      setNotice("Photo uploaded to R2. Public pages reflect this change on their next request.");
+  const upload = async (files: File[]) => {
+    if (!selected?.id || !files.length) return;
+    await run("upload", async () => {
+      const invalid = files.find(file => !["image/jpeg", "image/png", "image/webp"].includes(file.type) && !(file.type === "" && /\.(jpe?g|png|webp)$/i.test(file.name)));
+      if (invalid) throw new Error(`${invalid.name}: choose JPEG, PNG or WebP photos.`);
+      if (selected.photos.length + files.length > 50) throw new Error("A vehicle can have up to 50 photos. Remove a photo before adding more.");
+      let complete = 0;
+      for (const file of files) {
+        setUploadProgress(`Uploading photo ${complete + 1} of ${files.length}…`);
+        try {
+          const body = await preparePhoto(file);
+          const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images`, { method: "POST", body });
+          applyPhotos(result.vehicle); complete++;
+        } catch (failure) {
+          const message = `${complete ? `${complete} photo${complete === 1 ? "" : "s"} added. ` : ""}${file.name}: ${failure instanceof Error ? failure.message : String(failure)}`;
+          throw failure instanceof SessionError ? new SessionError(message) : new Error(message);
+        }
+      }
+      setNotice(`${complete} photo${complete === 1 ? "" : "s"} added.${dirty ? " Your other edits are still unsaved." : ""}`);
     });
   };
-
   const removeImage = async (position: number) => {
-    if (!selected || !window.confirm("Remove this photo from the vehicle?")) return;
-    await run(async () => {
+    if (!selected || lock.current || !window.confirm("Remove this photo from the vehicle?")) return;
+    await run("photo", async () => {
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images/${position}`, { method: "DELETE" });
-      setSelected(result.vehicle);
-      await refresh();
-      setNotice("Photo removed in D1. Public pages reflect this change on their next request.");
+      applyPhotos(result.vehicle); setNotice("Photo removed.");
     });
   };
-
   const moveImage = async (index: number, direction: -1 | 1) => {
     if (!selected || index + direction < 0 || index + direction >= selected.photos.length) return;
-    await run(async () => {
-      const positions = selected.photos.map((photo) => photo.position);
+    await run("photo", async () => {
+      const positions = selected.photos.map(photo => photo.position);
       [positions[index], positions[index + direction]] = [positions[index + direction], positions[index]];
       const result = await api<{ vehicle: Vehicle }>(`/api/admin/vehicles/${selected.id}/images/order`, {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ positions }),
       });
-      setSelected(result.vehicle);
-      await refresh();
-      setNotice("Photo order saved in D1. Public pages reflect this change on their next request.");
+      applyPhotos(result.vehicle); setNotice("Photo order saved.");
     });
   };
-
   const removeVehicle = async () => {
-    if (!selected || !window.confirm(`Remove ${selected.name} from the public catalogue?`)) return;
-    await run(async () => {
+    if (!selected?.id || lock.current || !window.confirm(`Remove ${selected.name} from the public catalogue?${dirty ? " Unsaved details will be discarded." : ""}`)) return;
+    await run("remove", async () => {
       await api(`/api/admin/vehicles/${selected.id}`, { method: "DELETE" });
-      setSelected(null); await refresh(); setNotice("Vehicle removed from D1. Its public page and listings update on their next request.");
+      setVehicles(before => before.filter(item => item.id !== selected.id));
+      setSelected(null); setBaseline(null); setNotice("Vehicle removed from the catalogue.");
+      requestAnimationFrame(() => searchInput.current?.focus());
     });
   };
-
-  const input = (label: string, path: string[], options?: { type?: string; min?: number; max?: number; step?: string }) => {
+  const input = (label: string, path: string[], options?: { min?: number; max?: number; integer?: boolean; required?: boolean; maxLength?: number; disabled?: boolean }) => {
     let current: unknown = selected;
     for (const key of path) current = (current as Record<string, unknown>)?.[key];
-    const numberField = options?.type === "number";
-    return <label className="field" key={path.join(".")}>{label}
-      <input type={options?.type || "text"} min={options?.min} max={options?.max} step={options?.step}
-        value={current ?? ""} onChange={(event) => numberField
-          ? numeric(path, event.target.value) : update(path, event.target.value)} />
+    const numberField = options?.min !== undefined;
+    return <label className="field" key={path.join(".")}><span>{label}{options?.required && <span className="required-hint"> required</span>}</span>
+      <input name={path.join(".")} type={numberField ? "number" : "text"} inputMode={numberField ? options?.integer ? "numeric" : "decimal" : undefined}
+        min={options?.min} max={options?.max} step={numberField ? options?.integer ? "1" : "any" : undefined}
+        required={options?.required} maxLength={options?.maxLength} disabled={options?.disabled} value={options?.disabled && current === -1 ? "" : current ?? ""}
+        onChange={event => update(path, numberField ? event.target.value === "" ? null : Number(event.target.value) : event.target.value)} />
     </label>;
   };
-
-  const filtered = vehicles.filter((vehicle) => `${vehicle.name} ${vehicle.slug} ${vehicle.category}`.toLowerCase().includes(search.toLowerCase()));
-
-  return <div className="min-h-screen">
-    <header className="bg-slate-950 text-white"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5">
-      <div><a href="/" className="text-xs uppercase tracking-[.2em] text-blue-200">Moorland Self Drive</a>
-        <h1 className="text-2xl font-bold">Vehicle administration</h1></div>
-      <span className="text-xs text-slate-300">{user ? `Signed in: ${user}` : "Admin access required"}</span>
+  const feedback = <>
+    {error && <div role="alert" className="feedback feedback-error">{error}{sessionExpired && <a href="/admin/" target="_blank" rel="noreferrer">Sign in again ↗</a>}</div>}
+    {notice && <div role="status" className="feedback feedback-success">{notice}</div>}
+  </>;
+  const filtered = vehicles.filter(vehicle => `${vehicle.name} ${vehicle.slug} ${categories.find(([value]) => value === vehicle.category)?.[1]}`.toLowerCase().includes(search.trim().toLowerCase()));
+  return <div className="admin-app">
+    <header className="app-header"><div className="header-inner">
+      <div><a href="/" target="_blank" rel="noreferrer" className="brand-link">Moorland Self Drive ↗</a><h1>Vehicle administration</h1></div>
+      {user && <div className="account-controls"><div className="signed-in"><span>Signed in</span><strong>{user}</strong></div>
+        <button type="button" className="button logout-button" disabled={busy} title="Log out of Cloudflare Access across your applications"
+          onClick={() => window.location.assign("/cdn-cgi/access/logout")}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 4H4v16h5m6-13 5 5-5 5m-5-5h10" /></svg>Log out
+        </button></div>}
     </div></header>
-    <main className="mx-auto max-w-7xl px-5 py-8">
-      {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">{error}</div>}
-      {notice && <div role="status" className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800">{notice}</div>}
-      {!user ? <div className="rounded-xl bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold">Admin access unavailable</h2>
-        <p className="mt-2 text-slate-600">Vehicle editing requires Cloudflare Access. Contact the site owner to enable access before signing in.</p></div>
-        : <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
-          <aside className="self-start rounded-xl bg-white p-4 shadow-sm lg:sticky lg:top-6">
-            <div className="flex items-center justify-between gap-3"><h2 className="font-bold">Vehicles ({vehicles.length})</h2>
-              <button type="button" className="rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-                onClick={() => { setSelected(blankVehicle()); setIsNew(true); setError(""); setNotice(""); }}>Add</button></div>
-            <label className="sr-only" htmlFor="vehicle-search">Search vehicles</label>
-            <input id="vehicle-search" placeholder="Search vehicles" value={search} onChange={(event) => setSearch(event.target.value)}
-              className="my-4 w-full rounded-lg border border-slate-300 px-3 py-2" />
-            <div className="max-h-[68vh] space-y-1 overflow-auto">
-              {filtered.map((vehicle) => <button type="button" key={vehicle.id} onClick={() => edit(vehicle)}
-                className={`flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-slate-100 ${selected?.id === vehicle.id ? "bg-blue-50" : ""}`}>
-                {vehicle.photos[0] ? <img src={vehicle.photos[0].url400} alt="" className="h-12 w-16 rounded object-cover" />
-                  : <span className="h-12 w-16 rounded bg-slate-200" />}
-                <span className="min-w-0"><span className="block truncate text-sm font-semibold">{vehicle.name}</span>
-                  <span className="text-xs text-slate-500">{vehicle.details.year} · {vehicle.sold ? "Sold" : "Active"}</span></span>
-              </button>)}
+    <main className={`admin-main ${selected ? "has-selection" : ""}`}>
+      {loading ? <section className="state-panel" role="status"><span className="loading-dot" />Loading your vehicles…</section>
+      : !user ? <section className="state-panel"><h2>We couldn’t load your vehicles</h2>{feedback}<p>Check your connection or sign in again, then retry.</p><button type="button" className="button button-primary" onClick={() => window.location.reload()}>Retry</button></section>
+      : <>
+        {!selected && feedback}
+        <div className="admin-layout">
+          <aside className="catalogue-panel" aria-label="Vehicle catalogue">
+            <div className="catalogue-heading"><div><h2>Vehicles <span className="count-badge">{vehicles.length}</span></h2><p>Manage your public catalogue</p></div>
+              <button type="button" className="button button-primary add-button" disabled={busy} onClick={() => choose(blankVehicle())}><span aria-hidden="true">+</span> Add vehicle</button></div>
+            <label className="search-field"><span className="sr-only">Search vehicles</span><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
+              <input ref={searchInput} type="search" placeholder="Search vehicles…" value={search} onChange={event => setSearch(event.target.value)} /></label>
+            <div className="vehicle-list">
+              {filtered.length ? filtered.map(vehicle => <button type="button" key={vehicle.id} disabled={busy} onClick={() => { if (selected?.id !== vehicle.id) choose(vehicle); }}
+                aria-current={selected?.id === vehicle.id ? "true" : undefined} className="vehicle-row">
+                <span className="vehicle-thumbnail">{vehicle.photos[0] ? <img src={vehicle.photos[0].url400} alt="" loading="lazy" /> : <span>No photo</span>}</span>
+                <span className="vehicle-summary"><strong>{vehicle.name}</strong><span>{[vehicle.details.year, vehicle.sold ? "Sold" : Object.values(vehicle.availability).some(Boolean) ? "Listed" : "Unlisted"].filter(Boolean).join(" · ")}</span></span>
+                <span className="row-chevron" aria-hidden="true">›</span>
+              </button>) : <div className="list-empty"><strong>{search ? "No matching vehicles" : "Your catalogue is empty"}</strong><p>{search ? "Try another name or category." : "Add your first vehicle to get started."}</p>{search && <button type="button" className="button button-secondary" onClick={() => setSearch("")}>Clear search</button>}</div>}
             </div>
           </aside>
-          {selected ? <section className="rounded-xl bg-white p-5 shadow-sm md:p-7">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-bold">{isNew ? "Add vehicle" : `Edit ${selected.name}`}</h2>
-              {!isNew && <a className="text-sm text-blue-700 underline" href={`/vehicles/${selected.slug}`} target="_blank" rel="noreferrer">View public page</a>}</div>
-              <div className="flex gap-2"><button disabled={busy} type="button" onClick={save}
-                className="rounded-lg bg-blue-700 px-5 py-2 font-semibold text-white hover:bg-blue-800">{busy ? "Working…" : "Save vehicle"}</button>
-                {!isNew && <button disabled={busy} type="button" onClick={removeVehicle}
-                  className="rounded-lg border border-red-300 px-4 py-2 font-semibold text-red-700">Remove</button>}</div></div>
-            <div className="space-y-8">
-              <fieldset><legend className="mb-3 text-lg font-semibold">Details</legend>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {input("Name", ["name"])}
-                  <label className="field">Category<select value={selected.category} onChange={(event) => update(["category"], event.target.value)}>
-                    {categories.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
-                  </select></label>
-                  <label className="field">Condition<select value={selected.condition} onChange={(event) => update(["condition"], event.target.value)}>
-                    <option value="used">Used</option><option value="new">New</option></select></label>
-                  {input("Year", ["details", "year"], { type: "number", min: 1886, max: 2100 })}
-                  {input("Mileage", ["details", "mileage"], { type: "number", min: 0 })}
-                  {input("Seats", ["details", "seats"], { type: "number", min: 0 })}
-                  {input("Doors", ["details", "doors"], { type: "number", min: 0 })}
-                  {input("Engine size (L)", ["details", "engineSize"], { type: "number", min: 0, step: "any" })}
-                  {input("Fuel economy (mpg)", ["details", "fuelEconomy"], { type: "number", min: 0, step: "any" })}
-                  {input("Fuel type", ["details", "fuelType"])}
-                  {input("Transmission", ["details", "transmission"])}
-                  {input("Overall height (mm)", ["details", "height"], { type: "number", min: 0, step: "any" })}
-                  {input("Cargo / payload (kg)", ["details", "cargo"], { type: "number", min: 0, step: "any" })}
-                  {input("Storage width (mm)", ["details", "storage", "width"], { type: "number", min: 0, step: "any" })}
-                  {input("Storage height (mm)", ["details", "storage", "height"], { type: "number", min: 0, step: "any" })}
-                  {input("Storage length (mm)", ["details", "storage", "length"], { type: "number", min: 0, step: "any" })}
-                </div>
-                <label className="field mt-4">Description (plain text)<textarea rows={6} value={selected.details.description}
-                  onChange={(event) => update(["details", "description"], event.target.value)} /></label>
-                <label className="check mt-4"><input type="checkbox" checked={selected.sold} onChange={(event) => update(["sold"], event.target.checked)} />Sold</label>
-              </fieldset>
-              <fieldset><legend className="mb-3 text-lg font-semibold">Pricing and visibility</legend>
-                <div className="grid gap-4 md:grid-cols-3">{services.map((type) => <div key={type} className="rounded-xl border border-slate-200 p-4">
-                  <h3 className="mb-3 font-semibold capitalize">{type === "sales" ? "Sales" : type}</h3>
-                  {input("Price (£)" + (type === "hire" ? " / day" : type === "lease" ? " / month" : ""), ["pricing", type], { type: "number", min: -1, step: "1" })}
-                  <label className="check mt-4"><input type="checkbox" checked={selected.availability[type]} onChange={(event) => update(["availability", type], event.target.checked)} />Available</label>
-                  <label className="check mt-2"><input type="checkbox" checked={selected.promoted[type]} onChange={(event) => update(["promoted", type], event.target.checked)} />Promoted</label>
-                </div>)}</div>
-                <p className="mt-3 text-xs text-slate-500">Sold vehicles remain in Sales when Sales availability is on, but are hidden from Hire and Leasing. Promoted vehicles rank first for featured cards; original card order breaks ties. A sales price of −1 means price on application.</p>
-              </fieldset>
-              <fieldset><legend className="mb-3 text-lg font-semibold">Photos</legend>
-                <div className="flex flex-wrap gap-3">{selected.photos.map((photo, index) => <div key={photo.url} className="rounded-xl border border-slate-200 p-2">
-                  <img src={photo.url400} alt={photo.alt} className="h-32 w-44 rounded object-cover" />
-                  <div className="mt-2 flex items-center gap-3 text-sm"><button type="button" disabled={busy || index === 0}
-                    className="text-blue-700 underline" onClick={() => moveImage(index, -1)}>Earlier</button>
-                    <button type="button" disabled={busy || index === selected.photos.length - 1}
-                      className="text-blue-700 underline" onClick={() => moveImage(index, 1)}>Later</button>
-                    <button type="button" disabled={busy} className="text-red-700 underline" onClick={() => removeImage(photo.position)}>Remove</button></div>
-                </div>)}</div>
-                {selected.id ? <label className="field mt-4 max-w-sm">Add a photo (JPEG, PNG or WebP)
-                  <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={(event) => {
-                    const file = event.target.files?.[0]; void upload(file); event.target.value = "";
-                  }} /></label> : <p className="text-sm text-slate-500">Save the vehicle before adding photos.</p>}
-                <p className="mt-2 text-sm text-slate-500">Your browser generates 400px and 1000px JPEGs before uploading.</p>
-              </fieldset>
+          {selected ? <form className="editor" onSubmit={event => { event.preventDefault(); void save(); }}>
+            <div className="editor-heading"><button type="button" className="button button-secondary mobile-back" disabled={busy} onClick={() => choose(null)}><ArrowLeft />Vehicles</button>
+              <div className="editor-title"><p className="eyebrow">{isNew ? "New vehicle" : "Vehicle details"}</p><h2 ref={editorHeading} tabIndex={-1}>{isNew ? "Add a vehicle" : baseline?.name}</h2></div>
+              {!isNew && <a className="public-link" href={`/vehicles/${selected.slug}`} target="_blank" rel="noreferrer">View on website ↗</a>}
             </div>
-          </section> : <section className="self-start rounded-xl bg-white p-8 text-slate-600 shadow-sm">Select a vehicle or add a new one.</section>}
-        </div>}
+            <div className="editor-body">
+              <fieldset disabled={busy} className="form-section"><legend>Overview</legend><p className="section-help">The essentials customers see on your website.</p>
+                <div className="field-grid"><div className="full-width">{input("Vehicle name", ["name"], { required: true, maxLength: 150 })}</div>
+                  <label className="field">Category<select value={selected.category} onChange={event => update(["category"], event.target.value)}>{categories.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+                  <label className="field">Condition<select value={selected.condition} onChange={event => update(["condition"], event.target.value)}><option value="used">Used</option><option value="new">New</option></select></label>
+                  {input("Year", ["details", "year"], { min: 1886, max: 2100, integer: true })}
+                  {input("Mileage (miles)", ["details", "mileage"], { min: 0, max: 10_000_000, integer: true })}
+                  <label className="field full-width">Description<textarea rows={5} maxLength={12000} value={selected.details.description} placeholder="Describe the vehicle, its condition and key features…" onChange={event => update(["details", "description"], event.target.value)} /></label>
+                </div>
+                <label className="check sold-check"><input type="checkbox" checked={selected.sold} onChange={event => update(["sold"], event.target.checked)} /><span><strong>Mark as sold</strong><small>Shows a Sold badge in Sales and hides this vehicle from Hire and Leasing.</small></span></label>
+              </fieldset>
+              <fieldset disabled={busy} className="form-section"><legend>Pricing & visibility</legend><p className="section-help">Choose where this vehicle appears. Leave a price blank to show price on application.</p>
+                <div className="pricing-grid">{services.map(([type, title, label]) => <div className="price-card" key={type}><h3>{title}</h3>
+                  {input(label, ["pricing", type], { min: -1, max: 1_000_000, disabled: selected.pricing[type] === -1 })}
+                  <label className="check"><input type="checkbox" checked={selected.pricing[type] === -1} onChange={event => update(["pricing", type], event.target.checked ? -1 : null)} />Price on application</label>
+                  <div className="price-toggles"><label className="check"><input type="checkbox" checked={selected.availability[type]} onChange={event => update(["availability", type], event.target.checked)} />Show in {title}</label>
+                    <label className="check"><input type="checkbox" checked={selected.promoted[type]} onChange={event => update(["promoted", type], event.target.checked)} />Feature this vehicle</label></div>
+                </div>)}</div><p className="field-hint">Featured vehicles appear before other vehicles in featured sections.</p>
+              </fieldset>
+              <PhotoManager photos={selected.photos} disabled={busy} canUpload={Boolean(selected.id)} uploadProgress={uploadProgress}
+                onUpload={files => void upload(files)} onRemove={position => void removeImage(position)} onMove={(index, direction) => void moveImage(index, direction)} />
+              <fieldset disabled={busy} className="form-section"><legend>Specifications</legend><p className="section-help">Leave any unknown details blank.</p>
+                <div className="field-grid specifications-grid">
+                  {input("Seats", ["details", "seats"], { min: 0, max: 100, integer: true })}
+                  {input("Doors", ["details", "doors"], { min: 0, max: 12, integer: true })}
+                  {input("Engine size (L)", ["details", "engineSize"], { min: 0, max: 100 })}
+                  {input("Fuel economy (mpg)", ["details", "fuelEconomy"], { min: 0, max: 1000 })}
+                  {input("Fuel type", ["details", "fuelType"], { maxLength: 40 })}
+                  {input("Transmission", ["details", "transmission"], { maxLength: 40 })}
+                </div>
+                <h3 className="subsection-title">Dimensions & payload</h3><div className="field-grid specifications-grid">
+                  {input("Overall height (mm)", ["details", "height"], { min: 0, max: 100000 })}
+                  {input("Payload (kg)", ["details", "cargo"], { min: 0, max: 100000 })}
+                  {input("Load width (mm)", ["details", "storage", "width"], { min: 0, max: 100000 })}
+                  {input("Load height (mm)", ["details", "storage", "height"], { min: 0, max: 100000 })}
+                  {input("Load length (mm)", ["details", "storage", "length"], { min: 0, max: 100000 })}
+                </div>
+              </fieldset>
+              {!isNew && <div className="remove-section"><div><h3>Remove vehicle</h3><p>Remove this vehicle and its listing from the website.</p></div><button type="button" className="button button-danger" disabled={busy} onClick={() => void removeVehicle()}>Remove vehicle</button></div>}
+            </div>
+            <footer className="save-bar"><div className="save-feedback">{feedback}<p className={dirty ? "save-state is-dirty" : "save-state"}>{busy ? uploadProgress || (operation === "save" ? "Saving vehicle…" : "Saving changes…") : dirty ? "Unsaved vehicle details" : isNew ? "Save this vehicle to add photos" : "All vehicle details saved"}</p></div>
+              <div className="save-actions">{dirty && <button type="button" className="button button-secondary" disabled={busy} onClick={() => { if (baseline && window.confirm("Discard your unsaved vehicle details? Photo changes are already saved.")) { setSelected(structuredClone(baseline)); setNotice(""); setError(""); } }}>Discard</button>}
+                <button type="submit" disabled={busy || (!dirty && !isNew)} className="button button-primary">{operation === "save" ? "Saving…" : isNew ? "Create vehicle" : "Save vehicle"}</button></div>
+            </footer>
+          </form> : <section className="editor-placeholder"><svg aria-hidden="true" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4"><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M8 8h8M8 12h8M8 16h4" /></svg><h2>Your vehicles, at a glance</h2><p>Choose a vehicle to update its details, pricing and photos, or add a new one.</p></section>}
+        </div>
+      </>}
     </main>
   </div>;
 }
-
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
