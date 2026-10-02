@@ -73,6 +73,14 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Compare production `Server-Timing` and rendered routes before/after the query change; the same Chicago edge showed roughly one D1 round trip less on each route and byte-identical Sales HTML.
 - [ ] Capture UK browser first-hit/warm timing after DNS cutover. The local proxy and Chicago edge cannot stand in for a UK visitor.
 
+### 6. Public UI spacing and image review (2026-10-02)
+
+- [x] Inspect the supplied screenshot, shared public layout and source image dimensions; identify forced `cover` crops and the cramped article/sidebar layout at intermediate widths.
+- [x] Render complete vehicle illustrations at their natural aspect ratio with accurate intrinsic dimensions and balanced feature-card padding. Keep catalogue/detail/gallery photos visible within stable image frames.
+- [x] Align vehicle prices and service-card links; allow long card titles/footer links to wrap, and improve tablet sidebar and mobile listing spacing.
+- [x] Build public/admin bundles and pass Worker typecheck and whitespace checks; retain fingerprinted immutable CSS/assets and server-only public rendering.
+- [ ] Deploy `main` and verify live homepage, brochure, listing and detail layouts; record any remaining visual limitations.
+
 ### 0. Audit current public site
 
 - [x] Inspect repository, live brochure routes and current listings.
@@ -169,6 +177,8 @@ Public [DNS lookup](https://www.who.is/dns/moorlandselfdrive.co.uk) on 2026-09-2
 - **2026-09-25:** `main` commit `ea10398` triggered successful Workers Build `735e58df-5778-4cb1-b16b-31c36ecc55e8`: public CSS/JS and separate admin built, the production D1 migration gate reported no pending migrations, and the Worker deployed. On the production `workers.dev` site, filtered hire `?size=all-vans` rendered five cards with All vans selected; Sales rendered eight cards and two sold badges; home displayed three featured cards; a `(72)` detail loaded; admin stayed fail-closed; no public hydration payload was present. The Ford Fiesta detail loaded a 1000px R2 image. A production header check confirmed dynamic HTML `Cache-Control: no-store`, while local HTTP checks confirmed hashed static CSS remains immutable. A focused local D1 test confirmed changing a pinned vehicle's Promoted flag changes the featured cards on the next response without a build. A small follow-up removes a repeated year from detail titles whose vehicle name already starts with that year.
 - **2026-09-25:** Confirmed the screenshot of `moorlandselfdrive.co.uk/sales` measures the old Express/Caddy deployment, not the Worker; DNS has not cut over. Reviewed SQL indexes and found the current 15-row sorts negligible. A local 500-iteration JSX benchmark measured warm rendering at 0.05–0.11 ms per page (excluding D1/network); React remains Worker-only and the browser receives no hydration bundle. Commit `d800daf` added `Server-Timing: catalogue` for awaited data and minified the production Worker. Its Cloudflare build `2c57a81f-a1b4-49f2-9c80-615cbca42438` succeeded. From the `ORD` Cloudflare edge, baseline catalogue timing was 200–211 ms for `/sales` (four samples) and 298–362 ms for the Caddy detail (four samples); local end-to-end proxy timing was excluded.
 - **2026-09-25:** Commit `72d9eb7` combined vehicle and ordered photo retrieval using D1-supported JSON aggregation, reducing D1 calls from two to one for homepage/listing and from three to two for detail. Local seed checks compared vehicle/order/image results across all three listing types, plus a non-contiguous photo position and missing photos; `npm run build` and typecheck passed. Cloudflare build `9877b2c9-864d-45ff-a1ce-2afd26765bfe` succeeded. After deployment from the same `ORD` edge, `/sales` catalogue timing was 102–113 ms (four samples) and Caddy detail 217–241 ms (four samples). These are the awaited D1/data portion of the response, not full page load or UK measurements. `/sales` HTML exactly matched the earlier Worker response; the filtered hire route still showed five vans, Sales eight cards and two sold badges, the homepage three featured cards, and a missing detail returned 404. Dynamic HTML remains `no-store`; a UK browser and cold-start comparison are still outstanding.
+
+- **2026-10-02 UI pass:** Code and build checks are complete; the production deployment and visual verification are in progress. Feature media now uses its true source dimensions instead of a forced 4:3 crop, catalogue photos use `contain` in stable frames, cards align their lower actions, and the article/sidebar layout stacks at 1080px to keep feature text readable.
 
 ## Open gates
 
