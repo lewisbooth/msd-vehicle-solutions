@@ -20,7 +20,7 @@ This is the tracked implementation record for moving Moorland Self Drive from Ex
 - [ ] Serve production R2 photos through an R2 custom domain with Cloudflare edge caching; confirm a warm `CF-Cache-Status: HIT` and preserve immutable browser caching. The temporary production `r2.dev` hostname is for functional tests and does not exercise the edge cache.
 - [x] Protect admin APIs using Cloudflare Access JWT and an exact-email Access policy; verify signed-out admin/UI API gates. First authenticated catalogue/edit verification remains in phase 7.
 - [ ] Configure verified contact email delivery. This integration fails closed until configured.
-- [x] Automatically build `main` and run guarded schema migrations before deployment. Public HTML reads D1 directly after admin changes; snapshot export is an optional audit only. A real future migration write and restore rehearsal remain open.
+- [x] Automatically build `main` and run guarded schema migrations before deployment. Public HTML reads D1 directly after admin changes; snapshot export is an optional audit only. A real production migration write passed on 2026-10-02; restore rehearsal remains open.
 - [x] Disable Preview Builds while keeping the `main` production build trigger active. The feature branch and its preview have already been deleted.
 - [x] Delete the orphaned `main` Worker Preview; both Cloudflare Preview lists are now empty.
 - [ ] Verify production routes, current inventory and photos, sold state, direct navigation, admin auth, contact delivery, cache headers, Worker routing and rollback before DNS cutover. Public route/photo checks passed; integrations and recovery checks remain.
@@ -110,7 +110,7 @@ Observed directly from the three public listing pages and each vehicle detail pa
 
 - [x] Store POA independently for Hire, Sales and Leasing, retaining the numeric amount through toggling, saving and reopening.
 - [x] Prepare the migration of legacy POA sentinels without inventing a previously overwritten amount; mask retained POA prices from public responses and price sorting.
-- [ ] Verify toggle/save/reload/discard behavior, API persistence and public masking, then deploy the migration and application through main.
+- [x] Verify toggle/save/reload/discard behavior, API persistence and public masking, then deploy the migration and application through main.
 
 ### 0. Audit current public site
 
@@ -220,9 +220,11 @@ Public [DNS lookup](https://www.who.is/dns/moorlandselfdrive.co.uk) on 2026-09-2
 
 - **2026-10-02 POA price preservation:** Replaced the destructive `-1` toggle with independent Hire/Sales/Leasing POA flags and migration `0002_price_on_application.sql`. Admin retains numeric prices when POA is enabled; public DTOs mask those amounts, and public price sorting ignores them. Old open admin forms receive a reload-required conflict instead of overwriting new price state. Browser tests confirmed £80.50 survives toggle/save/reopen/reload, independent service flags, photo actions and discard. Isolated SQLite tests exercised real create/update/read persistence, optimistic concurrency, legacy sentinel migration, all public API/SSR data paths and 12 service/sort combinations. Build and type checks passed. Read-only production baseline: 15 vehicles, zero legacy `-1` values. Deployment and production migration verification follow.
 
+- **2026-10-02 POA deployment:** `main` commit `9e9a8ce` triggered successful build `e009a195-e525-441b-a706-fb3b3dd5ff84`. CI applied `0002_price_on_application.sql` and deployed Worker version `2093023c-1ff4-48a7-a52e-6fcb75cb7001` with the verified admin bundle `index-BOy-isas.js`. Independent D1 readback confirmed the migration is recorded, all 15 original vehicle prices are unchanged and the three flags are initially false. This also verifies real production CI migration write permission; a rollback/restore rehearsal remains open.
+
 ## Open gates
 
-- Preview Builds is disabled and both Preview lists are empty; the production `main` trigger remains enabled. The no-pending production D1 check passes in CI; actual migration **write** permission and rollback behavior still need a genuinely needed future schema change or isolated rehearsal. No schema change should be manufactured solely for a CI test.
+- Preview Builds is disabled and both Preview lists are empty; the production `main` trigger remains enabled. CI has passed both no-pending checks and the real `0002_price_on_application.sql` migration write. Rollback/restore behavior still needs an isolated rehearsal; any application rollback after POA use must retain public price masking.
 - Cloudflare Access and matching Worker bindings are deployed and the admin/UI API gates are verified; first authenticated catalogue/edit verification remains in phase 7. A verified contact email destination and the site's DNS zone remain unconfigured, so form delivery fails closed.
 - Before enabling contact email, add the missing Worker `send_email` binding with a verified sender/recipient and a public form rate limit or Turnstile; verify real delivery and the phone fallback. The form and API now both use the `website` honeypot. Current email binding remains absent, so submissions are rejected.
 - DNS delegation currently points to Google nameservers, while `www` points at Squarespace and Google Workspace handles MX/SPF. Obtain the authoritative DNS export and preserve every mail/verification record before migrating the domain; test host/scheme redirects when routing through Cloudflare.
