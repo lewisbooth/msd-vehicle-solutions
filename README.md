@@ -74,6 +74,12 @@ points to the old host; the Worker can be tested on its `workers.dev` hostname.
 Admin edits write D1 immediately, and the next public HTML request reads the
 new rows. The retired [snapshot export procedure](scripts/publish-d1.md) remains
 available for optional inventory audits; it is not needed to publish edits.
-Cloudflare Access is not yet configured, so admin editing currently fails
-closed. Contact delivery likewise requires a verified email binding before
-submissions can succeed.
+Admin login uses Cloudflare Access email codes for `lewis@amp.studio`, with an
+eight-hour session. Open `/admin/` on the production Worker hostname to sign
+in. One Access application protects `/admin`, `/admin/*`, `/api/admin` and
+`/api/admin/*`; the public pages remain anonymous. The matching team URL and
+application audience are tracked in `wrangler.jsonc` so CI preserves them.
+When moving to the public domain, add its equivalent admin paths to this same
+Access application before testing login on that hostname. Manage approved
+emails through the application's Access policy. Contact delivery still requires
+a verified email binding before submissions can succeed.

@@ -81,6 +81,17 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Build public/admin bundles and pass Worker typecheck and whitespace checks; retain fingerprinted immutable CSS/assets and server-only public rendering.
 - [x] Deploy `main` and verify live homepage, brochure, listing and detail layouts; record any remaining visual limitations.
 
+### 7. Admin login (2026-10-02)
+
+- [x] Enable account Zero Trust and create an email-code identity provider without changing the account's existing default identity provider.
+- [x] Configure one self-hosted Access application for the production Worker `/admin`, `/admin/*`, `/api/admin` and `/api/admin/*`, allowing only the user-approved `lewis@amp.studio`; use an eight-hour session and one audience for UI/API.
+- [x] Record the team URL and audience in `wrangler.jsonc` to preserve authentication across CI deployments; retain signed JWT issuer/audience validation, no-store API responses and the mutation Origin check.
+- [x] Rehearse valid identity, missing configuration/assertion, wrong issuer/audience, expiry, missing email, altered signature, foreign signing key and cross-origin mutation enforcement locally.
+- [x] Confirm real email-code delivery to the approved address; the user reported receiving a login code on 2026-10-02.
+- [ ] Build/typecheck and deploy `main`; verify live Access policy, Worker bindings, anonymous public pages and signed-out admin/API login gates.
+- [ ] Complete the first real email-code sign-in and verify authenticated catalogue reads and a reversible edit/upload. Only the user can supply the one-time login code.
+- [ ] Add the public site's admin paths to this same Access application and verify login after DNS cutover.
+
 ### 0. Audit current public site
 
 - [x] Inspect repository, live brochure routes and current listings.
@@ -180,10 +191,12 @@ Public [DNS lookup](https://www.who.is/dns/moorlandselfdrive.co.uk) on 2026-09-2
 
 - **2026-10-02 UI pass:** Deployed `6bdc47f` and the final photo-frame correction `d8fc26e`; Cloudflare builds `3d5ea1ca-7f33-457f-a918-78e6a384d32e` and `c9d18b79-2ca6-4721-915b-d7c91dcf8fd5` succeeded. Feature media now uses true source dimensions instead of a forced 4:3 crop, with balanced padding and no upscaling of small van illustrations. Catalogue/detail photos use `contain`; their image children are positioned inside 3:2 wrappers so portrait intrinsic dimensions cannot enlarge cards. Live Sales catalogue frames measured 385×257px for all eight vehicles, with prices aligned within each row; the portrait Defender detail retained a 691×461px frame showing the complete photo. Visually checked the homepage, Sales, Leasing, Custom vehicles, Servicing, van size guide, Contact, Sales listing and portrait detail at the available desktop viewport; the inspected pages had no horizontal overflow, and brochure images loaded when scrolled into view. Responsive CSS review covers the 1080px article/sidebar stack and 620px feature-card stack; an actual handset viewport was unavailable in this browser and still needs visual verification. Public/admin build, Worker typecheck, the final public rebuild and whitespace checks passed. Fingerprinted immutable assets and public server-only rendering are retained.
 
+- **2026-10-02 Admin Access:** The user enabled Zero Trust and approved only `lewis@amp.studio`. Created OTP provider `814301cd-1498-479e-94fe-9c254c2f98a3` and Access application `9b8c13f7-9a2d-461c-abd0-ed9185c86abc` with four explicit production Worker admin/UI API destinations, one audience and an eight-hour session. Readback confirms a single exact-email Allow policy and OTP as the application's only allowed provider. The user confirmed real code delivery. Signed JWT and Origin enforcement passed focused local acceptance/rejection checks, and the public/admin build plus Worker typecheck passed. Matching deployment variables and operational instructions are prepared in the repo; production binding/gate verification follows deployment. Authenticated catalogue/edit verification still needs the user's completed sign-in.
+
 ## Open gates
 
 - Preview Builds is disabled and both Preview lists are empty; the production `main` trigger remains enabled. The no-pending production D1 check passes in CI; actual migration **write** permission and rollback behavior still need a genuinely needed future schema change or isolated rehearsal. No schema change should be manufactured solely for a CI test.
-- Cloudflare Access, a verified contact email destination and the site's DNS zone are not configured in the connected account. Admin writes and form delivery fail closed.
+- Cloudflare Access is configured for the production Worker admin paths and the user-approved email; deployment and first real sign-in verification are recorded in phase 7. A verified contact email destination and the site's DNS zone remain unconfigured, so form delivery fails closed.
 - Before enabling contact email, add the missing Worker `send_email` binding with a verified sender/recipient and a public form rate limit or Turnstile; verify real delivery and the phone fallback. The form and API now both use the `website` honeypot. Current email binding remains absent, so submissions are rejected.
 - DNS delegation currently points to Google nameservers, while `www` points at Squarespace and Google Workspace handles MX/SPF. Obtain the authoritative DNS export and preserve every mail/verification record before migrating the domain; test host/scheme redirects when routing through Cloudflare.
 - Production D1 contains the same 15 currently visible records and 15 image rows; its R2 bucket contains exactly 30 matching immutable JPEGs. Runtime `MEDIA_BASE_URL` still points to the temporary production `r2.dev` hostname. A permanent R2 custom domain and measured edge cache hit remain for DNS cutover.
