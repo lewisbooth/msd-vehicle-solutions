@@ -104,7 +104,7 @@ Observed directly from the three public listing pages and each vehicle detail pa
 - [x] Extend only the Moorland Access application session to one month (`730h`); verify policy, audience, provider and paths are unchanged.
 - [x] Add a responsive Log out button using Cloudflare's endpoint, retaining the unsaved-edits warning and documenting that logout affects all Access applications.
 - [x] Verify desktop/mobile layouts and focused interactions with isolated API fixtures; pass build and type checks.
-- [ ] Deploy to main and verify the automatic production build; record production authentication limits.
+- [x] Deploy to main and verify the automatic production build; record production authentication limits.
 
 ### 0. Audit current public site
 
@@ -209,6 +209,8 @@ Public [DNS lookup](https://www.who.is/dns/moorlandselfdrive.co.uk) on 2026-09-2
 
 - **2026-10-02 Admin UI:** Rebuilt the admin layout with a focused mobile catalogue/editor flow, consistent spacing, complete image previews, persistent save controls, loading/empty states and draft protection. Added conditional accessible photo arrows, a multiple-photo picker/drop target and sequential uploads with partial-failure recovery. Photo responses now merge only photos, preserving unsaved details and their concurrency token; new vehicles omit the empty slug so the API generates it. Numeric spinners are hidden, decimal prices/specifications are accepted and form constraints run before save. Local Chromium QA at 320/390/768/1024/1440px showed no horizontal overflow and stable portrait/landscape photo frames; interaction checks cover arrows, decimal typing, draft preservation, discard, drop/picker uploads, invalid files, partial failure, deletion and create validation. These checks use isolated API fixtures, with no production data writes. Logout navigation and its unsaved-change prompt passed; expired-session 401/HTML responses retain drafts and expose a new-tab sign-in link. Full public/admin build, Worker/admin TypeScript checks and whitespace checks passed. Deployment verification follows.
 - **2026-10-02 Session duration:** Updated only Access application `9b8c13f7-9a2d-461c-abd0-ed9185c86abc` from `8h` to `730h` (Cloudflare's one-month convention); independent readback verified the same audience, provider, exact-email policy and four paths. Global settings are unchanged. The admin Log out button navigates to `/cdn-cgi/access/logout`, which clears the app cookie and revokes that user's Access sessions across applications. Existing tokens keep their earlier expiration; the next login receives the new duration.
+
+- **2026-10-02 Admin deployment:** Published `b699b79` to `main`; Cloudflare build `af080e9a-1edd-43dd-9793-79cafcf241ec` succeeded and deployed Worker version `991c2ab9-5de0-4adc-af83-4b8745fe23b9`. The no-pending D1 migration gate passed, and build logs confirm upload of the new admin HTML plus `index-am4blFCS.css` and `index-mEi-AsHk.js`, matching the locally verified build. Public bundle hashes and production D1/R2/Access bindings remain unchanged. UI writes/logout were tested with isolated browser fixtures, not the user's real authenticated production session; the phase 7 real-sign-in/edit check remains open.
 
 ## Open gates
 
